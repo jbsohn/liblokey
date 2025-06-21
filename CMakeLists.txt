@@ -34,7 +34,10 @@ include_directories(src/pokey/stubs)
 
 # Separate source files
 set(LOKEY_SRC src/lokey.c)
-set(POKEY_SRC src/pokey/pokey.c)
+set(POKEY_SRC
+        src/pokey/pokey.c
+        src/pokey/pokey_adapter.c
+)
 
 # Create the static library from both
 add_library(liblokey STATIC ${LOKEY_SRC} ${POKEY_SRC})

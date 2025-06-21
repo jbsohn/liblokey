@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 void audio_callback(void* userdata, Uint8* stream, int len) {
-    lokey_generate_audio((float*)stream, len / sizeof(float));
+    lokey_render_audio((float*)stream, len / sizeof(float));
 }
 
 int main() {
@@ -13,7 +13,7 @@ int main() {
         printf("SDL_OpenAudio failed: %s\n", SDL_GetError());
         return 1;
     }
-    lokey_init();
+    lokey_init(44100, 1);
     SDL_PauseAudio(0);
     SDL_Delay(3000);
     SDL_CloseAudio();
