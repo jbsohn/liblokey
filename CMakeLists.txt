@@ -46,7 +46,11 @@ else()
     set_source_files_properties(${POKEY_SRC} PROPERTIES COMPILE_FLAGS "-w")
 endif()
 
-target_include_directories(liblokey PUBLIC include)
+target_include_directories(liblokey PUBLIC
+        include
+        src
+        src/pokey/stubs
+)
 
 # === SDL Audio Test ===
 
