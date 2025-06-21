@@ -30,3 +30,22 @@
 *.exe
 *.out
 *.app
+
+# CMake build directories
+/build/
+/cmake-build-*/
+
+# JetBrains CLion
+.idea/
+*.iml
+
+# VSCode
+.vscode/
+.code-workspace
+
+# Mac OS system files
+.DS_Store
+
+# Crash logs and logs
+*.log
+*.swp

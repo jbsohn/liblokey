@@ -1,0 +1,5 @@
+This project includes code derived from the Atari800 emulator's POKEY implementation.
+See http://atari800.sourceforge.net/ for details.
+
+The included and modified code is licensed under the GNU General Public License, version 2.
+See https://www.gnu.org/licenses/old-licenses/gpl-2.0.html for the full license text.
