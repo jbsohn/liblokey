@@ -20,10 +20,12 @@ CPMAddPackage("gh:doctest/doctest@2.4.11")
 find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 
+include_directories(src/pokey/stubs)
+
 # liblokey static library
 add_library(liblokey STATIC
-    src/lokey.c
-    src/pokey/pokey.c
+        src/lokey.c
+        src/pokey/pokey.c
 )
 
 target_include_directories(liblokey PUBLIC include)
@@ -35,4 +37,4 @@ target_link_libraries(test_sdl PRIVATE liblokey ${SDL2_LIBRARIES})
 # Doctest unit test
 add_executable(test_registers test/test_registers.cpp)
 target_link_libraries(test_registers PRIVATE liblokey doctest)
-target_compile_definitions(test_registers PRIVATE DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN)
+target_include_directories(test_registers PRIVATE ${doctest_SOURCE_DIR}/doctest)
