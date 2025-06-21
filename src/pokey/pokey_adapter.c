@@ -2,16 +2,7 @@
 #include "pokey.h"
 #include "pokey_adapter.h"
 
-UBYTE lokey_sample_out = 127;
-
-typedef struct {
-    uint8_t unused; // placeholder for now
-} POKEY;
-
-struct POKEY_instance {
-    POKEY pokey;
-    float sample_rate;
-};
+static UBYTE lokey_sample_out = 127;
 
 void POKEY_init(POKEY_instance* p, float sample_rate) {
     p->sample_rate = sample_rate;
@@ -34,5 +25,7 @@ void POKEY_poke(POKEY_instance* p, int address, uint8_t value) {
 
 float POKEY_render_sample(POKEY_instance* p) {
     if (p == NULL) { return 0.0f; }
-    return (float)lokey_sample_out / 127.5f - 1.0f;
+    static int phase = 0;
+    phase++;
+    return (float)((phase / 100) % 2 ? 1.0f : -1.0f);  // basic square wave
 }

@@ -1,4 +1,7 @@
 #include "lokey.h"
+
+#include <stdlib.h>
+
 #include "pokey/pokey_adapter.h"
 
 // Static internal state
@@ -9,6 +12,11 @@ static int num_channels = 1;
 void lokey_init(float sr, int channels) {
     sample_rate = sr;
     num_channels = channels;
+
+    if (!pokey) {
+        pokey = (POKEY_instance*)malloc(sizeof(*pokey));
+    }
+    POKEY_init(pokey, sample_rate);
 
     // Initialize the PoKEY chip with the given sample rate
     POKEY_init(pokey, sample_rate);

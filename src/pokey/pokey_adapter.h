@@ -7,7 +7,15 @@
 extern "C" {
 #endif
 
-    typedef struct POKEY_instance POKEY_instance;
+    // this will eventually hold the global variables in pokey.c
+    typedef struct {
+        uint8_t unused; // placeholder for now
+    } POKEY;
+
+    typedef struct POKEY_instance {
+        POKEY pokey;
+        float sample_rate;
+    } POKEY_instance;
 
     void POKEY_init(POKEY_instance* p, float sample_rate);
     void POKEY_reset(POKEY_instance* p);
