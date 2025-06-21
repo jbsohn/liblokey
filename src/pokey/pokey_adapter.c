@@ -2,7 +2,11 @@
 #include "pokey.h"
 #include "pokey_adapter.h"
 
-#define POKEY int
+UBYTE lokey_sample_out = 127;
+
+typedef struct {
+    uint8_t unused; // placeholder for now
+} POKEY;
 
 struct POKEY_instance {
     POKEY pokey;
@@ -11,19 +15,24 @@ struct POKEY_instance {
 
 void POKEY_init(POKEY_instance* p, float sample_rate) {
     p->sample_rate = sample_rate;
+
+    // When we eventually use a real struct for POKEY,
+    // this will zero/init the internal state.
     memset(&p->pokey, 0, sizeof(POKEY));
-    // Initialize Atari800 pokey state as needed
 }
 
 void POKEY_reset(POKEY_instance* p) {
-    // Reset logic (if needed)
+    memset(&p->pokey, 0, sizeof(POKEY));
 }
 
 void POKEY_poke(POKEY_instance* p, int address, uint8_t value) {
-    POKEY_PutByte(address, value);
+    if (p != NULL)
+    {
+        POKEY_PutByte(address, value);
+    }
 }
 
 float POKEY_render_sample(POKEY_instance* p) {
-    // Convert Atari800 internal output to float (e.g., 0–255 → -1.0 to 1.0)
-    return 0.0f;  // Placeholder: call actual render code
+    if (p == NULL) { return 0.0f; }
+    return (float)lokey_sample_out / 127.5f - 1.0f;
 }
