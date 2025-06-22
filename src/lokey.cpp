@@ -19,6 +19,6 @@ void Lokey::poke(const PokeyRegister address, const uint8_t value) {
 void Lokey::render(float* outputBuffer, const size_t frames) {
     for (size_t i = 0; i < frames; ++i) {
         const float sample = adapter.render();
-        outputBuffer[i] = sample;  // Mono output for now
+        outputBuffer[i] = sample; // Mono output for now
     }
 }

@@ -180,6 +180,8 @@ static int POKEY_siocheck(void)
 
 void POKEY_PutByte(UWORD addr, UBYTE byte)
 {
+    printf("POKEY_PutByte addr=%02X byte=%02X\n", addr, byte);
+
 #ifdef STEREO_SOUND
 	addr &= POKEYSND_stereo_enabled ? 0x1f : 0x0f;
 #else
@@ -582,7 +584,6 @@ void POKEY_Scanline(void)
 
 static void Update_Counter(int chan_mask)
 {
-
 /************************************************************/
 /* As defined in the manual, the exact Div_n_cnt values are */
 /* different depending on the frequency and resolution:     */
@@ -691,3 +692,39 @@ void POKEY_StateRead(void)
 }
 
 #endif
+
+/*
+ * libHOKEY additions start here
+ */
+static int output_value = 8; // holds the latest value
+static int Outvol[4] = {0, 0, 0, 0};  // track square wave output phase
+
+void Pokey_UpdateVolume(int chan_mask) {
+    static int div_count[4] = {0, 0, 0, 0};
+    static int div_target[4] = {100, 120, 140, 160};  // Fake dividers for now
+    for (int ch = 0; ch < 4; ch++) {
+        if (chan_mask & (1 << ch)) {
+            div_count[ch]++;
+            if (div_count[ch] >= div_target[ch]) {
+                div_count[ch] = 0;
+                Outvol[ch] = !Outvol[ch];  // Flip polarity to simulate a square wave
+            }
+        }
+    }
+}
+
+void Pokey_UpdateSound(void) {
+    Pokey_UpdateVolume(0x0F);
+    Update_Counter(0x0F);  // Update all 4 channels
+
+    output_value = 0;
+
+    for (int ch = 0; ch < 4; ch++) {
+        int vol = POKEY_AUDC[ch] & 0x0F;
+        output_value += Outvol[ch] ? (vol * 8) : -(vol * 8);
+    }
+}
+
+int Pokey_GetSample() {
+    return output_value;
+}

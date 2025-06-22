@@ -18,29 +18,29 @@ int main() {
     Lokey lokey(44100, 1);  // sample rate = 44100, 1 POKEY instance
 
     // Configure SDL audio
-    SDL_AudioSpec want = {};
-    want.freq = 44100;
-    want.format = AUDIO_F32SYS;
-    want.channels = 1;
-    want.samples = 512;
-    want.callback = audio_callback;
-    want.userdata = &lokey;
+    SDL_AudioSpec spec = {};
+    spec.freq = 44100;
+    spec.format = AUDIO_F32SYS;
+    spec.channels = 1;
+    spec.samples = 512;
+    spec.callback = audio_callback;
+    spec.userdata = &lokey;
 
-    const SDL_AudioDeviceID dev = SDL_OpenAudioDevice(nullptr, 0, &want, nullptr, 0);
+    const SDL_AudioDeviceID dev = SDL_OpenAudioDevice(nullptr, 0, &spec, nullptr, 0);
     if (dev == 0) {
         printf("SDL_OpenAudioDevice failed: %s\n", SDL_GetError());
         return 1;
     }
 
-    // Set up test tone (will eventually matter when pokey_process uses AUDF/AUDC)
-    lokey.poke(PokeyRegister::AUDF1, 0xF0);
-    lokey.poke(PokeyRegister::AUDC1, 0xA0);
+    lokey.poke(PokeyRegister::AUDF1, 0x28);   // Frequency divider (lower = higher pitch)
+    lokey.poke(PokeyRegister::AUDC1, 0xA8);   // Pure tone, max volume
+    lokey.poke(PokeyRegister::AUDCTL, 0x00);  // 64kHz clock, standard mode
 
     // Start audio
     SDL_PauseAudioDevice(dev, 0);
 
-    // Play for 5 seconds
-    SDL_Delay(5000);
+    // Play for 3 seconds
+    SDL_Delay(3000);
 
     SDL_CloseAudioDevice(dev);
     SDL_Quit();

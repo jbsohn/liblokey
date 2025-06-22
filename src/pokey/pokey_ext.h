@@ -10,7 +10,9 @@ extern "C" {
     // typedef struct {
     // } POKEY;
 
-    float pokey_generate_sample();
+    void Pokey_UpdateSound();
+    int Pokey_GetSample();
+
 #ifdef __cplusplus
 }
 #endif

@@ -1,4 +1,4 @@
-
+#include <stdio.h>
 extern "C" {
 #include "pokey/pokey.h"
 #include "pokey/pokey_ext.h"
@@ -17,5 +17,7 @@ void PokeyAdapter::poke(const PokeyRegister address, const uint8_t value) {
 }
 
 float PokeyAdapter::render() {
-    return pokey_generate_sample() / 128.0f;
+    Pokey_UpdateSound();  // Advance the emulation state
+    return Pokey_GetSample() / 128.0f;
 }
+
