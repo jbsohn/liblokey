@@ -1,8 +1,8 @@
 
 extern "C" {
 #include "pokey/pokey.h"
+#include "pokey/pokey_ext.h"
 }
-
 #include "pokey_adapter.hpp"
 
 PokeyAdapter::PokeyAdapter(const float sampleRate) : sampleRate(sampleRate) {
@@ -18,7 +18,5 @@ void PokeyAdapter::poke(const PokeyRegister address, const uint8_t value) const 
 }
 
 float PokeyAdapter::render() {
-    static int phase = 0;
-    phase++;
-    return phase / 100 % 2 ? 1.0f : -1.0f;  // basic square wave
+    return pokey_generate_sample();  // uses our hand-rolled audio engine
 }

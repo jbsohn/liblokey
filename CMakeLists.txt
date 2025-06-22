@@ -36,11 +36,14 @@ include_directories(src/pokey/stubs)
 set(LOKEY_SRC src/lokey.cpp)
 set(POKEY_SRC
         src/pokey/pokey.c
+        src/pokey/pokey_ext.c
         src/pokey_adapter.cpp
 )
 
 # Create the static library from both
 add_library(liblokey STATIC ${LOKEY_SRC} ${POKEY_SRC})
+# we may want this defined:
+#target_compile_definitions(liblokey PRIVATE POKEY_UPDATE)
 
 # Suppress warnings for pokey.c only
 if (MSVC)

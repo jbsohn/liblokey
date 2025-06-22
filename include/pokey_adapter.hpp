@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pokey/pokey.h"
+#include "pokey/pokey_ext.h"
 #include "pokey_registers.hpp"
 
 class PokeyAdapter {
