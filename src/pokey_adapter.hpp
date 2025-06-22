@@ -9,6 +9,7 @@ public:
     void reset();
     void poke(const uint16_t address, const uint8_t value) const;
     [[nodiscard]] float render();
+
 private:
     const float sampleRate;
 };

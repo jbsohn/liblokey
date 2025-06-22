@@ -5,9 +5,9 @@
 
 void audio_callback(void* userdata, Uint8* stream, int len) {
     float* fstream = (float*)stream;
-    int frames = len / sizeof(float); // assuming mono 32-bit float samples
+    int frames = len / sizeof(float);  // assuming mono 32-bit float samples
 
-    auto *lokey = static_cast<Lokey*>(userdata);
+    auto* lokey = static_cast<Lokey*>(userdata);
     lokey->render(fstream, frames);
 }
 

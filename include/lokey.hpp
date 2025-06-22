@@ -10,6 +10,7 @@ public:
     void reset();
     void writeRegister(uint16_t address, uint8_t value) const;
     void render(float* outputBuffer, size_t frames);
+
 private:
     PokeyAdapter adapter;
     int numChannels;
