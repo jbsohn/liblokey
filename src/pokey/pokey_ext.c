@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "pokey.h"
 
 float pokey_generate_sample() {

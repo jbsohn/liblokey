@@ -6,11 +6,10 @@ extern "C" {
 #include "pokey_adapter.hpp"
 
 PokeyAdapter::PokeyAdapter(const float sampleRate) : sampleRate(sampleRate) {
-    // TODO: initialise pokey instance
+    reset();
 }
 
 void PokeyAdapter::reset() {
-    // TODO: reset pokey instance
 }
 
 void PokeyAdapter::poke(const PokeyRegister address, const uint8_t value) {
@@ -18,5 +17,5 @@ void PokeyAdapter::poke(const PokeyRegister address, const uint8_t value) {
 }
 
 float PokeyAdapter::render() {
-    return pokey_generate_sample();  // uses our hand-rolled audio engine
+    return pokey_generate_sample() / 128.0f;
 }

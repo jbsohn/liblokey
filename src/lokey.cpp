@@ -4,7 +4,7 @@
 
 
 Lokey::Lokey(const float sampleRate, const int numChannels) : adapter(sampleRate), numChannels(numChannels) {
-    assert(numChannels == 1 && "Only mono output is supported right now");
+    assert(this->numChannels == 1 && "Only mono output is supported right now");
     adapter.reset();
 }
 
