@@ -13,7 +13,7 @@ void PokeyAdapter::reset() {
     // TODO: reset pokey instance
 }
 
-void PokeyAdapter::poke(const PokeyRegister address, const uint8_t value) const {
+void PokeyAdapter::poke(const PokeyRegister address, const uint8_t value) {
     POKEY_PutByte(static_cast<uint8_t>(address), value);
 }
 

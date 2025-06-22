@@ -9,7 +9,7 @@ public:
     explicit Lokey(float sampleRate = 44100.0f, int numChannels = 1);
 
     void reset();
-    void poke(const PokeyRegister address, const uint8_t value) const;
+    void poke(const PokeyRegister address, const uint8_t value);
     void render(float* outputBuffer, const size_t frames);
 
 private:

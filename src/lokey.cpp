@@ -1,7 +1,10 @@
 #include <cstddef>
+#include <cassert>
 #include "lokey.hpp"
 
+
 Lokey::Lokey(const float sampleRate, const int numChannels) : adapter(sampleRate), numChannels(numChannels) {
+    assert(numChannels == 1 && "Only mono output is supported right now");
     adapter.reset();
 }
 
@@ -9,7 +12,7 @@ void Lokey::reset() {
     adapter.reset();
 }
 
-void Lokey::poke(const PokeyRegister address, const uint8_t value) const {
+void Lokey::poke(const PokeyRegister address, const uint8_t value) {
     adapter.poke(address, value);
 }
 
