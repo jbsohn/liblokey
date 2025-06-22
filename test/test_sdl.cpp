@@ -1,11 +1,11 @@
 #include <SDL.h>
-#include <stdio.h>
+#include <cstdio>
 #include <unistd.h>
 #include "lokey.hpp"
 
 void audio_callback(void* userdata, Uint8* stream, int len) {
-    float* fstream = (float*)stream;
-    int frames = len / sizeof(float);  // assuming mono 32-bit float samples
+    auto* fstream = reinterpret_cast<float*>(stream);
+    const int frames = len / sizeof(float);  // assuming mono 32-bit float samples
 
     auto* lokey = static_cast<Lokey*>(userdata);
     lokey->render(fstream, frames);
@@ -23,8 +23,8 @@ int main() {
         printf("SDL_OpenAudio failed: %s\n", SDL_GetError());
         return 1;
     }
-    lokey.writeRegister(POKEY_OFFSET_AUDF1, 0xF0);
-    lokey.writeRegister(POKEY_OFFSET_AUDC1, 0xA0);
+    lokey.poke(PokeyRegister::AUDF1, 0xF0);
+    lokey.poke(PokeyRegister::AUDC1, 0xA0);
 
     SDL_PauseAudio(0);
     SDL_Delay(3000);
