@@ -33,10 +33,10 @@ include_directories(src/pokey/stubs)
 # === LIBLOKEY SETUP ===
 
 # Separate source files
-set(LOKEY_SRC src/lokey.c)
+set(LOKEY_SRC src/lokey.cpp)
 set(POKEY_SRC
         src/pokey/pokey.c
-        src/pokey/pokey_adapter.c
+        src/pokey_adapter.cpp
 )
 
 # Create the static library from both
