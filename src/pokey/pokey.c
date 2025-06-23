@@ -49,6 +49,13 @@
 #include "log.h"
 #include "input.h"
 #include "pbi.h"
+#ifdef NETSIO
+#include "netsio.h"
+#endif
+
+#ifdef POKEYREC
+#include "pokeyrec.h"
+#endif
 
 #ifdef VOICEBOX
 #include "voicebox.h"
@@ -139,9 +146,6 @@ UBYTE POKEY_GetByte(UWORD addr, int no_side_effects)
 #ifdef DEBUG3
 		printf("SERIO: SERIN read, bytevalue %02x\n", POKEY_SERIN);
 #endif
-#ifdef SERIO_SOUND
-		POKEYSND_UpdateSerio(0,byte);
-#endif
 		break;
 	case POKEY_OFFSET_IRQST:
 		byte = POKEY_IRQST;
@@ -180,8 +184,6 @@ static int POKEY_siocheck(void)
 
 void POKEY_PutByte(UWORD addr, UBYTE byte)
 {
-    printf("POKEY_PutByte addr=%02X byte=%02X\n", addr, byte);
-
 #ifdef STEREO_SOUND
 	addr &= POKEYSND_stereo_enabled ? 0x1f : 0x0f;
 #else
@@ -242,7 +244,7 @@ void POKEY_PutByte(UWORD addr, UBYTE byte)
 		printf("WR: IRQEN = %x, PC = %x\n", POKEY_IRQEN, PC);
 #endif
 		POKEY_IRQST |= ~byte & 0xf7;	/* Reset disabled IRQs except XMTDONE */
-		if ((~POKEY_IRQST & POKEY_IRQEN) == 0 && PBI_IRQ == 0)
+		if ((~POKEY_IRQST & POKEY_IRQEN) == 0 && PBI_IRQ == 0 && PIA_IRQ == 0)
 			CPU_IRQ = 0;
 		else
 			CPU_GenerateIRQ();
@@ -260,6 +262,17 @@ void POKEY_PutByte(UWORD addr, UBYTE byte)
 #endif
 		if ((POKEY_SKCTL & 0x70) == 0x20 && POKEY_siocheck())
 			SIO_PutByte(byte);
+#ifdef NETSIO
+		/* TODO: proper way to enable modem
+		 * When testing various FujiNet provided peripherals, I've noticed modem was not working.
+		 * Quick fix was to test (POKEY_SKCTL & 0x70) == 0x70 instead of calling more complex POKEY_siocheck().
+		 * Modem started to work (tested Ice-T with CP/M, BobTerm). However, I'm not sure how to test POKEY
+		 * registers for only valid serial port output modes.
+		 */
+		else if (netsio_enabled && (POKEY_SKCTL & 0x70) == 0x70)
+			NetSIO_PutByte(byte);
+#endif
+
 		/* check if cassette 2-tone mode has been enabled */
 		if ((POKEY_SKCTL & 0x08) == 0x00) {
 			/* intelligent device */
@@ -282,9 +295,6 @@ void POKEY_PutByte(UWORD addr, UBYTE byte)
 				POKEY_DELAYED_XMTDONE_IRQ = 0;
 			}
 		};
-#ifdef SERIO_SOUND
-		POKEYSND_UpdateSerio(1, byte);
-#endif
 		break;
 	case POKEY_OFFSET_STIMER:
 		POKEY_DivNIRQ[POKEY_CHAN1] = POKEY_DivNMax[POKEY_CHAN1];
@@ -449,12 +459,12 @@ void POKEY_Frame(void)
 
 void POKEY_Scanline(void)
 {
-#ifdef POKEY_UPDATE
-	pokey_update();
+#ifdef POKEYREC
+    POKEYREC_Recorder();
 #endif
 
-#ifdef VOL_ONLY_SOUND
-	POKEYSND_UpdateVolOnly();
+#ifdef POKEY_UPDATE
+	pokey_update();
 #endif
 
 #ifndef BASIC
@@ -504,6 +514,22 @@ void POKEY_Scanline(void)
 #endif
 		}
 	}
+#ifdef NETSIO
+	/* Check NetSIO for pending Rx bytes */
+	if (netsio_enabled && POKEY_DELAYED_SERIN_IRQ == 0) {
+		int avail = netsio_available();
+		if (avail > 0) {
+			/* TODO make various SIO speeds working
+			 * currently the POKEY_DELAYED_SERIN_IRQ is set to the same values ignoring the actual speed
+			 * and forcing baud rate to 19200
+			 */
+			if (avail == 1)
+				POKEY_DELAYED_SERIN_IRQ = SIO_SERIN_INTERVAL * 2 + 4;
+			else
+			 	POKEY_DELAYED_SERIN_IRQ = SIO_SERIN_INTERVAL + 2;
+		}
+	}
+#endif /* NETSIO */
 
 	if (POKEY_DELAYED_SEROUT_IRQ > 0) {
 		if (--POKEY_DELAYED_SEROUT_IRQ == 0) {
@@ -584,6 +610,7 @@ void POKEY_Scanline(void)
 
 static void Update_Counter(int chan_mask)
 {
+
 /************************************************************/
 /* As defined in the manual, the exact Div_n_cnt values are */
 /* different depending on the frequency and resolution:     */
@@ -640,6 +667,7 @@ void POKEY_StateSave(void)
 	int shift_key = 0;
 	int keypressed = 0;
 
+	STATESAV_TAG(pokey);
 	StateSav_SaveUBYTE(&POKEY_KBCODE, 1);
 	StateSav_SaveUBYTE(&POKEY_IRQST, 1);
 	StateSav_SaveUBYTE(&POKEY_IRQEN, 1);
@@ -692,39 +720,3 @@ void POKEY_StateRead(void)
 }
 
 #endif
-
-/*
- * libHOKEY additions start here
- */
-static int output_value = 8; // holds the latest value
-static int Outvol[4] = {0, 0, 0, 0};  // track square wave output phase
-
-void Pokey_UpdateVolume(int chan_mask) {
-    static int div_count[4] = {0, 0, 0, 0};
-    static int div_target[4] = {100, 120, 140, 160};  // Fake dividers for now
-    for (int ch = 0; ch < 4; ch++) {
-        if (chan_mask & (1 << ch)) {
-            div_count[ch]++;
-            if (div_count[ch] >= div_target[ch]) {
-                div_count[ch] = 0;
-                Outvol[ch] = !Outvol[ch];  // Flip polarity to simulate a square wave
-            }
-        }
-    }
-}
-
-void Pokey_UpdateSound(void) {
-    Pokey_UpdateVolume(0x0F);
-    Update_Counter(0x0F);  // Update all 4 channels
-
-    output_value = 0;
-
-    for (int ch = 0; ch < 4; ch++) {
-        int vol = POKEY_AUDC[ch] & 0x0F;
-        output_value += Outvol[ch] ? (vol * 8) : -(vol * 8);
-    }
-}
-
-int Pokey_GetSample() {
-    return output_value;
-}

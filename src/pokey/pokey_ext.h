@@ -9,10 +9,6 @@ extern "C" {
     // this will eventually hold the global variables in pokey.c
     // typedef struct {
     // } POKEY;
-
-    void Pokey_UpdateSound();
-    int Pokey_GetSample();
-
 #ifdef __cplusplus
 }
 #endif

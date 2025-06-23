@@ -36,7 +36,8 @@ include_directories(src/pokey/stubs)
 set(LOKEY_SRC src/lokey.cpp)
 set(POKEY_SRC
         src/pokey/pokey.c
-        src/pokey/pokey_ext.c
+        src/pokey/sound.c
+        src/pokey/pokeysnd.c
         src/pokey_adapter.cpp
 )
 
