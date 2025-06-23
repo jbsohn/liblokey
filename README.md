@@ -106,7 +106,7 @@ Use `PokeyAdapter` for low-level chip emulation or `Lokey` to manage multiple PO
 
 ## 🫡 Acknowledgments
 
-`libLOKEY` uses a modified version of the **POKEY sound emulation code from the [Atari800 project](http://atari800.sourceforge.net/)**.
+`libLOKEY` uses a modified version of the **POKEY sound emulation code from the [Atari800 project](https://atari800.github.io)**.
 
 We want to express our **deep appreciation and respect** to the original authors and maintainers of Atari800. Their outstanding work in preserving and emulating Atari’s 8-bit systems — including the **POKEY chip** — made this project possible. Without their reverse engineering efforts, `libLOKEY` would not exist.
 
@@ -131,7 +131,7 @@ This structure allows us to track upstream changes more easily while using the c
 The POKEY emulation code from Atari800 is licensed under the **GNU General Public License v2**.  
 `libLOKEY` maintains compatibility with that license.
 
-- Atari800 project: [http://atari800.sourceforge.net/](http://atari800.sourceforge.net/)
+- Atari800 project: [http://atari800.sourceforge.net/](https://atari800.github.io)
 - Full GPLv2 license text: [https://www.gnu.org/licenses/old-licenses/gpl-2.0.html](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 
 See `LICENSE.txt` for more details.
