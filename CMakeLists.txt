@@ -38,11 +38,13 @@ set(POKEY_SRC
         src/pokey/pokey.c
         src/pokey/sound.c
         src/pokey/pokeysnd.c
+        src/pokey/platform.c
         src/pokey_adapter.cpp
 )
 
 # Create the static library from both
 add_library(liblokey STATIC ${LOKEY_SRC} ${POKEY_SRC})
+target_compile_definitions(liblokey PRIVATE SOUND_CALLBACK)
 # we may want this defined:
 #target_compile_definitions(liblokey PRIVATE POKEY_UPDATE)
 
