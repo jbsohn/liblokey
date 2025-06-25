@@ -2,47 +2,53 @@
 #include <cstdio>
 #include "lokey.hpp"
 
-void audio_callback(void* userdata, Uint8* stream, int len) {
-    auto* fstream = reinterpret_cast<float*>(stream);
-    const int frames = len / sizeof(float);
-    auto* lokey = static_cast<Lokey*>(userdata);
-    lokey->render(fstream, frames);
+static constexpr int SAMPLE_RATE = 44100;
+static constexpr int BUFFER_SIZE = 512;
+
+void audioCallback(void* userdata, Uint8* stream, int len) {
+    auto* buffer = reinterpret_cast<int16_t*>(stream);
+    const int samples = len / sizeof(int16_t);
+
+    Lokey::instance().render(buffer, samples);
 }
 
 int main() {
     if (SDL_Init(SDL_INIT_AUDIO) < 0) {
-        printf("SDL_Init failed: %s\n", SDL_GetError());
+        std::fprintf(stderr, "SDL_Init failed: %s\n", SDL_GetError());
         return 1;
     }
 
-    Lokey lokey(44100, 1);  // sample rate = 44100, 1 POKEY instance
+    if (!Lokey::instance().init(SAMPLE_RATE)) {
+        std::fprintf(stderr, "Lokey::init() failed\n");
+        return 1;
+    }
 
-    // Configure SDL audio
-    SDL_AudioSpec spec = {};
-    spec.freq = 44100;
-    spec.format = AUDIO_F32SYS;
+    SDL_AudioSpec spec{};
+    spec.freq = SAMPLE_RATE;
+    spec.format = AUDIO_S16SYS;
     spec.channels = 1;
-    spec.samples = 512;
-    spec.callback = audio_callback;
-    spec.userdata = &lokey;
+    spec.samples = BUFFER_SIZE;
+    spec.callback = audioCallback;
 
-    const SDL_AudioDeviceID dev = SDL_OpenAudioDevice(nullptr, 0, &spec, nullptr, 0);
-    if (dev == 0) {
-        printf("SDL_OpenAudioDevice failed: %s\n", SDL_GetError());
+    if (SDL_OpenAudio(&spec, nullptr) < 0) {
+        std::fprintf(stderr, "SDL_OpenAudio failed: %s\n", SDL_GetError());
         return 1;
     }
 
-    lokey.poke(PokeyRegister::AUDF1, 0x28);   // Frequency divider (lower = higher pitch)
-    lokey.poke(PokeyRegister::AUDC1, 0xA8);   // Pure tone, max volume
-    lokey.poke(PokeyRegister::AUDCTL, 0x00);  // 64kHz clock, standard mode
+    // Set up a basic square wave tone
+    Lokey::instance().poke(PokeyRegister::AUDF1, 0x28);   // ~440 Hz
+    Lokey::instance().poke(PokeyRegister::AUDC1, 0xA0);   // Pure tone, volume=10
+    Lokey::instance().reset_registers();
 
-    // Start audio
-    SDL_PauseAudioDevice(dev, 0);
+    SDL_PauseAudio(0);  // Start audio playback
 
-    // Play for 3 seconds
-    SDL_Delay(3000);
+    printf("Running... press Ctrl+C to quit\n");
 
-    SDL_CloseAudioDevice(dev);
+    while (true) {
+        SDL_Delay(1000);  // Just idle
+    }
+
+    SDL_CloseAudio();
     SDL_Quit();
     return 0;
 }
