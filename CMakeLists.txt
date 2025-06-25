@@ -38,7 +38,8 @@ set(POKEY_SRC
         src/pokey/pokey.c
         src/pokey/sound.c
         src/pokey/pokeysnd.c
-        src/pokey/platform.c
+        src/pokey/pokey_ext.c
+        src/pokey/platform_sdl.c
         src/pokey_adapter.cpp
 )
 
