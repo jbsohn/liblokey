@@ -39,8 +39,6 @@ set(POKEY_SRC
         src/pokey/sound.c
         src/pokey/pokeysnd.c
         src/pokey/pokey_ext.c
-        src/pokey/platform_sdl.c
-        src/pokey_adapter.cpp
 )
 
 # Create the static library from both

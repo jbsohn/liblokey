@@ -1,8 +1,7 @@
 
 #pragma once
 
-#include "pokey_adapter.hpp"
-#include "pokey_registers.hpp"
+#include "pokey_register.hpp"
 
 class Lokey {
 public:
@@ -13,6 +12,5 @@ public:
     void render(float* outputBuffer, const size_t frames);
 
 private:
-    PokeyAdapter adapter;
     int numChannels;
 };

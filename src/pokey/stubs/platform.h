@@ -1,7 +1,7 @@
 // platform.h
 #pragma once
 
-#include "sound.h"
+#include "../sound.h"
 
 // PLATFORM Sound
 int PLATFORM_SoundSetup(Sound_setup_t *setup);
