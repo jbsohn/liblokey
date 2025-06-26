@@ -2,7 +2,6 @@
 #include <cassert>
 #include "lokey.hpp"
 
-
 Lokey::Lokey(const float sampleRate, const int numChannels) : adapter(sampleRate), numChannels(numChannels) {
     assert(this->numChannels == 1 && "Only mono output is supported right now");
     adapter.reset();
