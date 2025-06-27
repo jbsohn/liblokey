@@ -5,28 +5,16 @@
 // It exists to satisfy include dependencies in pokey.c but does not currently
 // contain any functional declarations. Add contents here only if required.
 
-#include <stdint.h>
-#include <stddef.h>
-
-typedef uint8_t  UBYTE;
-typedef uint16_t UWORD;
-typedef uint32_t ULONG;
-typedef int16_t  SWORD;
-
-
-extern int POKEYSND_playback_freq;
-extern int POKEYSND_volume;
+#include "config.h"
 
 #define Atari800_TV_NTSC 0
 #define Atari800_TV_PAL 1
-
 #define Atari800_FPS_NTSC 60
 #define Atari800_FPS_PAL 50
-
-extern int Atari800_tv_mode;
-
-void *POKEYSND_Update_ptr;
-void *POKEYSND_Process_ptr;
+#define Atari800_TV_PAL 1
+#define Atari800_FPS_NTSC 60
+#define Atari800_FPS_PAL 50
+#define ANTIC_CPU_CLOCK 1789772  // Roughly 1.79 MHz
 
 #define POKEY_OFFSET_AUDF1 0x00
 #define POKEY_OFFSET_AUDC1 0x01
@@ -61,19 +49,41 @@ void *POKEYSND_Process_ptr;
 
 #define POKEYSND_BIT16	1
 
-extern void (*POKEYSND_GenerateSync)(unsigned int);
+// Atari 800/XE/XL settings
+extern int Atari800_tv_mode;  // 0 = NTSC, 1 = PAL (adjust if needed)
+extern int Atari800_turbo;
 
-extern UBYTE POKEYSND_process_buffer[4096];
-extern int POKEYSND_process_buffer_fill;
+// Missing globals
+#define ANTIC_XPOS 0
+#define ANTIC_LINE_C 1
 
-extern int POKEYSND_process_buffer_length;
+extern int ESC_enable_sio_patch;
+extern int PBI_IRQ;
+extern int PIA_IRQ;
+extern int CPU_IRQ;
 
-extern int POKEYSND_snd_flags;
+// Missing functions
+static int CASSETTE_IOLineStatus(void) { return 0; }
+static void CPU_GenerateIRQ(void) {}
+static void SIO_PutByte(int byte) {}
+static int  SIO_GetByte(void) { return 0; }
+static void CASSETTE_ResetPOKEY(void) {}
+static int  CASSETTE_AddScanLine(void) { return 0; }
+static int  INPUT_Playingback(void) { return 0; }
+static int  INPUT_PlaybackInt(void) { return 0; }
+static int  INPUT_Recording(void) { return 0; }
+static void INPUT_RecordInt(int dummy) {}
+static void INPUT_Scanline(void) {}
+static void SndSave_CloseSoundFile(void) {}
+static void SndSave_WriteToSoundFile(const unsigned char*, int) {}
 
-#ifndef TRUE
-#define TRUE 1
-#endif
+// Needed for pokey.c
+#define SIO_SEROUT_INTERVAL 0
+#define SIO_XMTDONE_INTERVAL 0
 
-#ifndef FALSE
-#define FALSE 0
-#endif
+// Needed for pokey.c save/load routines
+#define STATESAV_TAG(x) #x
+static void StateSav_SaveUBYTE(UBYTE* /*data*/, int /*len*/) {}
+static void StateSav_SaveINT(int* /*data*/, int /*len*/) {}
+static void StateSav_ReadUBYTE(UBYTE* /*data*/, int /*len*/) {}
+static void StateSav_ReadINT(int* /*data*/, int /*len*/) {}

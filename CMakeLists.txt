@@ -40,6 +40,8 @@ set(LOKEY_SRC
 set(POKEY_SRC
         src/pokey/mzpokeysnd.c
         src/pokey/mzpokeysnd_ext.c
+        src/pokey/pokey.c
+        src/pokey/pokeysnd.c
         src/pokey/remez.c
 )
 
