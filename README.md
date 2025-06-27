@@ -35,6 +35,7 @@ Arcade machines often used **multiple POKEY chips** to create rich, layered audi
 
 It provides:
 
+- 🎛️ A working real-time SDL-based POKEY test harness (`test_sdl`) for tone verification and development
 - 🔄 A clean per-instance interface (`PokeyAdapter`)
 - 🔊 A mix-ready audio engine (`Lokey`)
 - 🎧 Support for rendering audio output with one or more POKEYs
@@ -60,7 +61,7 @@ Other great uses of POKEY audio include *Electraglide*, *Rescue on Fractalus!*, 
 
 ## 🎯 Project Goals and Roadmap
 
-`libLOKEY` is currently in early development. The goal is to create a high-quality, portable POKEY audio engine suitable for:
+`libLOKEY` has reached its first working milestone. The core POKEY emulation has been integrated with SDL audio and successfully tested in a real-time environment. The ongoing goal is to build a high-quality, portable POKEY audio engine suitable for:
 
 - SDL2-based desktop tools and games
 - WebAssembly builds for browser demos and testing
@@ -121,6 +122,8 @@ We aim to carry that legacy forward by making their work accessible in modern co
 - We have made **minimal and respectful changes** to `pokey.c` and `pokey.h` from the Atari800 source tree
 - Global state and platform-specific I/O have been isolated behind **lightweight stubs**
 - A clean wrapper (`lokey.c` / `lokey.h`) presents a portable C API usable across all targets
+
+- We've also successfully integrated `mzpokeysnd.c` from Atari800 with no modifications, using a clean external interface. This validates the engine in its original form and simplifies future updates.
 
 This structure allows us to track upstream changes more easily while using the core logic as-is.
 
