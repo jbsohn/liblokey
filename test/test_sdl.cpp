@@ -8,7 +8,7 @@
 #define BUFFER_SIZE 512
 
 void audio_callback(void *userdata, Uint8 *stream, int len) {
-    memset(stream, 0, len); // Clear buffer to silence
+    // memset(stream, 0, len); // Clear buffer to silence
     POKEYSND_Process((void *)stream, len / 2); // 16-bit: len in bytes → samples
 }
 
@@ -39,6 +39,17 @@ int main(int argc, char *argv[]) {
     POKEYSND_Update(0x01, 0xAF, 0, 1);  // AUDC0: volume = 15, tone enable
     POKEYSND_Update(0x00, 0x28, 0, 1);  // AUDF0: divisor for pitch
     POKEYSND_Update(0x08, 0x03, 0, 1);  // SKCTL: enable sound
+    POKEYSND_Update(0x03, 0xAF, 0, 1);  // AUDC1
+    POKEYSND_Update(0x05, 0xAF, 0, 1);  // AUDC2
+    POKEYSND_Update(0x07, 0xAF, 0, 1);  // AUDC3
+
+    for (int i = 0x28; i < 0x80; ++i) {
+        POKEYSND_Update(0x00, i, 0, 1);  // AUDF0
+        POKEYSND_Update(0x02, i + 4, 0, 1);  // AUDF1
+        POKEYSND_Update(0x04, i + 8, 0, 1);  // AUDF2
+        POKEYSND_Update(0x06, i + 12, 0, 1); // AUDF3
+        SDL_Delay(30);
+    }
 
     SDL_Delay(3000); // play for 3 seconds
 
