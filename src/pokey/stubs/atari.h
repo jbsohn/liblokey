@@ -7,14 +7,15 @@
 
 #include "config.h"
 
-#define Atari800_TV_NTSC 0
-#define Atari800_TV_PAL 1
+#define Atari800_TV_NTSC 1
+#define Atari800_TV_PAL  2
 #define Atari800_FPS_NTSC 60
 #define Atari800_FPS_PAL 50
 #define Atari800_TV_PAL 1
 #define Atari800_FPS_NTSC 60
 #define Atari800_FPS_PAL 50
 #define ANTIC_CPU_CLOCK 1789772  // Roughly 1.79 MHz
+// extern int ANTIC_CPU_CLOCK;
 
 #define POKEY_OFFSET_AUDF1 0x00
 #define POKEY_OFFSET_AUDC1 0x01

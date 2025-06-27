@@ -1,48 +1,48 @@
 #include <SDL.h>
 #include <cstdio>
-#include "lokey.hpp"
+#include <cstdlib>
+#include <cstring>
+#include "pokey/pokeysnd.h"
 
-void audio_callback(void* userdata, Uint8* stream, int len) {
-    auto* fstream = reinterpret_cast<float*>(stream);
-    const int frames = len / sizeof(float);
-    auto* lokey = static_cast<Lokey*>(userdata);
-    lokey->render(fstream, frames);
+#define SAMPLE_RATE 44100
+#define BUFFER_SIZE 512
+
+void audio_callback(void *userdata, Uint8 *stream, int len) {
+    memset(stream, 0, len); // Clear buffer to silence
+    POKEYSND_Process((void *)stream, len / 2); // 16-bit: len in bytes → samples
 }
 
-int main() {
+int main(int argc, char *argv[]) {
     if (SDL_Init(SDL_INIT_AUDIO) < 0) {
-        printf("SDL_Init failed: %s\n", SDL_GetError());
+        fprintf(stderr, "SDL_Init failed: %s\n", SDL_GetError());
         return 1;
     }
 
-    Lokey lokey(44100, 1);  // sample rate = 44100, 1 POKEY instance
+    SDL_AudioSpec desired, obtained;
+    SDL_zero(desired);
+    desired.freq = SAMPLE_RATE;
+    desired.format = AUDIO_S16SYS;
+    desired.channels = 1;
+    desired.samples = BUFFER_SIZE;
+    desired.callback = audio_callback;
 
-    // Configure SDL audio
-    SDL_AudioSpec spec = {};
-    spec.freq = 44100;
-    spec.format = AUDIO_F32SYS;
-    spec.channels = 1;
-    spec.samples = 512;
-    spec.callback = audio_callback;
-    spec.userdata = &lokey;
-
-    const SDL_AudioDeviceID dev = SDL_OpenAudioDevice(nullptr, 0, &spec, nullptr, 0);
-    if (dev == 0) {
-        printf("SDL_OpenAudioDevice failed: %s\n", SDL_GetError());
+    if (SDL_OpenAudio(&desired, &obtained) < 0) {
+        fprintf(stderr, "SDL_OpenAudio failed: %s\n", SDL_GetError());
         return 1;
     }
+    SDL_ClearQueuedAudio(1); // Clear any residual data (optional)
 
-    lokey.poke(PokeyRegister::AUDF1, 0x28);   // Frequency divider (lower = higher pitch)
-    lokey.poke(PokeyRegister::AUDC1, 0xA8);   // Pure tone, max volume
-    lokey.poke(PokeyRegister::AUDCTL, 0x00);  // 64kHz clock, standard mode
+    POKEYSND_Init(POKEYSND_FREQ_17_APPROX, SAMPLE_RATE, 1, POKEYSND_BIT16);
 
-    // Start audio
-    SDL_PauseAudioDevice(dev, 0);
+    SDL_PauseAudio(0); // start playback
 
-    // Play for 3 seconds
-    SDL_Delay(3000);
+    POKEYSND_Update(0x01, 0xAF, 0, 1);  // AUDC0: volume = 15, tone enable
+    POKEYSND_Update(0x00, 0x28, 0, 1);  // AUDF0: divisor for pitch
+    POKEYSND_Update(0x08, 0x03, 0, 1);  // SKCTL: enable sound
 
-    SDL_CloseAudioDevice(dev);
+    SDL_Delay(3000); // play for 3 seconds
+
+    SDL_CloseAudio();
     SDL_Quit();
     return 0;
 }
