@@ -1,6 +1,6 @@
 #pragma once
 
-#include "pokey_registers.hpp"
+#include "pokey_register.hpp"
 
 class PokeyAdapter {
 public:
@@ -8,7 +8,4 @@ public:
     void reset();
     void poke(const PokeyRegister address, const uint8_t value);
     [[nodiscard]] float render();
-
-private:
-    const float sampleRate;
 };

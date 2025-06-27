@@ -2,7 +2,7 @@
 #pragma once
 
 #include "pokey_adapter.hpp"
-#include "pokey_registers.hpp"
+#include "pokey_register.hpp"
 
 class Lokey {
 public:
