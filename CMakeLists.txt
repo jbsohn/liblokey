@@ -22,6 +22,13 @@ FetchContent_MakeAvailable(CPM)
 
 # Add Doctest via CPM
 CPMAddPackage("gh:doctest/doctest@2.4.11")
+CPMAddPackage(
+        NAME tl-span
+        GITHUB_REPOSITORY tcbrindle/span
+        GIT_TAG master
+        OPTIONS "TL_SPAN_ENABLE_TESTS OFF"
+        EXCLUDE_FROM_ALL TRUE
+)
 
 # SDL2 support
 find_package(SDL2 REQUIRED)
@@ -51,7 +58,7 @@ target_compile_definitions(liblokey PRIVATE SOUND_CALLBACK)
 # we may want this defined:
 #target_compile_definitions(liblokey PRIVATE POKEY_UPDATE)
 
-# Suppress warnings for pokey.c only
+# Suppress warnings for POKEY_SRC only
 if (MSVC)
     set_source_files_properties(${POKEY_SRC} PROPERTIES COMPILE_FLAGS "/w")
 else()

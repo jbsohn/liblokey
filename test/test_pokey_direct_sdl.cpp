@@ -58,7 +58,7 @@ void play_laser_blast() {
     for (int i = 0; i < 16; ++i) {
         const int pitch = 0x70 - i * 3;
         const int volume = 0x0F - (i / 2);
-        int audc = 0xA0 | volume & 0x0F;
+        const int audc = 0xA0 | (volume & 0x0F);
         POKEYSND_Update(addr(PokeyRegister::AUDF1), pitch, 0, 1);
         POKEYSND_Update(addr(PokeyRegister::AUDC1), audc, 0, 1);
         SDL_Delay(20);
@@ -87,7 +87,7 @@ void play_electric_zap(std::default_random_engine &rng) {
     for (int i = 0; i < 12; ++i) {
         const int pitch = 0x10 + dist32(rng);
         const int volume = 0x0F - (i / 3);
-        int audc = 0xC0 | volume & 0x0F; // more distortion
+        int audc = 0xC0 | (volume & 0x0F); // more distortion
         POKEYSND_Update(addr(PokeyRegister::AUDF1), pitch, 0, 1);
         POKEYSND_Update(addr(PokeyRegister::AUDC1), audc, 0, 1);
         SDL_Delay(25);
@@ -151,7 +151,8 @@ void background_hihat_loop() {
     }
 }
 
-void audio_callback(void *userdata, Uint8 *stream, int len) {
+void audio_callback([[maybe_unused]] void *userdata, Uint8 *stream, int len) {
+
     POKEYSND_Process(stream, len / 2); // 16-bit: len in bytes → samples
 }
 

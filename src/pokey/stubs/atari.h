@@ -1,6 +1,21 @@
 // atari.h - Minimal header to support Atari800 POKEY code
 #pragma once
 
+
+#if defined(_MSC_VER)
+  #pragma warning(push)
+  #pragma warning(disable: 4100) // unreferenced formal parameter
+  #pragma warning(disable: 4505) // unreferenced local function has been removed
+#elif defined(__clang__)
+  #pragma clang diagnostic push
+  #pragma clang diagnostic ignored "-Wunused-function"
+  #pragma clang diagnostic ignored "-Wunused-parameter"
+#elif defined(__GNUC__)
+  #pragma GCC diagnostic push
+  #pragma GCC diagnostic ignored "-Wunused-function"
+  #pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
+
 // This is a stubbed version of the atari.h header from the Atari800 project.
 // It exists to satisfy include dependencies in pokey.c but does not currently
 // contain any functional declarations. Add contents here only if required.
@@ -11,11 +26,7 @@
 #define Atari800_TV_PAL  2
 #define Atari800_FPS_NTSC 60
 #define Atari800_FPS_PAL 50
-#define Atari800_TV_PAL 1
-#define Atari800_FPS_NTSC 60
-#define Atari800_FPS_PAL 50
 #define ANTIC_CPU_CLOCK 1789772  // Roughly 1.79 MHz
-// extern int ANTIC_CPU_CLOCK;
 
 #define POKEY_OFFSET_AUDF1 0x00
 #define POKEY_OFFSET_AUDC1 0x01
@@ -88,3 +99,11 @@ static void StateSav_SaveUBYTE(UBYTE* /*data*/, int /*len*/) {}
 static void StateSav_SaveINT(int* /*data*/, int /*len*/) {}
 static void StateSav_ReadUBYTE(UBYTE* /*data*/, int /*len*/) {}
 static void StateSav_ReadINT(int* /*data*/, int /*len*/) {}
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#elif defined(__clang__)
+#pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
