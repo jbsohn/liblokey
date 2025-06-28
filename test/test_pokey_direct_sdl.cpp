@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <random>
+#include <thread>
 #include "pokey/pokeysnd.h"
 #include "pokey_register.hpp"
 
@@ -109,6 +110,7 @@ void play_glitch_sweep(std::default_random_engine &rng) {
 
 void run_all_effects() {
     std::random_device rd;
+
     std::default_random_engine rng(rd());
     play_engine_drone();
     play_force_field_buzz();
@@ -118,6 +120,35 @@ void run_all_effects() {
     play_explosion(rng);
     play_electric_zap(rng);
     play_glitch_sweep(rng);
+}
+
+void background_engine_vibrato() {
+    for (int i = 0; i < 120; ++i) {
+        const int pitch = 0x30 + i / 4 % 6; // Subtle vibrato
+        POKEYSND_Update(addr(PokeyRegister::AUDF1), pitch, 1, 1);
+        POKEYSND_Update(addr(PokeyRegister::AUDC1), 0xAF, 1, 1);
+        SDL_Delay(25);
+    }
+    POKEYSND_Update(addr(PokeyRegister::AUDC1), 0x00, 1, 1);
+}
+
+void background_lfo_sweep() {
+    for (int i = 0; i < 100; ++i) {
+        const int mod = 0x10 + (i % 20 ^ i >> 2);
+        POKEYSND_Update(addr(PokeyRegister::AUDF2), mod, 1, 1);
+        POKEYSND_Update(addr(PokeyRegister::AUDC2), 0xCF, 1, 1); // buzzy noise
+        SDL_Delay(30);
+    }
+    POKEYSND_Update(addr(PokeyRegister::AUDC2), 0x00, 1, 1);
+}
+
+void background_hihat_loop() {
+    for (int i = 0; i < 60; ++i) {
+        POKEYSND_Update(addr(PokeyRegister::AUDC1), 0x8F, 1, 1); // noise w/ vol
+        SDL_Delay(50);
+        POKEYSND_Update(addr(PokeyRegister::AUDC1), 0x00, 1, 1);
+        SDL_Delay(25);
+    }
 }
 
 void audio_callback(void *userdata, Uint8 *stream, int len) {
@@ -143,9 +174,25 @@ int main() {
         return 1;
     }
     SDL_ClearQueuedAudio(1);
-    POKEYSND_Init(POKEYSND_FREQ_17_APPROX, SAMPLE_RATE, 1, POKEYSND_BIT16);
+    POKEYSND_Init(POKEYSND_FREQ_17_APPROX, SAMPLE_RATE, 2, POKEYSND_BIT16);
     SDL_PauseAudio(0); // start playback
+
+    printf("background_hihat_loop with sound effects...\n");
+    std::thread background(background_hihat_loop);
     run_all_effects();
+    background.join();
+
+    printf("background_lfo_sweep with sound effects...\n");
+    std::thread background2(background_lfo_sweep);
+    run_all_effects();
+    background2.join();
+
+    printf("background_engine_vibrato with sound effects...\n");
+    std::thread background3(background_engine_vibrato);
+    run_all_effects();
+    background3.join();
+
+    printf("done.\n");
     SDL_CloseAudio();
     SDL_Quit();
     return 0;

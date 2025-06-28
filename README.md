@@ -21,9 +21,9 @@ You'll find POKEY in:
 - **Atari 400/800** and **XL/XE** home computers
 - **Atari 5200** and **7800** consoles
 - Classic **arcade games**, including:
-    - *Centipede*, *Millipede*, *Missile Command*, *Tempest*
-    - *Food Fight*, *Cloak & Dagger*, *Liberator*, *Juno First* (quad-POKEY!)
-    - *Star Wars* and *Return of the Jedi* (with vector audio)
+  - *Centipede*, *Millipede*, *Missile Command*, *Tempest*
+  - *Food Fight*, *Cloak & Dagger*, *Liberator*, *Juno First* (quad-POKEY!)
+  - *Star Wars* and *Return of the Jedi* (with vector audio)
 
 Arcade machines often used **multiple POKEY chips** to create rich, layered audio and increase input resolution — with up to 16 total sound channels.
 
@@ -107,7 +107,7 @@ Use `PokeyAdapter` for low-level chip emulation or `Lokey` to manage multiple PO
 
 ## 🫡 Acknowledgments
 
-`libLOKEY` uses a modified version of the **POKEY sound emulation code from the [Atari800 project](https://atari800.github.io)**.
+`libLOKEY` uses a version of the **POKEY sound emulation code from the [Atari800 project](https://atari800.github.io)**.
 
 We want to express our **deep appreciation and respect** to the original authors and maintainers of Atari800. Their outstanding work in preserving and emulating Atari’s 8-bit systems — including the **POKEY chip** — made this project possible. Without their reverse engineering efforts, `libLOKEY` would not exist.
 
@@ -117,17 +117,18 @@ We aim to carry that legacy forward by making their work accessible in modern co
 - 🌐 Runnable in browsers
 - 🔌 Deployable on embedded hardware
 
-### 🧩 About Our Fork
+### 🧩 About Our Integration
 
-- We have made **minimal and respectful changes** to `pokey.c` and `pokey.h` from the Atari800 source tree
-- Global state and platform-specific I/O have been isolated behind **lightweight stubs**
-- A clean wrapper (`lokey.c` / `lokey.h`) presents a portable C API usable across all targets
+We are **not implementing a new POKEY emulator**. Instead, `libLOKEY` uses the **original POKEY sound emulation code from the Atari800 project** without modification. Our goal is to provide a modern, portable interface around this existing core — not to fork or diverge from the upstream project.
 
-- We've also successfully integrated `mzpokeysnd.c` from Atari800 with no modifications, using a clean external interface. This validates the engine in its original form and simplifies future updates.
+Key points:
 
-This structure allows us to track upstream changes more easily while using the core logic as-is.
+- No changes are made to the original `pokeysnd.c` or `pokey.c` files
+- We wrap the Atari800 POKEY implementation behind a modern C++ and C interface
+- Our approach ensures compatibility and easy tracking of upstream updates
+- The `Lokey` class manages one or more POKEYs, while `PokeyAdapter` provides low-level access
 
----
+This lets us build new tools and platforms on top of Atari800’s excellent work without fragmenting the ecosystem.
 
 ## 📜 Licensing
 
