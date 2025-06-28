@@ -66,7 +66,7 @@ target_include_directories(liblokey PUBLIC
 
 # === SDL Audio Test ===
 
-add_executable(test_sdl test/test_sdl.cpp)
+add_executable(test_sdl test/test_direct_sdl.cpp)
 target_link_libraries(test_sdl PRIVATE liblokey ${SDL2_LIBRARIES})
 
 # === Doctest Unit Test ===

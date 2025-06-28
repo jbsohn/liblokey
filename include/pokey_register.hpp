@@ -18,4 +18,7 @@ enum class PokeyRegister : uint8_t {
     SEROUT  = 0x0D, // Serial output data
     IRQEN   = 0x0E, // Interrupt enable
     SKCTL   = 0x0F  // Serial/Keyboard control
+
 };
+
+constexpr uint8_t addr(PokeyRegister r) { return static_cast<uint8_t>(r); }
