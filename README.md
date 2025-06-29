@@ -7,25 +7,28 @@
 
 ## 🕹️ What’s a POKEY?
 
-**POKEY** stands for **POtentiometer and KEYboard** — a custom chip developed at Atari in the late 1970s by **Doug Neubauer** (who also created *Star Raiders*). It handled:
+**POKEY** stands for **POtentiometer and KEYboard** — a custom chip developed at Atari in the late 1970s by **Doug
+Neubauer** (who also created *Star Raiders*). It handled:
 
 - 4 channels of square wave audio
 - Paddle/joystick input
 - Keyboard scanning
 - Serial I/O and timers
 
-Though originally designed for utility and control tasks, **POKEY became a signature part of the Atari sound** — powering everything from explosions to funky chiptunes.
+Though originally designed for utility and control tasks, **POKEY became a signature part of the Atari sound** —
+powering everything from explosions to funky chiptunes.
 
 You'll find POKEY in:
 
 - **Atari 400/800** and **XL/XE** home computers
 - **Atari 5200** and **7800** consoles
 - Classic **arcade games**, including:
-  - *Centipede*, *Millipede*, *Missile Command*, *Tempest*
-  - *Food Fight*, *Cloak & Dagger*, *Liberator*, *Juno First* (quad-POKEY!)
-  - *Star Wars* and *Return of the Jedi* (with vector audio)
+    - *Centipede*, *Millipede*, *Missile Command*, *Tempest*
+    - *Food Fight*, *Cloak & Dagger*, *Liberator*, *Juno First* (quad-POKEY!)
+    - *Star Wars* and *Return of the Jedi* (with vector audio)
 
-Arcade machines often used **multiple POKEY chips** to create rich, layered audio and increase input resolution — with up to 16 total sound channels.
+Arcade machines often used **multiple POKEY chips** to create rich, layered audio and increase input resolution — with
+up to 16 total sound channels.
 
 ---
 
@@ -46,21 +49,28 @@ This project is built for clarity, modularity, and a little nostalgic joy.
 
 ## 🎵 Iconic POKEY Soundtracks
 
-Despite its limitations, POKEY delivered some of the most memorable chiptunes of the early gaming era. Two games in particular stand out as personal favorites:
+Despite its limitations, POKEY delivered some of the most memorable chiptunes of the early gaming era. Two games in
+particular stand out as personal favorites:
 
 - **🎶 M.U.L.E.**  
-  A funky, tempo-shifting theme that’s equal parts charming and ingenious. The music evolves with gameplay, giving each phase of the game its own vibe. An absolute classic.
+  A funky, tempo-shifting theme that’s equal parts charming and ingenious. The music evolves with gameplay, giving each
+  phase of the game its own vibe. An absolute classic.
 
 - **🎶 Ballblazer**  
-  Featuring the first procedurally generated video game music, *"Song of the Grid"* mixes jazzy phrases in real-time using clever logic and a single POKEY chip. It’s hypnotic and ahead of its time — truly one of the most iconic Atari soundtracks ever.
+  Featuring the first procedurally generated video game music, *"Song of the Grid"* mixes jazzy phrases in real-time
+  using clever logic and a single POKEY chip. It’s hypnotic and ahead of its time — truly one of the most iconic Atari
+  soundtracks ever.
 
-Other great uses of POKEY audio include *Electraglide*, *Rescue on Fractalus!*, *The Eidolon*, *Juno First*, and many modern demoscene remixes.
+Other great uses of POKEY audio include *Electraglide*, *Rescue on Fractalus!*, *The Eidolon*, *Juno First*, and many
+modern demoscene remixes.
 
 ---
 
 ## 🎯 Project Goals and Roadmap
 
-`libLOKEY` has reached its first working milestone. The core POKEY emulation has been integrated with SDL audio and successfully tested in a real-time environment. The ongoing goal is to build a high-quality, portable POKEY audio engine suitable for:
+`libLOKEY` has reached its first working milestone. The core POKEY emulation has been integrated with SDL audio and
+successfully tested in a real-time environment. The ongoing goal is to build a high-quality, portable POKEY audio engine
+suitable for:
 
 - SDL2-based desktop tools and games
 - WebAssembly builds for browser demos and testing
@@ -72,19 +82,20 @@ Other great uses of POKEY audio include *Electraglide*, *Rescue on Fractalus!*, 
 
 ## 📦 Planned Platform Support
 
-| Platform     | Planned Support Notes                        |
-|--------------|----------------------------------------------|
-| 🛠 Linux      | First-class development with CMake + SDL     |
-| 🛠 macOS      | Local testing and development                |
-| 🛠 Windows    | MinGW/MSVC builds planned                    |
-| 🛠 WASM       | WebAssembly builds via Emscripten            |
-| 🛠 RP2040     | Embedded output via PWM, DAC, or I2S planned |
+| Platform   | Planned Support Notes                        |
+|------------|----------------------------------------------|
+| 🛠 Linux   | First-class development with CMake + SDL     |
+| 🛠 macOS   | Local testing and development                |
+| 🛠 Windows | MinGW/MSVC builds planned                    |
+| 🛠 WASM    | WebAssembly builds via Emscripten            |
+| 🛠 RP2040  | Embedded output via PWM, DAC, or I2S planned |
 
 ---
 
 ## 🧩 Planned API Overview
 
 ### C++ API
+
 The preferred interface for working with `libLOKEY` is C++:
 
 ```cpp
@@ -97,11 +108,43 @@ lokey.renderAndPlay();                      // Render and play one audio frame
 
 ---
 
+## 🧱 Architectural Overview
+
+libLOKEY is built using a combination of well-known design patterns to ensure modularity, portability, and testability:
+
+🎭 Facade Pattern
+
+The Lokey class provides a simplified interface for interacting with the entire audio pipeline, hiding lower-level
+implementation details of the POKEY chip and audio output:
+
+lokey.poke(…);
+lokey.renderAndPlay();
+
+🧩 Strategy Pattern
+
+The core abstractions (Pokey, AudioSink) are defined as interfaces, allowing interchangeable backends like
+Atari800Pokey, SDLAudioSink, and (eventually) RP2040Pokey.
+
+🌉 Bridge Pattern
+
+Implementation details (platform-specific audio or chip emulation) are decoupled from the public API. This lets you vary
+or extend either side independently — ideal for cross-platform development.
+
+This flexible architecture should allow libLOKEY to:
+
+- Run on desktops, browsers, or embedded systems
+- Support test harnesses without changing production code
+- Cleanly separate upstream dependencies (like Atari800)
+
+---
+
 ## 🫡 Acknowledgments
 
 `libLOKEY` uses a version of the **POKEY sound emulation code from the [Atari800 project](https://atari800.github.io)**.
 
-We want to express our **deep appreciation and respect** to the original authors and maintainers of Atari800. Their outstanding work in preserving and emulating Atari’s 8-bit systems — including the **POKEY chip** — made this project possible. Without their reverse engineering efforts, `libLOKEY` would not exist.
+We want to express our **deep appreciation and respect** to the original authors and maintainers of Atari800. Their
+outstanding work in preserving and emulating Atari’s 8-bit systems — including the **POKEY chip** — made this project
+possible. Without their reverse engineering efforts, `libLOKEY` would not exist.
 
 We aim to carry that legacy forward by making their work accessible in modern contexts:
 
@@ -111,7 +154,9 @@ We aim to carry that legacy forward by making their work accessible in modern co
 
 ### 🧩 About Our Integration
 
-We are **not implementing a new POKEY emulator**. Instead, `libLOKEY` uses the **original POKEY sound emulation code from the Atari800 project** without modification. Our goal is to provide a modern, portable interface around this existing core — not to fork or diverge from the upstream project.
+We are **not implementing a new POKEY emulator**. Instead, `libLOKEY` uses the **original POKEY sound emulation code
+from the Atari800 project** without modification. Our goal is to provide a modern, portable interface around this
+existing core — not to fork or diverge from the upstream project.
 
 Key points:
 
@@ -128,7 +173,8 @@ The POKEY emulation code from Atari800 is licensed under the **GNU General Publi
 `libLOKEY` maintains compatibility with that license.
 
 - Atari800 project: [https://github.com/atari800/atari800/](https://atari800.github.io)
-- Full GPLv2 license text: [https://www.gnu.org/licenses/old-licenses/gpl-2.0.html](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
+- Full GPLv2 license
+  text: [https://www.gnu.org/licenses/old-licenses/gpl-2.0.html](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 
 See `LICENSE.txt` for more details.
 
@@ -136,7 +182,8 @@ See `LICENSE.txt` for more details.
 
 ## 🚧 Status
 
-This project is under active development. The public API, platform support, and audio output paths are still being built. Expect frequent changes and improvements.
+This project is under active development. The public API, platform support, and audio output paths are still being
+built. Expect frequent changes and improvements.
 
 ---
 
