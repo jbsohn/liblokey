@@ -19,7 +19,7 @@ void Atari800Pokey::reset() {
 }
 
 void Atari800Pokey::poke(PokeyRegister address, uint8_t val, uint8_t gain) {
-    POKEYSND_Update(addr(address), val, channel, 1);
+    POKEYSND_Update(addr(address), val, channel, gain);
 }
 
 tcb::span<const int16_t> Atari800Pokey::renderAudio() {

@@ -1,4 +1,5 @@
 #include <array>
+#include <memory>
 #include <fmt/core.h>
 #include "audio_sink.hpp"
 #include "sdl_audio_sink.hpp"
