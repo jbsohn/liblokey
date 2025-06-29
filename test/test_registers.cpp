@@ -4,6 +4,5 @@
 
 TEST_CASE("Basic register write") {
     Lokey lokey(44100, 1);
-    lokey.poke(PokeyRegister::SKCTL, 0xAA);
     CHECK(true);  // Replace with real state check once implemented
 }

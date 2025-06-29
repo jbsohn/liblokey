@@ -20,29 +20,34 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(CPM)
 
-# Add Doctest via CPM
-CPMAddPackage("gh:doctest/doctest@2.4.11")
+# doctest
 CPMAddPackage(
-        NAME tl-span
-        GITHUB_REPOSITORY tcbrindle/span
-        GIT_TAG master
-        OPTIONS "TL_SPAN_ENABLE_TESTS OFF"
-        EXCLUDE_FROM_ALL TRUE
+        NAME doctest
+        GITHUB_REPOSITORY doctest/doctest
+        VERSION 2.4.11
+        OPTIONS "DOCTEST_WITH_MAIN OFF"
 )
 
+# fmtlib
+CPMAddPackage("gh:fmtlib/fmt#11.2.0")
+
+set(TCB_SPAN_ENABLE_TESTS OFF CACHE BOOL "" FORCE)
+CPMAddPackage(
+        NAME tcb-span
+        GITHUB_REPOSITORY tcbrindle/span
+        GIT_TAG master
+        EXCLUDE_FROM_ALL TRUE
+)
 # SDL2 support
 find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIRS})
-
-# PoKEY stub headers
-include_directories(src/pokey/stubs)
 
 # === LIBLOKEY SETUP ===
 
 # Separate source files
 set(LOKEY_SRC
         src/lokey.cpp
-        src/pokey_adapter.cpp
+        src/sdl_audio_sink.cpp
+        src/atari800_pokey.cpp
 )
 set(POKEY_SRC
         src/pokey/mzpokeysnd.c
@@ -54,9 +59,14 @@ set(POKEY_SRC
 
 # Create the static library from both
 add_library(liblokey STATIC ${LOKEY_SRC} ${POKEY_SRC})
-target_compile_definitions(liblokey PRIVATE SOUND_CALLBACK)
-# we may want this defined:
-#target_compile_definitions(liblokey PRIVATE POKEY_UPDATE)
+target_include_directories(liblokey PUBLIC
+        include
+        src
+        src/pokey/stubs
+        ${tcb-span_SOURCE_DIR}/include
+)
+target_link_libraries(liblokey PUBLIC SDL2::SDL2 fmt::fmt)
+
 
 # Suppress warnings for POKEY_SRC only
 if (MSVC)
@@ -65,19 +75,16 @@ else()
     set_source_files_properties(${POKEY_SRC} PROPERTIES COMPILE_FLAGS "-w")
 endif()
 
-target_include_directories(liblokey PUBLIC
-        include
-        src
-        src/pokey/stubs
+target_include_directories(liblokey
+        PUBLIC include src
+        PRIVATE src/pokey/stubs
 )
 
 # === SDL Audio Test ===
-
 add_executable(test_sdl test/test_pokey_direct_sdl.cpp)
-target_link_libraries(test_sdl PRIVATE liblokey ${SDL2_LIBRARIES})
+target_link_libraries(test_sdl PRIVATE liblokey SDL2::SDL2 fmt::fmt)
 
 # === Doctest Unit Test ===
-
 add_executable(test_registers test/test_registers.cpp)
 target_link_libraries(test_registers PRIVATE liblokey doctest)
 target_include_directories(test_registers PRIVATE ${doctest_SOURCE_DIR}/doctest)
