@@ -1,5 +1,7 @@
-#include <fmt/format.h>
 #include "sdl_audio_sink.hpp"
+
+#include <thread>
+#include <fmt/format.h>
 
 SDLAudioSink::SDLAudioSink(const int sampleRate, const int bufferFrames) {
     if (SDL_Init(SDL_INIT_AUDIO) < 0) {
@@ -15,41 +17,51 @@ SDLAudioSink::SDLAudioSink(const int sampleRate, const int bufferFrames) {
     want.samples = bufferFrames;
     want.callback = nullptr;
 
+    SDL_AudioSpec spec{};
+
     deviceId = SDL_OpenAudioDevice(nullptr, 0, &want, &spec, 0);
     if (deviceId == 0) {
-        fmt::print(stderr, "SDLAudioSink: SDLAudioSink: Failed to open audio device: {}\n", SDL_GetError());
+        fmt::print(stderr, "SDLAudioSink: Failed to open audio device: {}\n", SDL_GetError());
+        return;
     }
+    targetQueuedBytes = bufferFrames * sizeof(int16_t) * 4;
+    isValid = true;
 }
 
 SDLAudioSink::~SDLAudioSink() {
     if (deviceId != 0) {
-        SDLAudioSink::stop(); // Ensure the device is paused before closing
+        SDLAudioSink::stop();
         SDL_CloseAudioDevice(deviceId);
     }
-    // Only quit the subsystem we initialized.
     SDL_QuitSubSystem(SDL_INIT_AUDIO);
 }
 
 void SDLAudioSink::start() {
-    if (deviceId != 0 && !running) {
-        SDL_PauseAudioDevice(deviceId, 0); // 0 means unpause (start playback)
-        running = true;
+    if (!isValid || running) {
+        return;
     }
+    SDL_PauseAudioDevice(deviceId, 0);
+    running = true;
 }
 
 void SDLAudioSink::stop() {
-    if (deviceId != 0 && running) {
-        SDL_PauseAudioDevice(deviceId, 1); // 1 means pause
-        running = false;
+    if (!isValid || !running) {
+        return;
     }
+    SDL_PauseAudioDevice(deviceId, 1);
+    running = false;
 }
 
 void SDLAudioSink::writeAudio(tcb::span<const int16_t> samples) {
-    if (deviceId == 0 || samples.empty()) {
+    if (!isValid || !running || samples.empty()) {
         return;
     }
 
+    while (SDL_GetQueuedAudioSize(deviceId) > targetQueuedBytes) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    }
+
     if (SDL_QueueAudio(deviceId, samples.data(), samples.size_bytes()) < 0) {
-        fmt::print(stderr, "SDLAudioSink: SDLAudioSink: Failed to open audio device: {}\n", SDL_GetError());
+        fmt::print(stderr, "SDLAudioSink: Failed to queue audio: {}\n", SDL_GetError());
     }
 }

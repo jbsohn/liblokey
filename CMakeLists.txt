@@ -7,9 +7,9 @@ set(CMAKE_CXX_STANDARD 17)
 # Global warnings for your own code
 if (MSVC)
     add_compile_options(/W4)
-else()
+else ()
     add_compile_options(-Wall -Wextra -Wpedantic)
-endif()
+endif ()
 
 # Fetch CPM.cmake from GitHub
 include(FetchContent)
@@ -71,9 +71,9 @@ target_link_libraries(liblokey PUBLIC SDL2::SDL2 fmt::fmt)
 # Suppress warnings for POKEY_SRC only
 if (MSVC)
     set_source_files_properties(${POKEY_SRC} PROPERTIES COMPILE_FLAGS "/w")
-else()
+else ()
     set_source_files_properties(${POKEY_SRC} PROPERTIES COMPILE_FLAGS "-w")
-endif()
+endif ()
 
 target_include_directories(liblokey
         PUBLIC include src
@@ -87,6 +87,10 @@ target_link_libraries(test_pokey_direct_sdl PRIVATE liblokey SDL2::SDL2 fmt::fmt
 # === SDL Audio Test ===
 add_executable(test_audio_sink_a800_sdl test/test_audio_sink_a800_sdl.cpp)
 target_link_libraries(test_audio_sink_a800_sdl PRIVATE liblokey SDL2::SDL2 fmt::fmt)
+
+# === SDL Audio Test ===
+add_executable(test_audio_sink_sdl test/test_audio_sink_sdl.cpp)
+target_link_libraries(test_audio_sink_sdl PRIVATE liblokey SDL2::SDL2 fmt::fmt)
 
 # === Doctest Unit Test ===
 add_executable(test_registers test/test_registers.cpp)
