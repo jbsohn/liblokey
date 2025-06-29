@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SDL.h>
 #include <tcb/span.hpp>
 #include "audio_sink.hpp" // where AudioSink is declared
 

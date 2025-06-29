@@ -15,10 +15,11 @@ Atari800Pokey::~Atari800Pokey() {
 void Atari800Pokey::reset() {
     audioBuffer.resize(bufferSize);
     POKEYSND_Init(POKEYSND_FREQ_17_APPROX, sampleRate, 2, POKEYSND_BIT16);
+    POKEYSND_SetVolume(1.0f);
 }
 
 void Atari800Pokey::poke(PokeyRegister address, uint8_t val, uint8_t gain) {
-    POKEYSND_Update(addr(PokeyRegister::AUDC1), 0x00, channel, 1);
+    POKEYSND_Update(addr(address), val, channel, 1);
 }
 
 tcb::span<const int16_t> Atari800Pokey::renderAudio() {

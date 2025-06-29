@@ -1,4 +1,3 @@
-#include <SDL.h>
 #include <fmt/format.h>
 #include "sdl_audio_sink.hpp"
 
