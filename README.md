@@ -31,21 +31,20 @@ Arcade machines often used **multiple POKEY chips** to create rich, layered audi
 
 ## 🎯 What This Project Does
 
-**libLOKEY** is a lightweight, modern C++ wrapper around the original Atari `pokey.c` sound core.
+**libLOKEY** is a lightweight, modern C++ wrapper around the original Atari 800 POKEY sound core.
 
 It provides:
 
-- 🎛️ A working real-time SDL-based POKEY test harness (`test_sdl`) for tone verification and development
-- 🔄 A clean per-instance interface (`PokeyAdapter`)
+- 🎛️ A working real-time SDL-based POKEY test harnesses for tone verification and development
 - 🔊 A mix-ready audio engine (`Lokey`)
 - 🎧 Support for rendering audio output with one or more POKEYs
-- 🧪 C and C++ APIs for use in games, emulators, audio apps, or embedded platforms (like RP2040)
+- 🧪 C++ APIs for use in games, emulators, audio apps, or embedded platforms (like RP2040)
 
 This project is built for clarity, modularity, and a little nostalgic joy.
 
 ---
 
-## 🎵 Iconic POKEY Soundtracks (John's Picks)
+## 🎵 Iconic POKEY Soundtracks
 
 Despite its limitations, POKEY delivered some of the most memorable chiptunes of the early gaming era. Two games in particular stand out as personal favorites:
 
@@ -85,23 +84,16 @@ Other great uses of POKEY audio include *Electraglide*, *Rescue on Fractalus!*, 
 
 ## 🧩 Planned API Overview
 
-### C++ API (`PokeyAdapter`, `Lokey`)
+### C++ API
 The preferred interface for working with `libLOKEY` is C++:
 
 ```cpp
-#include "pokey_adapter.hpp"
-#include "lokey.hpp"
-
-PokeyAdapter pokey(sampleRate);
-pokey.poke(address, value);
-float sample = pokey.render();
-
-Lokey lokey(sampleRate);
-lokey.write_register(addr, value);
-lokey.render_audio(buffer, frames);
+Lokey lokey;
+lokey.start();                              // Start audio playback
+lokey.reset();                              // Reset internal state
+lokey.poke(PokeyRegister::AUDF1, 0x40);     // Write to a register
+lokey.renderAndPlay();                      // Render and play one audio frame
 ```
-
-Use `PokeyAdapter` for low-level chip emulation or `Lokey` to manage multiple POKEYs and mix output audio into a shared buffer.
 
 ---
 
@@ -123,10 +115,10 @@ We are **not implementing a new POKEY emulator**. Instead, `libLOKEY` uses the *
 
 Key points:
 
-- No changes are made to the original `pokeysnd.c` or `pokey.c` files
-- We wrap the Atari800 POKEY implementation behind a modern C++ and C interface
+- No changes are made to the original Atari800 files
+- We wrap the Atari800 POKEY implementation behind a modern C++interface
 - Our approach ensures compatibility and easy tracking of upstream updates
-- The `Lokey` class manages one or more POKEYs, while `PokeyAdapter` provides low-level access
+- The `Lokey` class manages one or more POKEYs
 
 This lets us build new tools and platforms on top of Atari800’s excellent work without fragmenting the ecosystem.
 
@@ -135,7 +127,7 @@ This lets us build new tools and platforms on top of Atari800’s excellent work
 The POKEY emulation code from Atari800 is licensed under the **GNU General Public License v2**.  
 `libLOKEY` maintains compatibility with that license.
 
-- Atari800 project: [http://atari800.sourceforge.net/](https://atari800.github.io)
+- Atari800 project: [https://github.com/atari800/atari800/](https://atari800.github.io)
 - Full GPLv2 license text: [https://www.gnu.org/licenses/old-licenses/gpl-2.0.html](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 
 See `LICENSE.txt` for more details.
