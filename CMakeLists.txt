@@ -80,17 +80,21 @@ target_include_directories(liblokey
         PRIVATE src/pokey/stubs
 )
 
-# === SDL Audio Test ===
+# === test_pokey_direct_sdl ===
 add_executable(test_pokey_direct_sdl test/test_pokey_direct_sdl.cpp)
 target_link_libraries(test_pokey_direct_sdl PRIVATE liblokey SDL2::SDL2 fmt::fmt)
 
-# === SDL Audio Test ===
+# === test_audio_sink_a800_sdl ===
 add_executable(test_audio_sink_a800_sdl test/test_audio_sink_a800_sdl.cpp)
 target_link_libraries(test_audio_sink_a800_sdl PRIVATE liblokey SDL2::SDL2 fmt::fmt)
 
-# === SDL Audio Test ===
+# === test_audio_sink_sdl ===
 add_executable(test_audio_sink_sdl test/test_audio_sink_sdl.cpp)
 target_link_libraries(test_audio_sink_sdl PRIVATE liblokey SDL2::SDL2 fmt::fmt)
+
+# === test_lokey ===
+add_executable(test_lokey test/test_lokey.cpp)
+target_link_libraries(test_lokey PRIVATE liblokey SDL2::SDL2 fmt::fmt)
 
 # === Doctest Unit Test ===
 add_executable(test_registers test/test_registers.cpp)
