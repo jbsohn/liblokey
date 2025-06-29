@@ -50,11 +50,11 @@ set(LOKEY_SRC
         src/atari800_pokey.cpp
 )
 set(POKEY_SRC
-        src/pokey/mzpokeysnd.c
-        src/pokey/mzpokeysnd_ext.c
-        src/pokey/pokey.c
-        src/pokey/pokeysnd.c
-        src/pokey/remez.c
+        external/atari800_pokey/mzpokeysnd.c
+        external/atari800_pokey/mzpokeysnd_ext.c
+        external/atari800_pokey/pokey.c
+        external/atari800_pokey/pokeysnd.c
+        external/atari800_pokey/remez.c
 )
 
 # Create the static library from both
@@ -62,7 +62,8 @@ add_library(liblokey STATIC ${LOKEY_SRC} ${POKEY_SRC})
 target_include_directories(liblokey PUBLIC
         include
         src
-        src/pokey/stubs
+        external/atari800_pokey/stubs
+        external
         ${tcb-span_SOURCE_DIR}/include
 )
 target_link_libraries(liblokey PUBLIC SDL2::SDL2 fmt::fmt)
@@ -77,7 +78,7 @@ endif ()
 
 target_include_directories(liblokey
         PUBLIC include src
-        PRIVATE src/pokey/stubs
+        PRIVATE external/atari800_pokey/stubs
 )
 
 # === test_pokey_direct_sdl ===

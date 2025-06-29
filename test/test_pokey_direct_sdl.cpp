@@ -2,7 +2,7 @@
 #include <random>
 #include <thread>
 #include <fmt/format.h>
-#include "pokey/pokeysnd.h"
+#include "atari800_pokey/pokeysnd.h"
 #include "pokey_register.hpp"
 
 #define SAMPLE_RATE 44100
@@ -40,7 +40,7 @@ void play_alert_siren() {
     POKEYSND_Update(addr(PokeyRegister::AUDC1), 0x00, 0, 1);
 }
 
-void play_alien_squelch(std::default_random_engine &rng) {
+void play_alien_squelch(std::default_random_engine& rng) {
     std::uniform_int_distribution dist64(0, 63);
     std::uniform_int_distribution dist2(0, 1);
     for (int i = 0; i < 20; ++i) {
@@ -65,7 +65,7 @@ void play_laser_blast() {
     POKEYSND_Update(addr(PokeyRegister::AUDC1), 0x00, 0, 1);
 }
 
-void play_explosion(std::default_random_engine &rng) {
+void play_explosion(std::default_random_engine& rng) {
     std::uniform_int_distribution dist40(0x20, 0x5F);
     std::uniform_int_distribution dist3(0, 2);
     for (int i = 0; i < 24; ++i) {
@@ -81,7 +81,7 @@ void play_explosion(std::default_random_engine &rng) {
     POKEYSND_Update(addr(PokeyRegister::AUDC2), 0x00, 0, 1);
 }
 
-void play_electric_zap(std::default_random_engine &rng) {
+void play_electric_zap(std::default_random_engine& rng) {
     std::uniform_int_distribution dist32(0, 31);
     for (int i = 0; i < 12; ++i) {
         const int pitch = 0x10 + dist32(rng);
@@ -94,7 +94,7 @@ void play_electric_zap(std::default_random_engine &rng) {
     POKEYSND_Update(addr(PokeyRegister::AUDC1), 0x00, 0, 1);
 }
 
-void play_glitch_sweep(std::default_random_engine &rng) {
+void play_glitch_sweep(std::default_random_engine& rng) {
     std::uniform_int_distribution dist64(0, 63);
     std::uniform_int_distribution dist32(0, 31);
     for (int i = 0; i < 20; ++i) {
@@ -150,8 +150,7 @@ void background_hihat_loop() {
     }
 }
 
-void audio_callback([[maybe_unused]] void *userdata, Uint8 *stream, int len) {
-
+void audio_callback([[maybe_unused]] void* userdata, Uint8* stream, int len) {
     POKEYSND_Process(stream, len / 2); // 16-bit: len in bytes → samples
 }
 
