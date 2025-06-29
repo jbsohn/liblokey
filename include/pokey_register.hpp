@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <cstddef>
 
 enum class PokeyRegister : uint8_t {
     AUDF1   = 0x00, // Audio Frequency Channel 1
