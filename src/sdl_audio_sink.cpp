@@ -2,7 +2,7 @@
 #include <fmt/format.h>
 #include "sdl_audio_sink.hpp"
 
-SDLAudioSink::SDLAudioSink(int sampleRate, int bufferFrames) {
+SDLAudioSink::SDLAudioSink(const int sampleRate, const int bufferFrames) {
     if (SDL_Init(SDL_INIT_AUDIO) < 0) {
         fmt::print(stderr, "SDLAudioSink: Failed to initialize SDL audio: {}\n", SDL_GetError());
         return;
