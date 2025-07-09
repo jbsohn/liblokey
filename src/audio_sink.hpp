@@ -10,6 +10,8 @@ public:
 
     virtual void start() = 0;
     virtual void stop() = 0;
-
-    [[nodiscard]] virtual const char* name() const { return "UnnamedAudioSink"; }
+    [[nodiscard]] virtual uint32_t getSampleRate() const = 0;
+    [[nodiscard]] virtual const char* name() const {
+        return "UnnamedAudioSink";
+    }
 };
