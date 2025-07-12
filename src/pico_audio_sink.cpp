@@ -21,7 +21,7 @@ void PicoAudioSink::stop() {
 }
 
 void PicoAudioSink::writeAudio(tcb::span<const int16_t> samples) {
-    for (int16_t s : samples) {
+    for (const int16_t s : samples) {
         outputSample(s);
         sleep_us(sampleDelayUS);
     }

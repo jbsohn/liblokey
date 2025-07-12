@@ -2,6 +2,7 @@
 
 #include "audio_sink.hpp"
 #include <cstdint>
+#include <sys/types.h>
 
 class PicoAudioSink : public AudioSink {
 public:
