@@ -16,8 +16,8 @@ public:
     }
 
 private:
-    uint32_t sampleRate_;
-    uint32_t sampleDelayUS_;
+    uint32_t sampleRate;
+    uint32_t sampleDelayUS;
     uint gpioPin = 0;
 
     void initGPIO();

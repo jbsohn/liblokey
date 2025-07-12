@@ -3,6 +3,9 @@ project(liblokey C CXX)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
+set(PICO_SDK_PATH "${CMAKE_CURRENT_SOURCE_DIR}/pico-sdk")
+include(${PICO_SDK_PATH}/pico_sdk_init.cmake)
+pico_sdk_init()
 
 # Global warnings for your own code
 if (MSVC)
