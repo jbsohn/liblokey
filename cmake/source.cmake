@@ -9,9 +9,9 @@ if (EXISTS "${CMAKE_SOURCE_DIR}/external/atari800_pokey")
 endif ()
 
 set(POKEY_SRC
-        external/atari800_pokey/mzpokeysnd.c
-        external/atari800_pokey/mzpokeysnd_ext.c
-        external/atari800_pokey/pokey.c
-        external/atari800_pokey/pokeysnd.c
-        external/atari800_pokey/remez.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/external/atari800_pokey/mzpokeysnd.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/external/atari800_pokey/mzpokeysnd_ext.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/external/atari800_pokey/pokey.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/external/atari800_pokey/pokeysnd.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/external/atari800_pokey/remez.c
 )

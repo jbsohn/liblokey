@@ -31,7 +31,7 @@ void Lokey::poke(const PokeyRegister reg, const uint8_t val, const uint8_t gain)
     pokey->poke(reg, val, gain);
 }
 
-void Lokey::renderAndPlay() {
+void Lokey::renderAndPlay() const {
     const auto samples = pokey->renderAudio();
     sink->writeAudio(samples);
 }

@@ -2,6 +2,7 @@
 # dependencies.cmake
 #
 
+# setup CPM
 include(FetchContent)
 FetchContent_Declare(
         CPM
@@ -31,6 +32,7 @@ CPMAddPackage(
 )
 set(TCB_SPAN_INCLUDE_DIR "${tcb-span_SOURCE_DIR}/include")
 
+# setup SDL if building for host platform
 if (NOT LOKEY_TARGET_PICO)
     # SDL2
     find_package(SDL2 REQUIRED)

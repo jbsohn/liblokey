@@ -1,7 +1,6 @@
 #pragma once
 
 #include <SDL.h>
-#include <tcb/span.hpp>
 #include "audio_sink.hpp"
 
 class SDLAudioSink final : public AudioSink {

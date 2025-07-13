@@ -1,10 +1,11 @@
 #
 # target_host.cmake
 #
+
 set(LOKEY_SRC
-        src/lokey.cpp
-        src/sdl_audio_sink.cpp
-        src/atari800_pokey.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/lokey.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/sdl_audio_sink.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/atari800_pokey.cpp
 )
 
 add_library(liblokey STATIC ${LOKEY_SRC} ${POKEY_SRC})

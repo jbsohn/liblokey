@@ -1,25 +1,24 @@
 #pragma once
 
-#include <sys/types.h>
 #include "audio_sink.hpp"
 
-class PicoAudioSink : public AudioSink {
+class PicoAudioSink final : public AudioSink {
 public:
-    explicit PicoAudioSink(uint32_t sampleRate, uint gpioPin);
+    PicoAudioSink(uint32_t sampleRate, int gpioPin);
+    ~PicoAudioSink() override;
 
-    void writeAudio(tcb::span<const int16_t> samples) override;
     void start() override;
     void stop() override;
+    void writeAudio(tcb::span<const int16_t> samples) override;
 
+    [[nodiscard]] uint32_t getSampleRate() const override {
+        return sampleRate;
+    }
     [[nodiscard]] const char* name() const override {
-        return "PicoAudioSink";
+        return "";
     }
 
 private:
-    uint32_t sampleRate;
-    uint32_t sampleDelayUS;
-    uint gpioPin = 0;
-
-    void initGPIO() const;
-    void outputSample(int16_t sample) const;
+    const uint32_t sampleRate;
+    const int gpioPin;
 };

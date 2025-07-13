@@ -1,15 +1,15 @@
-#include <fmt/format.h>
+// #include <fmt/format.h>
 #include "atari800_pokey.hpp"
 #include "atari800_pokey/pokeysnd.h"
 #include "pokey_register.hpp"
 
-Atari800Pokey::Atari800Pokey(const int sampleRate, const size_t bufferSize, const int channel):
-    sampleRate(sampleRate), bufferSize(bufferSize), channel(channel) {
+Atari800Pokey::Atari800Pokey(const int sampleRate, const size_t bufferSize, const int channel)
+    : sampleRate(sampleRate), bufferSize(bufferSize), channel(channel) {
     Atari800Pokey::reset();
 }
 
 Atari800Pokey::~Atari800Pokey() {
-    fmt::print(stderr, "Atari800Pokey shutting down.\n");
+    // fmt::print(stderr, "Atari800Pokey shutting down.\n");
 }
 
 void Atari800Pokey::reset() {

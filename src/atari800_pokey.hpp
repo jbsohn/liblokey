@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <tcb/span.hpp>
 #include "pokey.hpp"
 
 class Atari800Pokey final : public Pokey {
