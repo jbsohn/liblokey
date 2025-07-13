@@ -1,8 +1,7 @@
 #pragma once
 
-#include "audio_sink.hpp"
-#include <cstdint>
 #include <sys/types.h>
+#include "audio_sink.hpp"
 
 class PicoAudioSink : public AudioSink {
 public:
@@ -21,6 +20,6 @@ private:
     uint32_t sampleDelayUS;
     uint gpioPin = 0;
 
-    void initGPIO();
-    void outputSample(int16_t sample);
+    void initGPIO() const;
+    void outputSample(int16_t sample) const;
 };

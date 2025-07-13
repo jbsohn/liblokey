@@ -29,6 +29,7 @@ CPMAddPackage(
         GIT_TAG master
         EXCLUDE_FROM_ALL TRUE
 )
+set(TCB_SPAN_INCLUDE_DIR "${tcb-span_SOURCE_DIR}/include")
 
 if (NOT LOKEY_TARGET_PICO)
     # SDL2

@@ -10,6 +10,22 @@ endif ()
 include(${PICO_SDK_PATH}/pico_sdk_init.cmake)
 pico_sdk_init()
 
+set(LOKEY_SRC
+        src/lokey.cpp
+        src/pico_audio_sink.cpp
+        src/atari800_pokey.cpp
+)
+
+add_library(liblokey STATIC ${LOKEY_SRC} ${POKEY_SRC})
+target_include_directories(liblokey PUBLIC
+        include
+        src
+        external/atari800_pokey/stubs
+        external
+        ${TCB_SPAN_INCLUDE_DIR}
+)
+target_link_libraries(liblokey PUBLIC pico_stdlib fmt::fmt)
+
 # hello test to ensure SDK is setup to ensure we can build and flash to pico
 add_executable(pico_hello
         test/pico/hello.cpp
@@ -27,3 +43,4 @@ add_custom_target(flash
         COMMAND picotool load -f $<TARGET_FILE:pico_hello>
         DEPENDS pico_hello
 )
+

@@ -7,14 +7,6 @@ set(LOKEY_SRC
         src/atari800_pokey.cpp
 )
 
-set(POKEY_SRC
-        external/atari800_pokey/mzpokeysnd.c
-        external/atari800_pokey/mzpokeysnd_ext.c
-        external/atari800_pokey/pokey.c
-        external/atari800_pokey/pokeysnd.c
-        external/atari800_pokey/remez.c
-)
-
 add_library(liblokey STATIC ${LOKEY_SRC} ${POKEY_SRC})
 target_include_directories(liblokey PUBLIC
         include
