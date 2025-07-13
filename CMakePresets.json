@@ -13,8 +13,7 @@
       "binaryDir": "${sourceDir}/cmake-build-pico",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
-        "PICO_BOARD": "pico",
-        "PICO_SDK_PATH": "${sourceDir}/pico-sdk"
+        "LOKEY_TARGET_PICO": "ON"
       }
     },
     {
@@ -24,9 +23,20 @@
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/cmake-build-host",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug",
-        "USE_SDL": "ON"
+        "CMAKE_BUILD_TYPE": "Debug"
       }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "pico-flash",
+      "displayName": "Pico Flash",
+      "description": "Build and flash to Raspberry Pi Pico using picotool",
+      "configurePreset": "pico-debug",
+      "targets": [
+        "flash"
+      ],
+      "configuration": "Debug"
     }
   ]
 }
