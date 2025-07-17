@@ -21,6 +21,7 @@ target_include_directories(liblokey PUBLIC
 
 target_link_libraries(liblokey PUBLIC
         pico_stdlib
+        pico_multicore
         hardware_pwm
         fmt::fmt
 )
@@ -41,8 +42,23 @@ add_custom_target(flash
         DEPENDS pico_hello
 )
 
-add_executable(test_audio_sink_pico test/pico/test_audio_sink.cpp)
+# test_audio_pico
+add_executable(test_audio_pico test/pico/test_audio_pico.cpp)
+target_link_libraries(test_audio_pico PRIVATE liblokey)
+pico_enable_stdio_usb(test_audio_pico 1)
+pico_enable_stdio_uart(test_audio_pico 0)
+pico_add_extra_outputs(test_audio_pico)
+
+# test_audio_sink_pico
+add_executable(test_audio_sink_pico test/pico/test_audio_sink_pico.cpp)
 target_link_libraries(test_audio_sink_pico PRIVATE liblokey)
 pico_enable_stdio_usb(test_audio_sink_pico 1)
 pico_enable_stdio_uart(test_audio_sink_pico 0)
 pico_add_extra_outputs(test_audio_sink_pico)
+
+# test_audio_sink_a800_pico
+add_executable(test_audio_sink_a800_pico test/pico/test_audio_sink_a800_pico.cpp)
+target_link_libraries(test_audio_sink_a800_pico PRIVATE liblokey)
+pico_enable_stdio_usb(test_audio_sink_a800_pico 1)
+pico_enable_stdio_uart(test_audio_sink_a800_pico 0)
+pico_add_extra_outputs(test_audio_sink_a800_pico)
