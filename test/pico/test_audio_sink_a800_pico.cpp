@@ -1,4 +1,5 @@
-#include <thread>
+#include "pico/time.h"
+#include "pico/bootrom.h"
 #include "atari800_pokey.hpp"
 #include "pico_audio_sink.hpp"
 
@@ -6,34 +7,36 @@ void playTone(Pokey& pokey, AudioSink& sink, uint8_t audf, uint8_t audc, int ms)
     pokey.poke(PokeyRegister::AUDF1, audf, 1);
     pokey.poke(PokeyRegister::AUDC1, audc, 1);
 
-    const auto end = std::chrono::steady_clock::now() + std::chrono::milliseconds(ms);
-    while (std::chrono::steady_clock::now() < end) {
-        const auto samples = pokey.renderAudio();
-        sink.writeAudio(samples);
-        sleep_ms(4);
+    const absolute_time_t end = make_timeout_time_ms(ms);
+    while (absolute_time_diff_us(get_absolute_time(), end) > 0) {
+        sink.writeAudio(pokey.renderAudio());
     }
 }
 
-[[noreturn]] int main() {
-    const auto sink = std::make_unique<PicoAudioSink>(0, 22000, 2048);
-    const auto pokey = std::make_unique<Atari800Pokey>(22000, 2048, 0);
 
-    sink->start();
 
-    while (true) {
-        // Soft tone 1
-        pokey->poke(PokeyRegister::AUDCTL, 0x00, 1);
-        pokey->poke(PokeyRegister::AUDC1, 0xA2, 1);
-        playTone(*pokey, *sink, 0x50, 0xA2, 800);  // lower tone
+int main() {
+    constexpr int bufferSize = 512;
+    constexpr float sampleRate = 44100;
+    auto sink = PicoAudioSink(0, sampleRate, bufferSize);
+    auto pokey = Atari800Pokey(sampleRate, bufferSize, 0);
 
-        // Soft tone 2
-        playTone(*pokey, *sink, 0x30, 0xA4, 800);  // mid tone, slightly louder
+    sink.start();
 
-        // Soft tone 3
-        playTone(*pokey, *sink, 0x20, 0xA6, 800);  // higher tone
+    // Soft tone 1
+    pokey.poke(PokeyRegister::AUDCTL, 0x00, 1);
+    pokey.poke(PokeyRegister::AUDC1, 0xA2, 1);
+    playTone(pokey, sink, 0x50, 0xA2, 800); // lower tone
 
-        // Silence
-        pokey->poke(PokeyRegister::AUDC1, 0x00, 1);
-        sleep_ms(500);
-    }
+    // Soft tone 2
+    playTone(pokey, sink, 0x30, 0xA4, 800); // mid tone, slightly louder
+
+    // Soft tone 3
+    playTone(pokey, sink, 0x20, 0xA6, 800); // higher tone
+
+    // Silence
+    pokey.poke(PokeyRegister::AUDC1, 0x00, 1);
+    reset_usb_boot(0, 0);
+
+    return 0;
 }
