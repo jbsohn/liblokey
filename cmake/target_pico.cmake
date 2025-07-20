@@ -23,11 +23,10 @@ target_link_libraries(liblokey PUBLIC
         pico_stdlib
         pico_multicore
         hardware_pwm
-        fmt::fmt
+        pico_audio_pwm
 )
 
 # --- Test Executables ---
-
 add_executable(pico_hello
         test/pico/hello.cpp
 )

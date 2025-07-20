@@ -1,19 +1,28 @@
 cmake_minimum_required(VERSION 3.25)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 if (LOKEY_TARGET_PICO)
     set(PICO_SDK_PATH "${CMAKE_SOURCE_DIR}/pico-sdk" CACHE PATH "Path to the Raspberry Pi Pico SDK")
+    set(PICO_EXTRAS_PATH "${CMAKE_SOURCE_DIR}/pico-extras" CACHE PATH "Path to the Raspberry Pi Pico Extras")
+
     include(${PICO_SDK_PATH}/pico_sdk_init.cmake)
+    pico_sdk_init()
+
+    add_subdirectory(pico-extras/src/rp2_common/pico_audio_pwm pico_audio_pwm_build)
+    add_subdirectory(pico-extras/src/common/pico_audio pico_audio_build)
+    add_subdirectory(pico-extras/src/common/pico_util_buffer pico_util_buffer_build)
+
 
     project(liblokey C CXX ASM)
-    pico_sdk_init()
 else ()
     project(liblokey C CXX ASM)
 endif ()
 
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/dependencies.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/source.cmake)
 
