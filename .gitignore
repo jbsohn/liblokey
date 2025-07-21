@@ -49,3 +49,6 @@
 # Crash logs and logs
 *.log
 *.swp
+
+# clang-tidy
+.cache

@@ -9,7 +9,7 @@ set(LOKEY_SRC
 )
 
 add_library(liblokey STATIC ${LOKEY_SRC} ${POKEY_SRC})
-
+target_compile_definitions(liblokey PRIVATE USE_AUDIO_PWM=1)
 target_include_directories(liblokey PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${CMAKE_CURRENT_SOURCE_DIR}/src
@@ -23,7 +23,9 @@ target_link_libraries(liblokey PUBLIC
         pico_stdlib
         pico_multicore
         hardware_pwm
+        pico_audio
         pico_audio_pwm
+        pico_util_buffer
 )
 
 # --- Test Executables ---
@@ -47,6 +49,17 @@ target_link_libraries(test_audio_pico PRIVATE liblokey)
 pico_enable_stdio_usb(test_audio_pico 1)
 pico_enable_stdio_uart(test_audio_pico 0)
 pico_add_extra_outputs(test_audio_pico)
+
+# test_audio_pwm_pico
+add_executable(test_audio_pwm_pico test/pico/test_audio_pwm_pico.cpp)
+target_link_libraries(test_audio_pwm_pico PRIVATE
+        pico_stdlib
+        pico_audio_pwm
+)
+target_compile_definitions(test_audio_pwm_pico PRIVATE USE_AUDIO_PWM=1)
+pico_enable_stdio_usb(test_audio_pwm_pico 1)
+pico_enable_stdio_uart(test_audio_pwm_pico 0)
+pico_add_extra_outputs(test_audio_pwm_pico)
 
 # test_audio_sink_pico
 add_executable(test_audio_sink_pico test/pico/test_audio_sink_pico.cpp)

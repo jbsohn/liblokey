@@ -15,13 +15,10 @@ if (LOKEY_TARGET_PICO)
     add_subdirectory(pico-extras/src/common/pico_audio pico_audio_build)
     add_subdirectory(pico-extras/src/common/pico_util_buffer pico_util_buffer_build)
 
-
     project(liblokey C CXX ASM)
 else ()
     project(liblokey C CXX ASM)
 endif ()
-
-
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/dependencies.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/source.cmake)
