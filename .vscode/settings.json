@@ -1,0 +1,11 @@
+{
+    "clang-tidy.path": "/usr/bin/clang-tidy",
+    "C_Cpp.codeAnalysis.clangTidy.enabled": true,
+    "C_Cpp.codeAnalysis.clangTidy.config": "file",
+    "C_Cpp.codeAnalysis.clangTidy.useBuildPath": true,
+    "C_Cpp.default.compileCommands": "${workspaceFolder}/build/pico/compile_commands.json",
+    "clangd.arguments": [
+        "--clang-tidy",
+        "--header-insertion=never"
+    ]
+}

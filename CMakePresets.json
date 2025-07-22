@@ -8,8 +8,9 @@
     {
       "name": "pico",
       "displayName": "Pico",
+      "generator": "Ninja",
       "description": "Build for Raspberry Pi Pico using the pico-sdk",
-      "binaryDir": "${sourceDir}/build",
+      "binaryDir": "${sourceDir}/build/pico",
       "cacheVariables": {
         "LOKEY_TARGET_PICO": "ON",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
@@ -18,11 +19,22 @@
     {
       "name": "host",
       "displayName": "Host (SDL)",
+      "generator": "Ninja",
       "description": "Build for desktop host using SDL audio sink",
-      "binaryDir": "${sourceDir}/build",
+      "binaryDir": "${sourceDir}/build/host",
       "cacheVariables": {
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
       }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "pico",
+      "configurePreset": "pico"
+    },
+    {
+      "name": "host",
+      "configurePreset": "host"
     }
   ]
 }
