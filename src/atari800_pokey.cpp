@@ -13,8 +13,10 @@ Atari800Pokey::~Atari800Pokey() {
 }
 
 void Atari800Pokey::reset() {
+    POKEYSND_enable_new_pokey = FALSE;
+    POKEYSND_bienias_fix = FALSE;
     audioBuffer.resize(bufferSize);
-    POKEYSND_Init(POKEYSND_FREQ_17_APPROX, sampleRate, 2, POKEYSND_BIT16);
+    POKEYSND_Init(POKEYSND_FREQ_17_APPROX, sampleRate, 2, POKEYSND_BIT8);
     POKEYSND_SetVolume(1.0f);
 }
 

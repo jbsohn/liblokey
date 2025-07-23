@@ -60,6 +60,7 @@
 #define POKEY_OFFSET_SKSTAT 0x0f
 
 #define POKEYSND_BIT16	1
+#define POKEYSND_BIT8	2
 
 // Atari 800/XE/XL settings
 extern int Atari800_tv_mode;  // 0 = NTSC, 1 = PAL (adjust if needed)

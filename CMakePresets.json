@@ -12,6 +12,7 @@
       "description": "Build for Raspberry Pi Pico using the pico-sdk",
       "binaryDir": "${sourceDir}/build/pico",
       "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
         "LOKEY_TARGET_PICO": "ON",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
       }
@@ -23,6 +24,7 @@
       "description": "Build for desktop host using SDL audio sink",
       "binaryDir": "${sourceDir}/build/host",
       "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
       }
     }

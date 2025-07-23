@@ -43,4 +43,5 @@ private:
     // New members for audio_pwm
     audio_buffer_format_t audio_buffer_format{};
     audio_buffer_pool_t* buffer_pool = nullptr;
+    audio_format_t audio_format;
 };
