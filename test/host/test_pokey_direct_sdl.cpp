@@ -41,8 +41,8 @@ void play_alert_siren() {
 }
 
 void play_alien_squelch(std::default_random_engine& rng) {
-    std::uniform_int_distribution dist64(0, 63);
-    std::uniform_int_distribution dist2(0, 1);
+    std::uniform_int_distribution<> dist64(0, 63);
+    std::uniform_int_distribution<> dist2(0, 1);
     for (int i = 0; i < 20; ++i) {
         const int freq = 0x10 + dist64(rng);
         const int style = dist2(rng) ? 0x8F : 0xAF;
@@ -66,11 +66,11 @@ void play_laser_blast() {
 }
 
 void play_explosion(std::default_random_engine& rng) {
-    std::uniform_int_distribution dist40(0x20, 0x5F);
-    std::uniform_int_distribution dist3(0, 2);
+    std::uniform_int_distribution<> dist40(0x20, 0x5F);
+    std::uniform_int_distribution<> dist3(0, 2);
     for (int i = 0; i < 24; ++i) {
         const int noise = dist40(rng);
-        int audc = dist3(rng) == 0 ? 0x8F : 0xAF;
+        const int audc = dist3(rng) == 0 ? 0x8F : 0xAF;
         POKEYSND_Update(addr(PokeyRegister::AUDF1), noise, 0, 1);
         POKEYSND_Update(addr(PokeyRegister::AUDC1), audc, 0, 1);
         POKEYSND_Update(addr(PokeyRegister::AUDF2), noise ^ 0x3F, 0, 1);
@@ -82,11 +82,11 @@ void play_explosion(std::default_random_engine& rng) {
 }
 
 void play_electric_zap(std::default_random_engine& rng) {
-    std::uniform_int_distribution dist32(0, 31);
+    std::uniform_int_distribution<> dist32(0, 31);
     for (int i = 0; i < 12; ++i) {
         const int pitch = 0x10 + dist32(rng);
         const int volume = 0x0F - (i / 3);
-        int audc = 0xC0 | (volume & 0x0F); // more distortion
+        const int audc = 0xC0 | (volume & 0x0F); // more distortion
         POKEYSND_Update(addr(PokeyRegister::AUDF1), pitch, 0, 1);
         POKEYSND_Update(addr(PokeyRegister::AUDC1), audc, 0, 1);
         SDL_Delay(25);
@@ -95,8 +95,8 @@ void play_electric_zap(std::default_random_engine& rng) {
 }
 
 void play_glitch_sweep(std::default_random_engine& rng) {
-    std::uniform_int_distribution dist64(0, 63);
-    std::uniform_int_distribution dist32(0, 31);
+    std::uniform_int_distribution<> dist64(0, 63);
+    std::uniform_int_distribution<> dist32(0, 31);
     for (int i = 0; i < 20; ++i) {
         const int glitch_freq = dist64(rng) ^ dist32(rng);
         int audc = i % 2 == 0 ? 0x9F : 0x8E;

@@ -1,5 +1,4 @@
 #include <SDL.h>
-#include <thread>
 #include <chrono>
 #include <vector>
 #include <fmt/core.h>

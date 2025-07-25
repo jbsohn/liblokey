@@ -1,5 +1,6 @@
 #pragma once
 
+#include <exception>
 #include <tcb/span.hpp>
 #include "pokey_register.hpp"
 
@@ -11,5 +12,7 @@ public:
     virtual void poke(PokeyRegister address, uint8_t val, uint8_t gain) = 0;
     virtual tcb::span<const int16_t> renderAudio() = 0;
 
-    [[nodiscard]] virtual const char* name() const { return "UnnamedPokey"; }
+    [[nodiscard]] virtual const char* name() const {
+        return "UnnamedPokey";
+    }
 };

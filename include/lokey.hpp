@@ -10,10 +10,10 @@ public:
     explicit Lokey(float sampleRate = 44100.0f, size_t bufferSize = 512);
     ~Lokey();
 
-    void start();
-    void reset();
-    void poke(PokeyRegister reg, uint8_t val, uint8_t gain = 1);
-    void renderAndPlay();
+    void start() const;
+    void reset() const;
+    void poke(PokeyRegister reg, uint8_t val, uint8_t gain = 1) const;
+    void renderAndPlay() const;
 
 private:
     std::unique_ptr<Pokey> pokey;

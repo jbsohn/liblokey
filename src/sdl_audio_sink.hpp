@@ -1,8 +1,7 @@
 #pragma once
 
 #include <SDL.h>
-#include <tcb/span.hpp>
-#include "audio_sink.hpp" // where AudioSink is declared
+#include "audio_sink.hpp"
 
 class SDLAudioSink final : public AudioSink {
 public:
@@ -13,6 +12,9 @@ public:
     void stop() override;
     void writeAudio(tcb::span<const int16_t> samples) override;
 
+    [[nodiscard]] uint32_t getSampleRate() const override {
+        return sampleRate;
+    }
     [[nodiscard]] const char* name() const override {
         return "SDLAudioSink";
     }
@@ -20,6 +22,8 @@ public:
 private:
     SDL_AudioDeviceID deviceId = 0;
     uint32_t targetQueuedBytes = 0;
+    int sampleRate;
+    int bufferFrames;
     bool running = false;
     bool isValid = false;
 };
