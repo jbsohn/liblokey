@@ -7,9 +7,9 @@
   #pragma warning(disable: 4100) // unreferenced formal parameter
   #pragma warning(disable: 4505) // unreferenced local function has been removed
 #elif defined(__clang__)
-  #pragma clang diagnostic push
-  #pragma clang diagnostic ignored "-Wunused-function"
-  #pragma clang diagnostic ignored "-Wunused-parameter"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-function"
+#pragma clang diagnostic ignored "-Wunused-parameter"
 #elif defined(__GNUC__)
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wunused-function"
@@ -63,7 +63,7 @@
 #define POKEYSND_BIT8	2
 
 // Atari 800/XE/XL settings
-extern int Atari800_tv_mode;  // 0 = NTSC, 1 = PAL (adjust if needed)
+extern int Atari800_tv_mode; // 0 = NTSC, 1 = PAL (adjust if needed)
 extern int Atari800_turbo;
 
 // Missing globals
@@ -76,19 +76,50 @@ extern int PIA_IRQ;
 extern int CPU_IRQ;
 
 // Missing functions
-static int CASSETTE_IOLineStatus(void) { return 0; }
-static void CPU_GenerateIRQ(void) {}
-static void SIO_PutByte(int byte) {}
-static int  SIO_GetByte(void) { return 0; }
-static void CASSETTE_ResetPOKEY(void) {}
-static int  CASSETTE_AddScanLine(void) { return 0; }
-static int  INPUT_Playingback(void) { return 0; }
-static int  INPUT_PlaybackInt(void) { return 0; }
-static int  INPUT_Recording(void) { return 0; }
-static void INPUT_RecordInt(int dummy) {}
-static void INPUT_Scanline(void) {}
-static void SndSave_CloseSoundFile(void) {}
-static void SndSave_WriteToSoundFile(const unsigned char*, int) {}
+static int CASSETTE_IOLineStatus(void) {
+    return 0;
+}
+
+static void CPU_GenerateIRQ(void) {
+}
+
+static void SIO_PutByte(int byte) {
+}
+
+static int SIO_GetByte(void) {
+    return 0;
+}
+
+static void CASSETTE_ResetPOKEY(void) {
+}
+
+static int CASSETTE_AddScanLine(void) {
+    return 0;
+}
+
+static int INPUT_Playingback(void) {
+    return 0;
+}
+
+static int INPUT_PlaybackInt(void) {
+    return 0;
+}
+
+static int INPUT_Recording(void) {
+    return 0;
+}
+
+static void INPUT_RecordInt(int dummy) {
+}
+
+static void INPUT_Scanline(void) {
+}
+
+static void SndSave_CloseSoundFile(void) {
+}
+
+static void SndSave_WriteToSoundFile(const unsigned char*, int) {
+}
 
 // Needed for pokey.c
 #define SIO_SEROUT_INTERVAL 0
@@ -96,10 +127,18 @@ static void SndSave_WriteToSoundFile(const unsigned char*, int) {}
 
 // Needed for pokey.c save/load routines
 #define STATESAV_TAG(x) #x
-static void StateSav_SaveUBYTE(UBYTE* /*data*/, int /*len*/) {}
-static void StateSav_SaveINT(int* /*data*/, int /*len*/) {}
-static void StateSav_ReadUBYTE(UBYTE* /*data*/, int /*len*/) {}
-static void StateSav_ReadINT(int* /*data*/, int /*len*/) {}
+
+static void StateSav_SaveUBYTE(UBYTE* /*data*/, int /*len*/) {
+}
+
+static void StateSav_SaveINT(int* /*data*/, int /*len*/) {
+}
+
+static void StateSav_ReadUBYTE(UBYTE* /*data*/, int /*len*/) {
+}
+
+static void StateSav_ReadINT(int* /*data*/, int /*len*/) {
+}
 
 #if defined(_MSC_VER)
 #pragma warning(pop)

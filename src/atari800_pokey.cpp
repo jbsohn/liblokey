@@ -1,7 +1,7 @@
 // #include <fmt/format.h>
 #include "atari800_pokey.hpp"
-#include "atari800_pokey/pokeysnd.h"
 #include "pokey_register.hpp"
+#include "atari800_pokey_lofi/pokeysnd_adapter.h"
 
 Atari800Pokey::Atari800Pokey(const int sampleRate, const size_t bufferSize, const int channel)
     : sampleRate(sampleRate), bufferSize(bufferSize), channel(channel) {
@@ -13,8 +13,8 @@ Atari800Pokey::~Atari800Pokey() {
 }
 
 void Atari800Pokey::reset() {
-    POKEYSND_enable_new_pokey = FALSE;
-    POKEYSND_bienias_fix = FALSE;
+    // POKEYSND_enable_new_pokey = FALSE;
+    // POKEYSND_bienias_fix = FALSE;
     audioBuffer.resize(bufferSize);
     POKEYSND_Init(POKEYSND_FREQ_17_APPROX, sampleRate, 2, POKEYSND_BIT8);
     POKEYSND_SetVolume(1.0f);

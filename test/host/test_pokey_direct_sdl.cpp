@@ -2,7 +2,7 @@
 #include <random>
 #include <thread>
 #include <fmt/format.h>
-#include "atari800_pokey/pokeysnd.h"
+#include "atari800_pokey_lofi/pokeysnd_adapter.h"
 #include "pokey_register.hpp"
 
 #define SAMPLE_RATE 44100
