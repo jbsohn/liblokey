@@ -1,8 +1,7 @@
 #pragma once
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <fpm/fixed.hpp>
+#include <array>
 
 // Initialize the POKEY emulator with the given sample rate.
 void mzpokeysnd_ext_init(int sample_rate);
@@ -14,6 +13,9 @@ void mzpokeysnd_ext_write(int addr, int value);
 // `buffer` must be `count` samples long (16-bit signed PCM).
 void mzpokeysnd_ext_render(int16_t* buffer, int count);
 
-#ifdef __cplusplus
+constexpr int COS_TABLE_SIZE = 256;
+extern const std::array<fpm::fixed_16_16, COS_TABLE_SIZE> cos_table;
+
+inline fpm::fixed_16_16 make_fixed_safe(const int val) {
+    return fpm::fixed_16_16(static_cast<int64_t>(val) << 16);
 }
-#endif

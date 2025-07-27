@@ -10,9 +10,8 @@ endif ()
 
 set(POKEY_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/external/atari800_pokey_embed/mzpokeysnd.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/external/atari800_pokey_embed/mzpokeysnd_ext.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/external/atari800_pokey_embed/pokey.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/external/atari800_pokey_embed/pokeysnd.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/external/atari800_pokey_embed/remez.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/external/atari800_pokey_embed/cos_table.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/external/atari800_pokey_embed/utils.cpp
 )

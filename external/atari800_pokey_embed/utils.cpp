@@ -1,8 +1,29 @@
-
-#include "fpm/fixed.hpp"
-
+#include <stdlib.h>
+#include <stdio.h>
+#include <fpm/fixed.hpp>
 #include <cmath>
-#include "cos_table.hpp"
+#include "atari.h"
+#include "utils.hpp"
+
+int Atari800_tv_mode = Atari800_TV_NTSC;
+
+int PBI_IRQ = 0;
+int PIA_IRQ = 0;
+int CPU_IRQ = 0;
+int ESC_enable_sio_patch = 0;
+
+void* Util_malloc(const size_t size) {
+    void* p = malloc(size);
+    if (!p) {
+        fprintf(stderr, "Util_malloc: Out of memory\n");
+        exit(1);
+    }
+    return p;
+}
+
+void Log_print(const char* s) {
+    fprintf(stderr, "LOG: %s\n", s);
+}
 
 constexpr fpm::fixed_16_16 compute_cos_entry(int i) {
     constexpr float TWO_PI = 2.0f * static_cast<float>(M_PI);
