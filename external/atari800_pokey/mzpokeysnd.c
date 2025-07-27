@@ -36,6 +36,7 @@
 #include "remez.h"
 #include "antic.h"
 #include "gtia.h"
+#include "pokey_resample.h"
 
 #define CONSOLE_VOL 8
 #ifdef NONLINEAR_MIXING
@@ -1295,17 +1296,14 @@ int MZPOKEYSND_Init(ULONG freq17, int playback_freq, UBYTE num_pokeys,
 
     switch(playback_freq)
     {
-#if 0
     case 44100:
         if(flags & POKEYSND_BIT16)
         {
-            filter_data = filter_44;
-            filter_size = filter_size_44;
+            filter_size = load_precomputed_filter(filter_data, 44100, true);
         }
         else
         {
-            filter_data = filter_44_8;
-            filter_size = filter_size_44_8;
+            filter_size = load_precomputed_filter(filter_data, 44100, false);
         }
         pokey_frq = 1808100; /* 1.02% off ideal */
         audible_frq = 20000; /* ultrasound */
@@ -1313,13 +1311,11 @@ int MZPOKEYSND_Init(ULONG freq17, int playback_freq, UBYTE num_pokeys,
     case 22050:
         if(flags & POKEYSND_BIT16)
         {
-            filter_data = filter_22;
-            filter_size = filter_size_22;
+            filter_size = load_precomputed_filter(filter_data, 22050, true);
         }
         else
         {
-            filter_data = filter_22_8;
-            filter_size = filter_size_22_8;
+            filter_size = load_precomputed_filter(filter_data, 22050, false);
         }
         pokey_frq = 1786050; /* 0.2% off ideal */
         audible_frq = 10000; /* 30db filter attenuation */
@@ -1327,13 +1323,11 @@ int MZPOKEYSND_Init(ULONG freq17, int playback_freq, UBYTE num_pokeys,
     case 11025:
         if(flags & POKEYSND_BIT16)
         {
-            filter_data = filter_11;
-            filter_size = filter_size_11;
+            filter_size = load_precomputed_filter(filter_data, 11025, true);
         }
         else
         {
-            filter_data = filter_11_8;
-            filter_size = filter_size_11_8;
+            filter_size = load_precomputed_filter(filter_data, 11025, false);
         }
         pokey_frq = 1786050; /* 0.2% off ideal */
         audible_frq = 4500; /* 30db filter attenuation */
@@ -1341,13 +1335,11 @@ int MZPOKEYSND_Init(ULONG freq17, int playback_freq, UBYTE num_pokeys,
     case 48000:
         if(flags & POKEYSND_BIT16)
         {
-            filter_data = filter_48;
-            filter_size = filter_size_48;
+            filter_size = load_precomputed_filter(filter_data, 48000, true);
         }
         else
         {
-            filter_data = filter_48_8;
-            filter_size = filter_size_48_8;
+            filter_size = load_precomputed_filter(filter_data, 48000, false);
         }
         pokey_frq = 1776000; /* 0.7% off ideal */
         audible_frq = 20000; /* ultrasound */
@@ -1355,18 +1347,15 @@ int MZPOKEYSND_Init(ULONG freq17, int playback_freq, UBYTE num_pokeys,
     case 8000:
         if(flags & POKEYSND_BIT16)
         {
-            filter_data = filter_8;
-            filter_size = filter_size_8;
+            filter_size = load_precomputed_filter(filter_data, 8000, true);
         }
         else
         {
-            filter_data = filter_8_8;
-            filter_size = filter_size_8_8;
+            filter_size = load_precomputed_filter(filter_data, 8000, false);
         }
         pokey_frq = 1792000; /* 0.1% off ideal */
         audible_frq = 4000; /* Nyquist, also 30db attn, should be 50 */
         break;
-#endif
     default:
         pokey_frq = (int)(((double)pokey_frq_ideal/POKEYSND_playback_freq) + 0.5)
           * POKEYSND_playback_freq;

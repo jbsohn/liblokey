@@ -13,5 +13,6 @@ set(POKEY_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/external/atari800_pokey/mzpokeysnd_ext.c
         ${CMAKE_CURRENT_SOURCE_DIR}/external/atari800_pokey/pokey.c
         ${CMAKE_CURRENT_SOURCE_DIR}/external/atari800_pokey/pokeysnd.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/external/atari800_pokey/pokey_resample.c
         ${CMAKE_CURRENT_SOURCE_DIR}/external/atari800_pokey/remez.c
 )

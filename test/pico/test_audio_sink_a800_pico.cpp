@@ -36,13 +36,13 @@ void sinkTest(Pokey& pokey, AudioSink& sink) {
 }
 
 int main() {
-    // stdio_usb_init();
-    // while (!stdio_usb_connected()) {
-    //     tight_loop_contents();
-    // }
+    stdio_usb_init();
+    while (!stdio_usb_connected()) {
+        tight_loop_contents();
+    }
 
     constexpr int bufferSize = 512;
-    constexpr int sampleRate = 44100;
+    constexpr int sampleRate = 22050;
     auto pokey = Atari800Pokey(sampleRate, bufferSize, 0);
     auto nullAudioSink = NullAudioSink{};
     auto picoAudioSink = PicoAudioSink{0, sampleRate, bufferSize};
