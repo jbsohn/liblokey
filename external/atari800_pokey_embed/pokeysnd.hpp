@@ -42,6 +42,7 @@
 
 #include "config.h"
 #include "pokey.hpp"
+#include "pokey_utils.hpp"
 
 /* CONSTANT DEFINITIONS */
 

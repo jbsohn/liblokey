@@ -4,9 +4,9 @@
 
 # silence warnings about CPM
 cmake_policy(PUSH)
-if(POLICY CMP0097)
-  cmake_policy(SET CMP0097 NEW)
-endif()
+if (POLICY CMP0097)
+    cmake_policy(SET CMP0097 NEW)
+endif ()
 
 
 # setup CPM
@@ -14,7 +14,7 @@ include(FetchContent)
 FetchContent_Declare(
         CPM
         GIT_REPOSITORY https://github.com/cpm-cmake/CPM.cmake
-        GIT_TAG v0.42.0 
+        GIT_TAG v0.42.0
 )
 FetchContent_MakeAvailable(CPM)
 
@@ -29,28 +29,18 @@ CPMAddPackage(
 # fmtlib
 CPMAddPackage("gh:fmtlib/fmt#11.2.0")
 
-# tcb-span
-set(TCB_SPAN_ENABLE_TESTS OFF CACHE BOOL "" FORCE)
-CPMAddPackage(
-        NAME tcb-span
-        GITHUB_REPOSITORY tcbrindle/span
-        GIT_TAG master
-        EXCLUDE_FROM_ALL TRUE
-)
-set(TCB_SPAN_INCLUDE_DIR "${tcb-span_SOURCE_DIR}/include")
-
 # setup SDL if building for host platform
 if (NOT LOKEY_TARGET_PICO)
     # SDL2
     find_package(SDL2 REQUIRED)
 endif ()
 
-cmake_policy(POP)
 
 CPMAddPackage(
         NAME fpm
         GITHUB_REPOSITORY MikeLankamp/fpm
         VERSION 1.1.0
-        OPTIONS "FPM_BUILD_TESTS OFF"
+        EXCLUDE_FROM_ALL TRUE
+        "FPM_BUILD_BENCHMARKS OFF"
+        "FPM_BUILD_TESTS OFF"
 )
-CPMAddPackage("gh:MikeLankamp/fpm#master")

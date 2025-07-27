@@ -24,6 +24,7 @@
 
 #include "config.h"
 #include <cmath>
+#include <algorithm>
 
 #ifdef ASAP /* external project, see http://asap.sf.net */
 #include "asap_internal.h"
@@ -38,19 +39,20 @@
 
 #define CONSOLE_VOL 8
 #ifdef NONLINEAR_MIXING
-static const float pokeymix[61 + CONSOLE_VOL] = {/* Nonlinear POKEY mixing array */
-                                                 0.000000, 5.169146, 10.157015, 15.166247, 20.073793, 24.927443,
-                                                 29.728237, 34.495266, 39.181262, 43.839780, 48.429508, 52.932530,
-                                                 57.327319, 61.586304, 65.673220, 69.547672, 73.207846, 76.594474,
-                                                 79.739231, 82.631161, 85.300361, 87.750638, 90.020656, 92.108334,
-                                                 94.051256, 95.848478, 97.521287, 99.080719, 100.540674, 101.902750,
-                                                 103.185339, 104.375596, 105.491149, 106.523735, 107.473511, 108.361458,
-                                                 109.185669, 109.962251, 110.685574, 111.367150, 112.008476, 112.612760,
-                                                 113.185603, 113.722735, 114.227904, 114.712206, 115.171007, 115.605730,
-                                                 116.024396, 116.416097, 116.803169, 117.155108, 117.532921, 117.835494,
-                                                 118.196180, 118.502785, 118.825177, 119.138170, 119.421378, 119.734493,
-                                                 /* need to add CONSOLE_VOL extra copies of the last val */
-                                                 120.000000, 120.0, 120.0, 120.0, 120.0, 120.0, 120.0, 120.0, 120.0};
+static const PFixed pokeymix[61 + CONSOLE_VOL] = {/* Nonlinear POKEY mixing array */
+                                                  0.000000, 5.169146, 10.157015, 15.166247, 20.073793, 24.927443,
+                                                  29.728237, 34.495266, 39.181262, 43.839780, 48.429508, 52.932530,
+                                                  57.327319, 61.586304, 65.673220, 69.547672, 73.207846, 76.594474,
+                                                  79.739231, 82.631161, 85.300361, 87.750638, 90.020656, 92.108334,
+                                                  94.051256, 95.848478, 97.521287, 99.080719, 100.540674, 101.902750,
+                                                  103.185339, 104.375596, 105.491149, 106.523735, 107.473511,
+                                                  108.361458, 109.185669, 109.962251, 110.685574, 111.367150,
+                                                  112.008476, 112.612760, 113.185603, 113.722735, 114.227904,
+                                                  114.712206, 115.171007, 115.605730, 116.024396, 116.416097,
+                                                  116.803169, 117.155108, 117.532921, 117.835494, 118.196180,
+                                                  118.502785, 118.825177, 119.138170, 119.421378, 119.734493,
+                                                  /* need to add CONSOLE_VOL extra copies of the last val */
+                                                  120.000000, 120.0, 120.0, 120.0, 120.0, 120.0, 120.0, 120.0, 120.0};
 #endif
 
 #define SND_FILTER_SIZE 2048
@@ -67,7 +69,7 @@ static int num_cur_pokeys = 0;
 /* Filter */
 static int pokey_frq; /* Hz - for easier resampling */
 static int filter_size;
-static float filter_data[SND_FILTER_SIZE];
+static PFixed filter_data[SND_FILTER_SIZE];
 static int audible_frq;
 
 static constexpr int pokey_frq_ideal = 1789790; /* Hz - True */
@@ -100,13 +102,13 @@ typedef void (*event_t)(stPokeyState* ps, int p5v, int p4v, int p917v);
 
 #ifdef NONLINEAR_MIXING
 /* Change queue event value type */
-typedef float qev_t;
+typedef PFixed qev_t;
 #else
 typedef unsigned char qev_t;
 #endif
 
-static float ticks_per_sample;
-static float samp_pos;
+static PFixed ticks_per_sample;
+static PFixed samp_pos;
 
 /* State variables for single Pokey Chip */
 typedef struct stPokeyState {
@@ -256,8 +258,8 @@ typedef struct stPokeyState {
 PokeyState pokey_states[NPOKEYS];
 
 static struct {
-    float s16;
-    float s8;
+    PFixed s16;
+    PFixed s8;
 } volume;
 
 /* Forward declarations for ResetPokeyState */
@@ -409,7 +411,7 @@ static void ResetPokeyState(PokeyState* ps) {
     ps->speaker = 0;
 }
 
-static float read_resam_all(PokeyState* ps) {
+static PFixed read_resam_all(PokeyState* ps) {
     int i = ps->qebeg;
     qev_t bvol;
 
@@ -418,7 +420,7 @@ static float read_resam_all(PokeyState* ps) {
     }
 
     qev_t avol = ps->ovola;
-    float sum = 0;
+    PFixed sum = to_pfixed(0);
 
     /* Separate two loop cases, for wrap-around and without */
     if (ps->qeend < ps->qebeg) /* With wrap */
@@ -445,9 +447,9 @@ static float read_resam_all(PokeyState* ps) {
 }
 
 /* linear interpolation of filter data */
-static float interp_filter_data(int pos, float frac) {
+static PFixed interp_filter_data(int pos, PFixed frac) {
     if (pos + 1 >= filter_size) {
-        return 0.0;
+        return to_pfixed(0.0);
     }
     return frac * filter_data[pos + 1] + (1 - frac) * (filter_data[pos] - filter_data[filter_size - 1]);
 }
@@ -455,7 +457,7 @@ static float interp_filter_data(int pos, float frac) {
 /* returns the filtered output sample value using an interpolated filter */
 /* frac is the fractional distance of the output sample point between
  * input sample values */
-static float interp_read_resam_all(PokeyState* ps, float frac) {
+static PFixed interp_read_resam_all(PokeyState* ps, PFixed frac) {
     int i = ps->qebeg;
     qev_t bvol;
 
@@ -464,7 +466,7 @@ static float interp_read_resam_all(PokeyState* ps, float frac) {
     }
 
     qev_t avol = ps->ovola;
-    float sum = 0;
+    PFixed sum = to_pfixed(0);
 
     /* Separate two loop cases, for wrap-around and without */
     if (ps->qeend < ps->qebeg) /* With wrap */
@@ -1052,7 +1054,7 @@ static void advance_ticks(PokeyState* ps, int ticks) {
     }
 }
 
-static float generate_sample(PokeyState* ps) {
+static PFixed generate_sample(PokeyState* ps) {
     advance_ticks(ps, pokey_frq / POKEYSND_playback_freq);
     return read_resam_all(ps);
 }
@@ -1061,36 +1063,38 @@ static float generate_sample(PokeyState* ps) {
  filter table generator by Krzysztof Nikiel
  ******************************************/
 
-static int remez_filter_table(float resamp_rate, /* output_rate/input_rate */
-                              float* cutoff,
+static int remez_filter_table(PFixed resamp_rate, /* output_rate/input_rate */
+                              PFixed* cutoff,
                               int quality) {
     int i;
     static constexpr int orders[] = {600, 800, 1000, 1200};
-    static const struct {
-        int stop;     /* stopband ripple */
-        float weight; /* stopband weight */
-        float twidth[sizeof(orders) / sizeof(orders[0])];
-    }
-
-    constexpr paramtab[] = {{70, 90, {4.9e-3, 3.45e-3, 2.65e-3, 2.2e-3}},
-                            {55, 25, {3.4e-3, 2.7e-3, 2.05e-3, 1.7e-3}},
-                            {40, 6.0, {2.6e-3, 1.8e-3, 1.5e-3, 1.2e-3}},
-                            {-1, 0, {0, 0, 0, 0}}};
-    static constexpr float passtab[] = {0.5, 0.6, 0.7};
+    static struct {
+        int stop;      /* stopband ripple */
+        PFixed weight; /* stopband weight */
+        PFixed twidth[std::size(orders)];
+    } paramtab[] = {{70, to_pfixed(90), {to_pfixed(4.9e-3), to_pfixed(3.45e-3), to_pfixed(2.65e-3), to_pfixed(2.2e-3)}},
+                    {55, to_pfixed(25), {to_pfixed(3.4e-3), to_pfixed(2.7e-3), to_pfixed(2.05e-3), to_pfixed(1.7e-3)}},
+                    {40, to_pfixed(6.0), {to_pfixed(2.6e-3), to_pfixed(1.8e-3), to_pfixed(1.5e-3), to_pfixed(1.2e-3)}},
+                    {-1, to_pfixed(0), {to_pfixed(0), to_pfixed(0), to_pfixed(0), to_pfixed(0)}}};
+    static PFixed passtab[] = {to_pfixed(0.5), to_pfixed(0.6), to_pfixed(0.7)};
     int ripple = 0, order = 0;
     int size;
-    float weights[2], desired[2], bands[4];
+    PFixed weights[2], desired[2], bands[4];
     static constexpr int interlevel = 5;
-    const float step = 1.0 / interlevel;
+    const PFixed step = to_pfixed(1.0) / interlevel;
 
-    *cutoff = 0.95 * 0.5 * resamp_rate;
+    if (resamp_rate <= to_pfixed(0.0)) {
+        *cutoff = to_pfixed(0.01);  // Minimum cutoff to avoid division-by-zero downstream
+    } else {
+        *cutoff = to_pfixed(0.95 * 0.5) * resamp_rate;
+    }
 
-    if (quality >= static_cast<int>(sizeof(passtab) / sizeof(passtab[0])))
-        quality = static_cast<int>(sizeof(passtab) / sizeof(passtab[0])) - 1;
+    if (quality >= static_cast<int>(std::size(passtab)))
+        quality = static_cast<int>(std::size(passtab)) - 1;
 
     for (ripple = 0; paramtab[ripple].stop > 0; ripple++) {
-        for (order = 0; order < (int)(sizeof(orders) / sizeof(orders[0])); order++) {
-            if ((*cutoff - paramtab[ripple].twidth[order]) > passtab[quality] * 0.5 * resamp_rate)
+        for (order = 0; order < static_cast<int>(std::size(orders)); order++) {
+            if ((*cutoff - paramtab[ripple].twidth[order]) > passtab[quality] * to_pfixed(0.5) * resamp_rate)
                 /* transition width OK */
                 goto found;
         }
@@ -1116,27 +1120,37 @@ found:
     if (size > SND_FILTER_SIZE) /* static table too short */
         return 0;
 
-    desired[0] = 1;
-    desired[1] = 0;
+    desired[0] = to_pfixed(1);
+    desired[1] = to_pfixed(0);
 
-    weights[0] = 1;
+    weights[0] = to_pfixed(1);
     weights[1] = paramtab[ripple].weight;
 
-    bands[0] = 0;
+    bands[0] = to_pfixed(0);
     bands[2] = *cutoff;
     bands[1] = bands[2] - paramtab[ripple].twidth[order];
-    bands[3] = 0.5;
+    bands[3] = to_pfixed(0.5);
 
-    bands[1] *= static_cast<float>(interlevel);
-    bands[2] *= static_cast<float>(interlevel);
-    REMEZ_CreateFilter(filter_data, size / interlevel + 1, 2, bands, desired, weights, REMEZ_BANDPASS);
+    bands[1] *= static_cast<PFixed>(interlevel);
+    bands[2] *= static_cast<PFixed>(interlevel);
+
+    const int numtaps = size / interlevel + 1;
+    float bands_f[4] = {to_float(bands[0]), to_float(bands[1]), to_float(bands[2]), to_float(bands[3])};
+    const float desired_f[2] = {to_float(desired[0]), to_float(desired[1])};
+    const float weights_f[2] = {to_float(weights[0]), to_float(weights[1])};
+    std::vector<float> float_filter_data(numtaps);
+    REMEZ_CreateFilter(float_filter_data.data(), numtaps, 2, bands_f, desired_f, weights_f, REMEZ_BANDPASS);
+    for (int convertBackIndex = 0; convertBackIndex < numtaps; convertBackIndex++) {
+        filter_data[convertBackIndex] = to_pfixed(float_filter_data[convertBackIndex]);
+    }
+
     for (i = size - interlevel; i >= 0; i -= interlevel) {
-        float h1 = filter_data[i / interlevel];
-        float h2 = filter_data[i / interlevel + 1];
+        PFixed h1 = filter_data[i / interlevel];
+        PFixed h2 = filter_data[i / interlevel + 1];
 
         for (int s = 0; s < interlevel; s++) {
-            const float d = static_cast<float>(s) * step;
-            filter_data[i + s] = (h1 * (1.0 - d) + h2 * d) * step;
+            const PFixed d = static_cast<PFixed>(s) * step;
+            filter_data[i + s] = (h1 * (to_pfixed(1.0) - d) + h2 * d) * step;
         }
     }
 
@@ -1178,12 +1192,12 @@ static void Update_consol_sound_mz(int set);
 
 static void generate_sync(unsigned int num_ticks);
 
-static void init_syncsound(void) {
-    float samples_per_frame = static_cast<float>(POKEYSND_playback_freq) /
-                              (Atari800_tv_mode == Atari800_TV_PAL ? Atari800_FPS_PAL : Atari800_FPS_NTSC);
+static void init_syncsound() {
+    const PFixed samples_per_frame = to_pfixed(POKEYSND_playback_freq) /
+                                     (Atari800_tv_mode == Atari800_TV_PAL ? Atari800_FPS_PAL : Atari800_FPS_NTSC);
     const unsigned int ticks_per_frame = Atari800_tv_mode * 114;
-    ticks_per_sample = static_cast<float>(ticks_per_frame) / samples_per_frame;
-    samp_pos = 0.0;
+    ticks_per_sample = static_cast<PFixed>(ticks_per_frame) / samples_per_frame;
+    samp_pos = to_pfixed(0.0);
     POKEYSND_GenerateSync = generate_sync;
 }
 
@@ -1197,7 +1211,7 @@ int MZPOKEYSND_Init(ULONG freq17,
                     int clear_regs
 #endif
 ) {
-    float cutoff;
+    PFixed cutoff;
 
     snd_quality = quality;
 
@@ -1282,9 +1296,9 @@ int MZPOKEYSND_Init(ULONG freq17,
         break;
 #endif
         default:
-            pokey_frq = static_cast<int>(static_cast<float>(pokey_frq_ideal) / POKEYSND_playback_freq + 0.5) *
-                        POKEYSND_playback_freq;
-            filter_size = remez_filter_table(static_cast<float>(POKEYSND_playback_freq) / pokey_frq, &cutoff, quality);
+            pokey_frq = to_int_trunc(to_pfixed(pokey_frq_ideal) / POKEYSND_playback_freq +
+                                     to_pfixed(0.5) * POKEYSND_playback_freq);
+            filter_size = remez_filter_table(to_pfixed(POKEYSND_playback_freq) / pokey_frq, &cutoff, quality);
             audible_frq = static_cast<int>(cutoff * pokey_frq);
     }
 
@@ -1303,8 +1317,8 @@ int MZPOKEYSND_Init(ULONG freq17,
     num_cur_pokeys = num_pokeys;
 
     init_syncsound();
-    volume.s8 = POKEYSND_volume * 0xff / 256.0;
-    volume.s16 = POKEYSND_volume * 0xffff / 256.0;
+    volume.s8 = to_pfixed(POKEYSND_volume * 0xff / 256.0);
+    volume.s16 = to_pfixed(POKEYSND_volume * 0xffff / 256.0);
 
     return 0; /* OK */
 }
@@ -1628,7 +1642,14 @@ static void Update_c3stop(PokeyState* ps) {
 }
 #else
 static void Update_c0stop(PokeyState* ps) {
-    const int lim = pokey_frq / 2 / audible_frq;
+    if (audible_frq == 0) {
+        // Handle error, fallback, or log it
+        return;
+    }
+
+    PFixed nyquist = pokey_frq / to_pfixed(2.0);
+    PFixed buckets = nyquist / audible_frq;
+    int lim = to_int_trunc(buckets);
 
     int hfa = 0;
     ps->c0stop = 0;
@@ -2107,13 +2128,15 @@ static void mzpokeysnd_process_8(void* sndbuffer, const int sndn) {
     /* if there are two pokeys, then the signal is stereo
        we assume even sndn */
     while (nsam >= num_cur_pokeys) {
-        buffer[0] =
-            static_cast<UBYTE>(floor(generate_sample(pokey_states) * (255.0 / 2 / MAX_SAMPLE / 4 * M_PI * 0.95) + 128 +
-                                     0.5 + 0.5 * rand() / RAND_MAX - 0.25));
-        for (int i = 1; i < num_cur_pokeys; i++) {
-            buffer[i] = static_cast<UBYTE>(
-                floor(generate_sample(pokey_states + i) * (255.0 / 2 / MAX_SAMPLE / 4 * M_PI * 0.95) + 128 + 0.5 +
-                      0.5 * rand() / RAND_MAX - 0.25));
+        for (int i = 0; i < num_cur_pokeys; i++) {
+            PFixed s = generate_sample(pokey_states + i);  // raw sample
+            PFixed norm = s / MAX_SAMPLE;                  // normalize to [-1.0, 1.0]
+            PFixed gain = to_pfixed(M_PI * 0.95 / 4.0);
+            PFixed noise = to_pfixed(rand()) / RAND_MAX - to_pfixed(0.5);
+            PFixed adjusted = norm * gain + to_pfixed(0.5) * noise;          // dithered and scaled
+            PFixed biased = adjusted * to_pfixed(127.5) + to_pfixed(128.0);  // shift to 0–255
+
+            buffer[i] = static_cast<UBYTE>(std::clamp(biased, to_pfixed(0.0), to_pfixed(255.0)));
         }
         buffer += num_cur_pokeys;
         nsam -= num_cur_pokeys;
@@ -2130,13 +2153,21 @@ static void mzpokeysnd_process_16(void* sndbuffer, const int sndn) {
     /* if there are two pokeys, then the signal is stereo
        we assume even sndn */
     while (nsam >= num_cur_pokeys) {
-        buffer[0] =
-            static_cast<SWORD>(floor(generate_sample(pokey_states) * (65535.0 / 2 / MAX_SAMPLE / 4 * M_PI * 0.95) +
-                                     0.5 + 0.5 * rand() / RAND_MAX - 0.25));
+        const PFixed scale = to_pfixed(65535.0) / (2 * MAX_SAMPLE);
+        const PFixed gain = to_pfixed(M_PI * 0.95);                                     // adjustable volume/soft clip
+        const PFixed noise = to_pfixed(rand()) / to_pfixed(RAND_MAX) - to_pfixed(0.5);  // dither in range [-0.5, +0.5]
+
+        PFixed sample = generate_sample(pokey_states);  // range: [-MAX_SAMPLE, MAX_SAMPLE]
+        PFixed scaled = sample * scale * gain + noise;
+        PFixed rounded = scaled + to_pfixed(0.5);  // round to nearest
+
+        buffer[0] = static_cast<SWORD>(floor(rounded));
+
         for (int i = 1; i < num_cur_pokeys; i++) {
-            buffer[i] = static_cast<SWORD>(
-                floor(generate_sample(pokey_states + i) * (65535.0 / 2 / MAX_SAMPLE / 4 * M_PI * 0.95) + 0.5 +
-                      0.5 * rand() / RAND_MAX - 0.25));
+            buffer[i] =
+                static_cast<SWORD>(floor(generate_sample(pokey_states + i) * (to_pfixed(65535.0) / 2 / MAX_SAMPLE / 4 *
+                                                                              to_pfixed(M_PI) * to_pfixed(0.95)) +
+                                         to_pfixed(0.5 + 0.5) * rand() / RAND_MAX - to_pfixed(0.25)));
         }
         buffer += num_cur_pokeys;
         nsam -= num_cur_pokeys;
@@ -2149,9 +2180,9 @@ static void generate_sync(unsigned int num_ticks) {
     unsigned int i;
 
     for (;;) {
-        float int_part;
-        float new_samp_pos = samp_pos + ticks_per_sample;
-        new_samp_pos = modff(new_samp_pos, &int_part);
+        PFixed int_part;
+        PFixed new_samp_pos = samp_pos + ticks_per_sample;
+        new_samp_pos = get_fraction(new_samp_pos, &int_part);
         const auto ticks = static_cast<unsigned int>(int_part);
         if (ticks > num_ticks) {
             samp_pos -= num_ticks;
@@ -2169,13 +2200,15 @@ static void generate_sync(unsigned int num_ticks) {
             if (POKEYSND_snd_flags & POKEYSND_BIT16) {
                 *reinterpret_cast<SWORD*>(buffer) =
                     static_cast<SWORD>(floor(interp_read_resam_all(pokey_states + i, samp_pos) *
-                                                 (volume.s16 / 2 / MAX_SAMPLE / 4 * M_PI * 0.95) +
-                                             0.5 + 0.5 * rand() / RAND_MAX - 0.25));
+                                                 (volume.s16 / 2 / MAX_SAMPLE / 4 * to_pfixed(M_PI) * to_pfixed(0.95)) +
+                                             to_pfixed(0.5) + to_pfixed(0.5) * rand() / RAND_MAX - to_pfixed(0.25)));
                 buffer += 2;
-            } else
-                *buffer++ = static_cast<UBYTE>(floor(interp_read_resam_all(pokey_states + i, samp_pos) *
-                                                         (volume.s8 / 2 / MAX_SAMPLE / 4 * M_PI * 0.95) +
-                                                     128 + 0.5 + 0.5 * rand() / RAND_MAX - 0.25));
+            } else {
+                *buffer++ = static_cast<UBYTE>(
+                    floor(interp_read_resam_all(pokey_states + i, samp_pos) *
+                              (volume.s8 / 2 / MAX_SAMPLE / 4 * to_pfixed(M_PI) * to_pfixed(0.95)) +
+                          128 + to_pfixed(0.5) + to_pfixed(0.5) * rand() / RAND_MAX - to_pfixed(0.25)));
+            }
         }
     }
 

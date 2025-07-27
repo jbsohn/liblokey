@@ -182,8 +182,8 @@ static void Generate_sync_rf(unsigned int num_ticks);
 static void null_generate_sync(unsigned int num_ticks) {}
 void (*POKEYSND_GenerateSync)(unsigned int num_ticks) = null_generate_sync;
 
-static float ticks_per_sample;
-static float samp_pos;
+static PFixed ticks_per_sample;
+static PFixed samp_pos;
 static int speaker;
 static int const CONSOLE_VOL = 32;
 
@@ -266,14 +266,14 @@ int POKEYSND_Init(ULONG freq17,
         /* A single call to Atari800_Frame may emulate a bit more CPU ticks than the exact number of
            ticks per frame (Atari800_tv_mode*114). So we add a few ticks to buffer size just to be safe. */
         constexpr unsigned int surplus_ticks = 10;
-        const float samples_per_frame = (float)POKEYSND_playback_freq /
-                                        (Atari800_tv_mode == Atari800_TV_PAL ? Atari800_FPS_PAL : Atari800_FPS_NTSC);
+        const PFixed samples_per_frame = to_pfixed(
+            POKEYSND_playback_freq / (Atari800_tv_mode == Atari800_TV_PAL ? Atari800_FPS_PAL : Atari800_FPS_NTSC));
         unsigned int ticks_per_frame = Atari800_tv_mode * 114;
         unsigned int max_ticks_per_frame = ticks_per_frame + surplus_ticks;
-        float ticks_per_sample = static_cast<float>(ticks_per_frame) / samples_per_frame;
+        PFixed ticks_per_sample = static_cast<PFixed>(ticks_per_frame) / samples_per_frame;
         POKEYSND_process_buffer_length =
             POKEYSND_num_pokeys *
-            static_cast<unsigned int>(ceil(static_cast<float>(max_ticks_per_frame) / ticks_per_sample)) *
+            static_cast<unsigned int>(ceil(static_cast<double>(max_ticks_per_frame / ticks_per_sample))) *
             ((POKEYSND_snd_flags & POKEYSND_BIT16) ? 2 : 1);
         free(POKEYSND_process_buffer);
         POKEYSND_process_buffer = static_cast<UBYTE*>(Util_malloc(POKEYSND_process_buffer_length));
@@ -322,11 +322,11 @@ int POKEYSND_UpdateProcessBuffer() {
 }
 
 static void init_syncsound(void) {
-    const float samples_per_frame = static_cast<float>(POKEYSND_playback_freq) /
-                                    (Atari800_tv_mode == Atari800_TV_PAL ? Atari800_FPS_PAL : Atari800_FPS_NTSC);
-    unsigned int ticks_per_frame = Atari800_tv_mode * 114;
-    ticks_per_sample = static_cast<float>(ticks_per_frame) / samples_per_frame;
-    samp_pos = 0.0;
+    const PFixed samples_per_frame = static_cast<PFixed>(POKEYSND_playback_freq) /
+                                     (Atari800_tv_mode == Atari800_TV_PAL ? Atari800_FPS_PAL : Atari800_FPS_NTSC);
+    const unsigned int ticks_per_frame = Atari800_tv_mode * 114;
+    ticks_per_sample = static_cast<PFixed>(ticks_per_frame) / samples_per_frame;
+    samp_pos = to_pfixed(0.0);
     POKEYSND_GenerateSync = Generate_sync_rf;
     speaker = 0;
 }
@@ -1017,9 +1017,9 @@ static void Generate_sync_rf(unsigned int num_ticks) {
     UBYTE* buffer_end = POKEYSND_process_buffer + POKEYSND_process_buffer_length;
 
     for (;;) {
-        float int_part;
-        float new_samp_pos = samp_pos + ticks_per_sample;
-        new_samp_pos = modff(new_samp_pos, &int_part);
+        PFixed int_part;
+        PFixed new_samp_pos = samp_pos + ticks_per_sample;
+        new_samp_pos = get_fraction(new_samp_pos, &int_part);  // modff(new_samp_pos, &int_part);
         const auto ticks = static_cast<unsigned int>(int_part);
         if (ticks > num_ticks) {
             samp_pos -= num_ticks;
