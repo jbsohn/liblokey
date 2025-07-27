@@ -3,7 +3,7 @@
 #include <fpm/fixed.hpp>
 #include <cmath>
 #include "atari.h"
-#include "utils.hpp"
+#include "pokey_utils.hpp"
 
 int Atari800_tv_mode = Atari800_TV_NTSC;
 

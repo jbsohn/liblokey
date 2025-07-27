@@ -38,20 +38,19 @@
 
 #define CONSOLE_VOL 8
 #ifdef NONLINEAR_MIXING
-static const double pokeymix[61 + CONSOLE_VOL] = {/* Nonlinear POKEY mixing array */
-                                                  0.000000, 5.169146, 10.157015, 15.166247, 20.073793, 24.927443,
-                                                  29.728237, 34.495266, 39.181262, 43.839780, 48.429508, 52.932530,
-                                                  57.327319, 61.586304, 65.673220, 69.547672, 73.207846, 76.594474,
-                                                  79.739231, 82.631161, 85.300361, 87.750638, 90.020656, 92.108334,
-                                                  94.051256, 95.848478, 97.521287, 99.080719, 100.540674, 101.902750,
-                                                  103.185339, 104.375596, 105.491149, 106.523735, 107.473511,
-                                                  108.361458, 109.185669, 109.962251, 110.685574, 111.367150,
-                                                  112.008476, 112.612760, 113.185603, 113.722735, 114.227904,
-                                                  114.712206, 115.171007, 115.605730, 116.024396, 116.416097,
-                                                  116.803169, 117.155108, 117.532921, 117.835494, 118.196180,
-                                                  118.502785, 118.825177, 119.138170, 119.421378, 119.734493,
-                                                  /* need to add CONSOLE_VOL extra copies of the last val */
-                                                  120.000000, 120.0, 120.0, 120.0, 120.0, 120.0, 120.0, 120.0, 120.0};
+static const float pokeymix[61 + CONSOLE_VOL] = {/* Nonlinear POKEY mixing array */
+                                                 0.000000, 5.169146, 10.157015, 15.166247, 20.073793, 24.927443,
+                                                 29.728237, 34.495266, 39.181262, 43.839780, 48.429508, 52.932530,
+                                                 57.327319, 61.586304, 65.673220, 69.547672, 73.207846, 76.594474,
+                                                 79.739231, 82.631161, 85.300361, 87.750638, 90.020656, 92.108334,
+                                                 94.051256, 95.848478, 97.521287, 99.080719, 100.540674, 101.902750,
+                                                 103.185339, 104.375596, 105.491149, 106.523735, 107.473511, 108.361458,
+                                                 109.185669, 109.962251, 110.685574, 111.367150, 112.008476, 112.612760,
+                                                 113.185603, 113.722735, 114.227904, 114.712206, 115.171007, 115.605730,
+                                                 116.024396, 116.416097, 116.803169, 117.155108, 117.532921, 117.835494,
+                                                 118.196180, 118.502785, 118.825177, 119.138170, 119.421378, 119.734493,
+                                                 /* need to add CONSOLE_VOL extra copies of the last val */
+                                                 120.000000, 120.0, 120.0, 120.0, 120.0, 120.0, 120.0, 120.0, 120.0};
 #endif
 
 #define SND_FILTER_SIZE 2048
@@ -68,7 +67,7 @@ static int num_cur_pokeys = 0;
 /* Filter */
 static int pokey_frq; /* Hz - for easier resampling */
 static int filter_size;
-static double filter_data[SND_FILTER_SIZE];
+static float filter_data[SND_FILTER_SIZE];
 static int audible_frq;
 
 static constexpr int pokey_frq_ideal = 1789790; /* Hz - True */
@@ -101,13 +100,13 @@ typedef void (*event_t)(stPokeyState* ps, int p5v, int p4v, int p917v);
 
 #ifdef NONLINEAR_MIXING
 /* Change queue event value type */
-typedef double qev_t;
+typedef float qev_t;
 #else
 typedef unsigned char qev_t;
 #endif
 
-static double ticks_per_sample;
-static double samp_pos;
+static float ticks_per_sample;
+static float samp_pos;
 
 /* State variables for single Pokey Chip */
 typedef struct stPokeyState {
@@ -257,8 +256,8 @@ typedef struct stPokeyState {
 PokeyState pokey_states[NPOKEYS];
 
 static struct {
-    double s16;
-    double s8;
+    float s16;
+    float s8;
 } volume;
 
 /* Forward declarations for ResetPokeyState */
@@ -410,7 +409,7 @@ static void ResetPokeyState(PokeyState* ps) {
     ps->speaker = 0;
 }
 
-static double read_resam_all(PokeyState* ps) {
+static float read_resam_all(PokeyState* ps) {
     int i = ps->qebeg;
     qev_t bvol;
 
@@ -419,7 +418,7 @@ static double read_resam_all(PokeyState* ps) {
     }
 
     qev_t avol = ps->ovola;
-    double sum = 0;
+    float sum = 0;
 
     /* Separate two loop cases, for wrap-around and without */
     if (ps->qeend < ps->qebeg) /* With wrap */
@@ -446,7 +445,7 @@ static double read_resam_all(PokeyState* ps) {
 }
 
 /* linear interpolation of filter data */
-static double interp_filter_data(int pos, double frac) {
+static float interp_filter_data(int pos, float frac) {
     if (pos + 1 >= filter_size) {
         return 0.0;
     }
@@ -456,7 +455,7 @@ static double interp_filter_data(int pos, double frac) {
 /* returns the filtered output sample value using an interpolated filter */
 /* frac is the fractional distance of the output sample point between
  * input sample values */
-static double interp_read_resam_all(PokeyState* ps, double frac) {
+static float interp_read_resam_all(PokeyState* ps, float frac) {
     int i = ps->qebeg;
     qev_t bvol;
 
@@ -465,7 +464,7 @@ static double interp_read_resam_all(PokeyState* ps, double frac) {
     }
 
     qev_t avol = ps->ovola;
-    double sum = 0;
+    float sum = 0;
 
     /* Separate two loop cases, for wrap-around and without */
     if (ps->qeend < ps->qebeg) /* With wrap */
@@ -1053,7 +1052,7 @@ static void advance_ticks(PokeyState* ps, int ticks) {
     }
 }
 
-static double generate_sample(PokeyState* ps) {
+static float generate_sample(PokeyState* ps) {
     advance_ticks(ps, pokey_frq / POKEYSND_playback_freq);
     return read_resam_all(ps);
 }
@@ -1062,27 +1061,27 @@ static double generate_sample(PokeyState* ps) {
  filter table generator by Krzysztof Nikiel
  ******************************************/
 
-static int remez_filter_table(double resamp_rate, /* output_rate/input_rate */
-                              double* cutoff,
+static int remez_filter_table(float resamp_rate, /* output_rate/input_rate */
+                              float* cutoff,
                               int quality) {
     int i;
     static constexpr int orders[] = {600, 800, 1000, 1200};
     static const struct {
-        int stop;      /* stopband ripple */
-        double weight; /* stopband weight */
-        double twidth[sizeof(orders) / sizeof(orders[0])];
+        int stop;     /* stopband ripple */
+        float weight; /* stopband weight */
+        float twidth[sizeof(orders) / sizeof(orders[0])];
     }
 
     constexpr paramtab[] = {{70, 90, {4.9e-3, 3.45e-3, 2.65e-3, 2.2e-3}},
                             {55, 25, {3.4e-3, 2.7e-3, 2.05e-3, 1.7e-3}},
                             {40, 6.0, {2.6e-3, 1.8e-3, 1.5e-3, 1.2e-3}},
                             {-1, 0, {0, 0, 0, 0}}};
-    static constexpr double passtab[] = {0.5, 0.6, 0.7};
+    static constexpr float passtab[] = {0.5, 0.6, 0.7};
     int ripple = 0, order = 0;
     int size;
-    double weights[2], desired[2], bands[4];
+    float weights[2], desired[2], bands[4];
     static constexpr int interlevel = 5;
-    const double step = 1.0 / interlevel;
+    const float step = 1.0 / interlevel;
 
     *cutoff = 0.95 * 0.5 * resamp_rate;
 
@@ -1128,15 +1127,15 @@ found:
     bands[1] = bands[2] - paramtab[ripple].twidth[order];
     bands[3] = 0.5;
 
-    bands[1] *= static_cast<double>(interlevel);
-    bands[2] *= static_cast<double>(interlevel);
-    REMEZ_CreateFilter(filter_data, (size / interlevel) + 1, 2, bands, desired, weights, REMEZ_BANDPASS);
+    bands[1] *= static_cast<float>(interlevel);
+    bands[2] *= static_cast<float>(interlevel);
+    REMEZ_CreateFilter(filter_data, size / interlevel + 1, 2, bands, desired, weights, REMEZ_BANDPASS);
     for (i = size - interlevel; i >= 0; i -= interlevel) {
-        double h1 = filter_data[i / interlevel];
-        double h2 = filter_data[i / interlevel + 1];
+        float h1 = filter_data[i / interlevel];
+        float h2 = filter_data[i / interlevel + 1];
 
         for (int s = 0; s < interlevel; s++) {
-            const double d = static_cast<double>(s) * step;
+            const float d = static_cast<float>(s) * step;
             filter_data[i + s] = (h1 * (1.0 - d) + h2 * d) * step;
         }
     }
@@ -1180,10 +1179,10 @@ static void Update_consol_sound_mz(int set);
 static void generate_sync(unsigned int num_ticks);
 
 static void init_syncsound(void) {
-    double samples_per_frame = static_cast<double>(POKEYSND_playback_freq) /
-                               (Atari800_tv_mode == Atari800_TV_PAL ? Atari800_FPS_PAL : Atari800_FPS_NTSC);
+    float samples_per_frame = static_cast<float>(POKEYSND_playback_freq) /
+                              (Atari800_tv_mode == Atari800_TV_PAL ? Atari800_FPS_PAL : Atari800_FPS_NTSC);
     const unsigned int ticks_per_frame = Atari800_tv_mode * 114;
-    ticks_per_sample = static_cast<double>(ticks_per_frame) / samples_per_frame;
+    ticks_per_sample = static_cast<float>(ticks_per_frame) / samples_per_frame;
     samp_pos = 0.0;
     POKEYSND_GenerateSync = generate_sync;
 }
@@ -1198,7 +1197,7 @@ int MZPOKEYSND_Init(ULONG freq17,
                     int clear_regs
 #endif
 ) {
-    double cutoff;
+    float cutoff;
 
     snd_quality = quality;
 
@@ -1283,9 +1282,9 @@ int MZPOKEYSND_Init(ULONG freq17,
         break;
 #endif
         default:
-            pokey_frq = static_cast<int>(static_cast<double>(pokey_frq_ideal) / POKEYSND_playback_freq + 0.5) *
+            pokey_frq = static_cast<int>(static_cast<float>(pokey_frq_ideal) / POKEYSND_playback_freq + 0.5) *
                         POKEYSND_playback_freq;
-            filter_size = remez_filter_table(static_cast<double>(POKEYSND_playback_freq) / pokey_frq, &cutoff, quality);
+            filter_size = remez_filter_table(static_cast<float>(POKEYSND_playback_freq) / pokey_frq, &cutoff, quality);
             audible_frq = static_cast<int>(cutoff * pokey_frq);
     }
 
@@ -2098,7 +2097,7 @@ void mzpokeysnd_debugreset(UBYTE chip)
 
 #define MAX_SAMPLE 152
 
-static void mzpokeysnd_process_8(void* sndbuffer, int sndn) {
+static void mzpokeysnd_process_8(void* sndbuffer, const int sndn) {
     int nsam = sndn;
     auto* buffer = static_cast<UBYTE*>(sndbuffer);
 
@@ -2121,7 +2120,7 @@ static void mzpokeysnd_process_8(void* sndbuffer, int sndn) {
     }
 }
 
-static void mzpokeysnd_process_16(void* sndbuffer, int sndn) {
+static void mzpokeysnd_process_16(void* sndbuffer, const int sndn) {
     int nsam = sndn;
     auto* buffer = static_cast<SWORD*>(sndbuffer);
 
@@ -2150,9 +2149,9 @@ static void generate_sync(unsigned int num_ticks) {
     unsigned int i;
 
     for (;;) {
-        double int_part;
-        double new_samp_pos = samp_pos + ticks_per_sample;
-        new_samp_pos = modf(new_samp_pos, &int_part);
+        float int_part;
+        float new_samp_pos = samp_pos + ticks_per_sample;
+        new_samp_pos = modff(new_samp_pos, &int_part);
         const auto ticks = static_cast<unsigned int>(int_part);
         if (ticks > num_ticks) {
             samp_pos -= num_ticks;

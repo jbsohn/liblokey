@@ -27,12 +27,12 @@
 
 /* Function prototype for REMEZ_CreateFilter() - the only function that should need be
  * called from external code */
-void REMEZ_CreateFilter(double h[],
+void REMEZ_CreateFilter(float h[],
                         int numtaps,
                         int numband,
-                        double bands[],
-                        const double des[],
-                        const double weight[],
+                        float bands[],
+                        const float des[],
+                        const float weight[],
                         int type);
 
 #endif /* REMEZ_H_ */

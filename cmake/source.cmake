@@ -13,5 +13,5 @@ set(POKEY_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/external/atari800_pokey_embed/pokey.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/external/atari800_pokey_embed/pokeysnd.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/external/atari800_pokey_embed/remez.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/external/atari800_pokey_embed/utils.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/external/atari800_pokey_embed/pokey_utils.cpp
 )

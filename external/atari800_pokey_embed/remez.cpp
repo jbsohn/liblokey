@@ -56,31 +56,31 @@
  * int      r        - 1/2 the number of filter coefficients
  * int      numtaps  - Number of taps in the resulting filter
  * int      numband  - Number of bands in user specification
- * double   bands[]  - User-specified band edges [2*numband]
- * double   des[]    - Desired response per band [numband]
- * double   weight[] - Weight per band [numband]
+ * float   bands[]  - User-specified band edges [2*numband]
+ * float   des[]    - Desired response per band [numband]
+ * float   weight[] - Weight per band [numband]
  * int      symmetry - Symmetry of filter - used for grid check
  *
  * OUTPUT:
  * -------
  * int    gridsize   - Number of elements in the dense frequency grid
- * double Grid[]     - Frequencies (0 to 0.5) on the dense grid [gridsize]
- * double D[]        - Desired response on the dense grid [gridsize]
- * double W[]        - Weight function on the dense grid [gridsize]
+ * float Grid[]     - Frequencies (0 to 0.5) on the dense grid [gridsize]
+ * float D[]        - Desired response on the dense grid [gridsize]
+ * float W[]        - Weight function on the dense grid [gridsize]
  *******************/
 
 static void CreateDenseGrid(int r,
                             int numtaps,
                             int numband,
-                            double bands[],
-                            const double des[],
-                            const double weight[],
+                            float bands[],
+                            const float des[],
+                            const float weight[],
                             int* gridsize,
-                            double Grid[],
-                            double D[],
-                            double W[],
+                            float Grid[],
+                            float D[],
+                            float W[],
                             int symmetry) {
-    const double delf = 0.5 / (GRIDDENSITY * r);
+    const float delf = 0.5 / (GRIDDENSITY * r);
 
     /* For differentiator, hilbert,
      *   symmetry is odd and Grid[0] = max(delf, band[0]) */
@@ -91,8 +91,8 @@ static void CreateDenseGrid(int r,
     int j = 0;
     for (int band = 0; band < numband; band++) {
         Grid[j] = bands[2 * band];
-        double lowf = bands[2 * band];
-        double highf = bands[2 * band + 1];
+        float lowf = bands[2 * band];
+        float highf = bands[2 * band + 1];
         int k = static_cast<int>((highf - lowf) / delf + 0.5); /* .5 for rounding */
         for (int i = 0; i < k; i++) {
             D[j] = des[band];
@@ -142,27 +142,27 @@ static void InitialGuess(int r, int Ext[], int gridsize) {
  * ------
  * int    r      - 1/2 the number of filter coefficients
  * int    Ext[]  - Extremal indexes to dense frequency grid [r+1]
- * double Grid[] - Frequencies (0 to 0.5) on the dense grid [gridsize]
- * double D[]    - Desired response on the dense grid [gridsize]
- * double W[]    - Weight function on the dense grid [gridsize]
+ * float Grid[] - Frequencies (0 to 0.5) on the dense grid [gridsize]
+ * float D[]    - Desired response on the dense grid [gridsize]
+ * float W[]    - Weight function on the dense grid [gridsize]
  *
  * OUTPUT:
  * -------
- * double ad[]   - 'b' in Oppenheim & Schafer [r+1]
- * double x[]    - [r+1]
- * double y[]    - 'C' in Oppenheim & Schafer [r+1]
+ * float ad[]   - 'b' in Oppenheim & Schafer [r+1]
+ * float x[]    - [r+1]
+ * float y[]    - 'C' in Oppenheim & Schafer [r+1]
  ***********************/
 
 static void CalcParms(int r,
                       const int Ext[],
-                      const double Grid[],
-                      const double D[],
-                      const double W[],
-                      double ad[],
-                      double x[],
-                      double y[]) {
+                      const float Grid[],
+                      const float D[],
+                      const float W[],
+                      float ad[],
+                      float x[],
+                      float y[]) {
     int i;
-    double denom;
+    float denom;
 
     /* Find x[] */
     for (i = 0; i <= r; i++)
@@ -172,7 +172,7 @@ static void CalcParms(int r,
     int ld = (r - 1) / 15 + 1; /* Skips around to avoid round errors */
     for (i = 0; i <= r; i++) {
         denom = 1.0;
-        const double xi = x[i];
+        const float xi = x[i];
         for (int j = 0; j < ld; j++) {
             for (int k = j; k <= r; k += ld)
                 if (k != i)
@@ -185,14 +185,14 @@ static void CalcParms(int r,
     }
 
     /* Calculate delta  - Oppenheim & Schafer eq 7.131 */
-    double numer = denom = 0;
-    double sign = 1;
+    float numer = denom = 0;
+    float sign = 1;
     for (i = 0; i <= r; i++) {
         numer += ad[i] * D[Ext[i]];
         denom += sign * ad[i] / W[Ext[i]];
         sign = -sign;
     }
-    const double delta = numer / denom;
+    const float delta = numer / denom;
     sign = 1;
 
     /* Calculate y[]  - Oppenheim & Schafer eq 7.133b */
@@ -212,24 +212,24 @@ static void CalcParms(int r,
  *
  * INPUT:
  * ------
- * double freq - Frequency (0 to 0.5) at which to calculate A
+ * float freq - Frequency (0 to 0.5) at which to calculate A
  * int    r    - 1/2 the number of filter coefficients
- * double ad[] - 'b' in Oppenheim & Schafer [r+1]
- * double x[]  - [r+1]
- * double y[]  - 'C' in Oppenheim & Schafer [r+1]
+ * float ad[] - 'b' in Oppenheim & Schafer [r+1]
+ * float x[]  - [r+1]
+ * float y[]  - 'C' in Oppenheim & Schafer [r+1]
  *
  * OUTPUT:
  * -------
- * Returns double value of A[freq]
+ * Returns float value of A[freq]
  *********************/
 
-static double ComputeA(double freq, int r, const double ad[], const double x[], const double y[]) {
-    double numer;
+static float ComputeA(float freq, int r, const float ad[], const float x[], const float y[]) {
+    float numer;
 
-    double denom = numer = 0;
-    const double xc = cos(Pi2 * freq);
+    float denom = numer = 0;
+    const float xc = cos(Pi2 * freq);
     for (int i = 0; i <= r; i++) {
-        double c = xc - x[i];
+        float c = xc - x[i];
         if (fabs(c) < 1.0e-7) {
             numer = y[i];
             denom = 1;
@@ -253,30 +253,30 @@ static double ComputeA(double freq, int r, const double ad[], const double x[], 
  * INPUT:
  * ------
  * int    r      - 1/2 the number of filter coefficients
- * double ad[]   - [r+1]
- * double x[]    - [r+1]
- * double y[]    - [r+1]
+ * float ad[]   - [r+1]
+ * float x[]    - [r+1]
+ * float y[]    - [r+1]
  * int gridsize  - Number of elements in the dense frequency grid
- * double Grid[] - Frequencies on the dense grid [gridsize]
- * double D[]    - Desired response on the dense grid [gridsize]
- * double W[]    - Weight function on the desnse grid [gridsize]
+ * float Grid[] - Frequencies on the dense grid [gridsize]
+ * float D[]    - Desired response on the dense grid [gridsize]
+ * float W[]    - Weight function on the desnse grid [gridsize]
  *
  * OUTPUT:
  * -------
- * double E[]    - Error function on dense grid [gridsize]
+ * float E[]    - Error function on dense grid [gridsize]
  ************************/
 
 static void CalcError(int r,
-                      const double ad[],
-                      const double x[],
-                      const double y[],
+                      const float ad[],
+                      const float x[],
+                      const float y[],
                       int gridsize,
-                      const double Grid[],
-                      const double D[],
-                      const double W[],
-                      double E[]) {
+                      const float Grid[],
+                      const float D[],
+                      const float W[],
+                      float E[]) {
     for (int i = 0; i < gridsize; i++) {
-        const double A = ComputeA(Grid[i], r, ad, x, y);
+        const float A = ComputeA(Grid[i], r, ad, x, y);
         E[i] = W[i] * (D[i] - A);
     }
 }
@@ -300,13 +300,13 @@ static void CalcError(int r,
  * int    r        - 1/2 the number of filter coefficients
  * int    Ext[]    - Indexes to Grid[] of extremal frequencies [r+1]
  * int    gridsize - Number of elements in the dense frequency grid
- * double E[]      - Array of error values.  [gridsize]
+ * float E[]      - Array of error values.  [gridsize]
  * OUTPUT:
  * -------
  * int    Ext[]    - New indexes to extremal frequencies [r+1]
  ************************/
 
-static void Search(int r, int Ext[], int gridsize, const double E[]) {
+static void Search(int r, int Ext[], int gridsize, const float E[]) {
     int i; /* Counters */
     int up;
     /* Array of found extremals */
@@ -391,18 +391,18 @@ static void Search(int r, int Ext[], int gridsize, const double E[]) {
  * INPUT:
  * ------
  * int      N        - Number of filter coefficients
- * double   A[]      - Sample points of desired response [N/2]
+ * float   A[]      - Sample points of desired response [N/2]
  * int      symm     - Symmetry of desired filter
  *
  * OUTPUT:
  * -------
- * double h[] - Impulse Response of final filter [N]
+ * float h[] - Impulse Response of final filter [N]
  *********************/
-static void FreqSample(int N, const double A[], double h[], int symm) {
+static void FreqSample(int N, const float A[], float h[], int symm) {
     int n, k;
-    double x, val;
+    float x, val;
 
-    const double M = (N - 1.0) / 2.0;
+    const float M = (N - 1.0) / 2.0;
     if (symm == POSITIVE) {
         if (N % 2) {
             for (n = 0; n < N; n++) {
@@ -452,7 +452,7 @@ static void FreqSample(int N, const double A[], double h[], int symm) {
  * ------
  * int    r     - 1/2 the number of filter coeffiecients
  * int    Ext[] - Indexes to extremal frequencies [r+1]
- * double E[]   - Error function on the dense grid [gridsize]
+ * float E[]   - Error function on the dense grid [gridsize]
  *
  * OUTPUT:
  * -------
@@ -460,12 +460,12 @@ static void FreqSample(int N, const double A[], double h[], int symm) {
  * Returns 0 if the result has not converged
  ********************/
 
-static int isDone(int r, const int Ext[], const double E[]) {
-    double max;
+static int isDone(int r, const int Ext[], const float E[]) {
+    float max;
 
-    double min = max = fabs(E[Ext[0]]);
+    float min = max = fabs(E[Ext[0]]);
     for (int i = 1; i <= r; i++) {
-        const double current = fabs(E[Ext[i]]);
+        const float current = fabs(E[Ext[i]]);
         if (current < min)
             min = current;
         if (current > max)
@@ -489,25 +489,25 @@ static int isDone(int r, const int Ext[], const double E[]) {
  * ------
  * int     numtaps     - Number of filter coefficients
  * int     numband     - Number of bands in filter specification
- * double  bands[]     - User-specified band edges [2 * numband]
- * double  des[]       - User-specified band responses [numband]
- * double  weight[]    - User-specified error weights [numband]
+ * float  bands[]     - User-specified band edges [2 * numband]
+ * float  des[]       - User-specified band responses [numband]
+ * float  weight[]    - User-specified error weights [numband]
  * int     type        - Type of filter
  *
  * OUTPUT:
  * -------
- * double h[]      - Impulse response of final filter [numtaps]
+ * float h[]      - Impulse response of final filter [numtaps]
  ********************/
 
-void REMEZ_CreateFilter(double h[],
+void REMEZ_CreateFilter(float h[],
                         int numtaps,
                         int numband,
-                        double bands[],
-                        const double des[],
-                        const double weight[],
+                        float bands[],
+                        const float des[],
+                        const float weight[],
                         int type) {
     int i, iter, gridsize, r;
-    double c;
+    float c;
     int symmetry;
 
     if (type == REMEZ_BANDPASS)
@@ -530,15 +530,15 @@ void REMEZ_CreateFilter(double h[],
     }
 
     /* Dynamically allocate memory for arrays with proper sizes */
-    auto* Grid = static_cast<double*>(Util_malloc(gridsize * sizeof(double)));
-    auto* D = static_cast<double*>(Util_malloc(gridsize * sizeof(double)));
-    auto* W = static_cast<double*>(Util_malloc(gridsize * sizeof(double)));
-    auto* E = static_cast<double*>(Util_malloc(gridsize * sizeof(double)));
+    auto* Grid = static_cast<float*>(Util_malloc(gridsize * sizeof(float)));
+    auto* D = static_cast<float*>(Util_malloc(gridsize * sizeof(float)));
+    auto* W = static_cast<float*>(Util_malloc(gridsize * sizeof(float)));
+    auto* E = static_cast<float*>(Util_malloc(gridsize * sizeof(float)));
     const auto Ext = static_cast<int*>(Util_malloc((r + 1) * sizeof(int)));
-    auto* taps = static_cast<double*>(Util_malloc((r + 1) * sizeof(double)));
-    auto* x = static_cast<double*>(Util_malloc((r + 1) * sizeof(double)));
-    auto* y = static_cast<double*>(Util_malloc((r + 1) * sizeof(double)));
-    auto* ad = static_cast<double*>(Util_malloc((r + 1) * sizeof(double)));
+    auto* taps = static_cast<float*>(Util_malloc((r + 1) * sizeof(float)));
+    auto* x = static_cast<float*>(Util_malloc((r + 1) * sizeof(float)));
+    auto* y = static_cast<float*>(Util_malloc((r + 1) * sizeof(float)));
+    auto* ad = static_cast<float*>(Util_malloc((r + 1) * sizeof(float)));
 
     /* Create dense frequency grid */
     CreateDenseGrid(r, numtaps, numband, bands, des, weight, &gridsize, Grid, D, W, symmetry);
@@ -603,14 +603,14 @@ void REMEZ_CreateFilter(double h[],
             if (numtaps % 2)
                 c = 1;
             else
-                c = cos(Pi * static_cast<double>(i) / numtaps);
+                c = cos(Pi * static_cast<float>(i) / numtaps);
         } else {
             if (numtaps % 2)
-                c = sin(Pi2 * static_cast<double>(i) / numtaps);
+                c = sin(Pi2 * static_cast<float>(i) / numtaps);
             else
-                c = sin(Pi * static_cast<double>(i) / numtaps);
+                c = sin(Pi * static_cast<float>(i) / numtaps);
         }
-        taps[i] = ComputeA(static_cast<double>(i) / numtaps, r, ad, x, y) * c;
+        taps[i] = ComputeA(static_cast<float>(i) / numtaps, r, ad, x, y) * c;
     }
 
     /* Frequency sampling design with calculated taps */
