@@ -12,11 +12,11 @@ add_library(liblokey STATIC ${LOKEY_SRC} ${POKEY_SRC})
 target_include_directories(liblokey PUBLIC
         include
         src
-        external/atari800_pokey/stubs
+        external/atari800_pokey_embed/stubs
         external
         ${tcb-span_SOURCE_DIR}/include
 )
-target_link_libraries(liblokey PUBLIC SDL2::SDL2 fmt::fmt)
+target_link_libraries(liblokey PUBLIC SDL2::SDL2 fmt::fmt fpm)
 
 # === host Tests ===
 add_executable(test_pokey_direct_sdl test/host/test_pokey_direct_sdl.cpp)

@@ -1,6 +1,6 @@
 // #include <fmt/format.h>
 #include "atari800_pokey.hpp"
-#include "atari800_pokey/pokeysnd.h"
+#include "atari800_pokey_embed/pokeysnd.hpp"
 #include "pokey_register.hpp"
 
 Atari800Pokey::Atari800Pokey(const int sampleRate, const size_t bufferSize, const int channel)

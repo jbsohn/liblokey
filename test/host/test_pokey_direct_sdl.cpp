@@ -2,7 +2,7 @@
 #include <random>
 #include <thread>
 #include <fmt/format.h>
-#include "atari800_pokey/pokeysnd.h"
+#include "atari800_pokey_embed/pokeysnd.hpp"
 #include "pokey_register.hpp"
 
 #define SAMPLE_RATE 44100
@@ -86,7 +86,7 @@ void play_electric_zap(std::default_random_engine& rng) {
     for (int i = 0; i < 12; ++i) {
         const int pitch = 0x10 + dist32(rng);
         const int volume = 0x0F - (i / 3);
-        const int audc = 0xC0 | (volume & 0x0F); // more distortion
+        const int audc = 0xC0 | (volume & 0x0F);  // more distortion
         POKEYSND_Update(addr(PokeyRegister::AUDF1), pitch, 0, 1);
         POKEYSND_Update(addr(PokeyRegister::AUDC1), audc, 0, 1);
         SDL_Delay(25);
@@ -123,7 +123,7 @@ void run_all_effects() {
 
 void background_engine_vibrato() {
     for (int i = 0; i < 120; ++i) {
-        const int pitch = 0x30 + i / 4 % 6; // Subtle vibrato
+        const int pitch = 0x30 + i / 4 % 6;  // Subtle vibrato
         POKEYSND_Update(addr(PokeyRegister::AUDF1), pitch, 1, 1);
         POKEYSND_Update(addr(PokeyRegister::AUDC1), 0xAF, 1, 1);
         SDL_Delay(25);
@@ -135,7 +135,7 @@ void background_lfo_sweep() {
     for (int i = 0; i < 100; ++i) {
         const int mod = 0x10 + (i % 20 ^ i >> 2);
         POKEYSND_Update(addr(PokeyRegister::AUDF2), mod, 1, 1);
-        POKEYSND_Update(addr(PokeyRegister::AUDC2), 0xCF, 1, 1); // buzzy noise
+        POKEYSND_Update(addr(PokeyRegister::AUDC2), 0xCF, 1, 1);  // buzzy noise
         SDL_Delay(30);
     }
     POKEYSND_Update(addr(PokeyRegister::AUDC2), 0x00, 1, 1);
@@ -143,7 +143,7 @@ void background_lfo_sweep() {
 
 void background_hihat_loop() {
     for (int i = 0; i < 80; ++i) {
-        POKEYSND_Update(addr(PokeyRegister::AUDC1), 0x8F, 1, 1); // noise w/ vol
+        POKEYSND_Update(addr(PokeyRegister::AUDC1), 0x8F, 1, 1);  // noise w/ vol
         SDL_Delay(50);
         POKEYSND_Update(addr(PokeyRegister::AUDC1), 0x00, 1, 1);
         SDL_Delay(25);
@@ -151,7 +151,7 @@ void background_hihat_loop() {
 }
 
 void audio_callback([[maybe_unused]] void* userdata, Uint8* stream, int len) {
-    POKEYSND_Process(stream, len / 2); // 16-bit: len in bytes → samples
+    POKEYSND_Process(stream, len / 2);  // 16-bit: len in bytes → samples
 }
 
 int main() {
@@ -174,7 +174,7 @@ int main() {
     }
     SDL_ClearQueuedAudio(1);
     POKEYSND_Init(POKEYSND_FREQ_17_APPROX, SAMPLE_RATE, 2, POKEYSND_BIT16);
-    SDL_PauseAudio(0); // start playback
+    SDL_PauseAudio(0);  // start playback
 
     fmt::print("background_hihat_loop with sound effects...\n");
     std::thread background(background_hihat_loop);

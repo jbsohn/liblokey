@@ -46,3 +46,11 @@ if (NOT LOKEY_TARGET_PICO)
 endif ()
 
 cmake_policy(POP)
+
+CPMAddPackage(
+        NAME fpm
+        GITHUB_REPOSITORY MikeLankamp/fpm
+        VERSION 1.1.0
+        OPTIONS "FPM_BUILD_TESTS OFF"
+)
+CPMAddPackage("gh:MikeLankamp/fpm#master")
