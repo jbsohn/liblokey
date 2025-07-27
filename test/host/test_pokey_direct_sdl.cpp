@@ -156,7 +156,7 @@ void audio_callback([[maybe_unused]] void* userdata, Uint8* stream, int len) {
 
 int main() {
     if (SDL_Init(SDL_INIT_AUDIO) < 0) {
-        fmt::print(stderr, "SDL_Init failed: {}\n", SDL_GetError());
+        printf("SDL_Init failed: %s\n", SDL_GetError());
         return 1;
     }
 
@@ -169,29 +169,29 @@ int main() {
     desired.callback = audio_callback;
 
     if (SDL_OpenAudio(&desired, &obtained) < 0) {
-        fmt::print(stderr, "DL_OpenAudio failed: {}\n", SDL_GetError());
+        printf("DL_OpenAudio failed: %s\n", SDL_GetError());
         return 1;
     }
     SDL_ClearQueuedAudio(1);
     POKEYSND_Init(POKEYSND_FREQ_17_APPROX, SAMPLE_RATE, 2, POKEYSND_BIT16);
     SDL_PauseAudio(0); // start playback
 
-    fmt::print("background_hihat_loop with sound effects...\n");
+    printf("background_hihat_loop with sound effects...\n");
     std::thread background(background_hihat_loop);
     run_all_effects();
     background.join();
 
-    fmt::print("background_lfo_sweep with sound effects...\n");
+    printf("background_lfo_sweep with sound effects...\n");
     std::thread background2(background_lfo_sweep);
     run_all_effects();
     background2.join();
 
-    fmt::print("background_engine_vibrato with sound effects...\n");
+    printf("background_engine_vibrato with sound effects...\n");
     std::thread background3(background_engine_vibrato);
     run_all_effects();
     background3.join();
 
-    fmt::print("done.\n");
+    printf("done.\n");
     SDL_CloseAudio();
     SDL_Quit();
     return 0;

@@ -2,6 +2,7 @@
 #include "atari800_pokey.hpp"
 #include "atari800_pokey/pokeysnd.h"
 #include "pokey_register.hpp"
+#include <cstdio>
 
 Atari800Pokey::Atari800Pokey(const int sampleRate, const size_t bufferSize, const int channel)
     : sampleRate(sampleRate), bufferSize(bufferSize), channel(channel) {
@@ -9,7 +10,7 @@ Atari800Pokey::Atari800Pokey(const int sampleRate, const size_t bufferSize, cons
 }
 
 Atari800Pokey::~Atari800Pokey() {
-    // fmt::print(stderr, "Atari800Pokey shutting down.\n");
+    printf("Atari800Pokey shutting down.\n");
 }
 
 void Atari800Pokey::reset() {
@@ -24,7 +25,7 @@ void Atari800Pokey::poke(PokeyRegister address, uint8_t val, uint8_t gain) {
     POKEYSND_Update(addr(address), val, channel, gain);
 }
 
-tcb::span<const int16_t> Atari800Pokey::renderAudio() {
+std::span<const int16_t> Atari800Pokey::renderAudio() {
     POKEYSND_Process(audioBuffer.data(), static_cast<int>(bufferSize));
     return {audioBuffer.data(), bufferSize};
 }

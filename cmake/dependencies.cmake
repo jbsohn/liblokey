@@ -26,19 +26,6 @@ CPMAddPackage(
         OPTIONS "DOCTEST_WITH_MAIN OFF"
 )
 
-# fmtlib
-CPMAddPackage("gh:fmtlib/fmt#11.2.0")
-
-# tcb-span
-set(TCB_SPAN_ENABLE_TESTS OFF CACHE BOOL "" FORCE)
-CPMAddPackage(
-        NAME tcb-span
-        GITHUB_REPOSITORY tcbrindle/span
-        GIT_TAG master
-        EXCLUDE_FROM_ALL TRUE
-)
-set(TCB_SPAN_INCLUDE_DIR "${tcb-span_SOURCE_DIR}/include")
-
 # setup SDL if building for host platform
 if (NOT LOKEY_TARGET_PICO)
     # SDL2

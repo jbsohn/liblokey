@@ -1,12 +1,11 @@
 #include "sdl_audio_sink.hpp"
 
 #include <thread>
-#include <fmt/format.h>
 
 SDLAudioSink::SDLAudioSink(const int sampleRate, const int bufferFrames)
     : sampleRate(sampleRate), bufferFrames(bufferFrames) {
     if (SDL_Init(SDL_INIT_AUDIO) < 0) {
-        fmt::print(stderr, "SDLAudioSink: Failed to initialize SDL audio: {}\n", SDL_GetError());
+        printf("SDLAudioSink: Failed to initialize SDL audio: %d\n", SDL_GetError());
         return;
     }
 
@@ -22,7 +21,7 @@ SDLAudioSink::SDLAudioSink(const int sampleRate, const int bufferFrames)
 
     deviceId = SDL_OpenAudioDevice(nullptr, 0, &want, &spec, 0);
     if (deviceId == 0) {
-        fmt::print(stderr, "SDLAudioSink: Failed to open audio device: {}\n", SDL_GetError());
+        printf("SDLAudioSink: Failed to open audio device: {}\n", SDL_GetError());
         return;
     }
     targetQueuedBytes = bufferFrames * sizeof(int16_t) * 4;
@@ -53,7 +52,7 @@ void SDLAudioSink::stop() {
     running = false;
 }
 
-void SDLAudioSink::writeAudio(tcb::span<const int16_t> samples) {
+void SDLAudioSink::writeAudio(std::span<const int16_t> samples) {
     if (!isValid || !running || samples.empty()) {
         return;
     }
@@ -63,6 +62,6 @@ void SDLAudioSink::writeAudio(tcb::span<const int16_t> samples) {
     }
 
     if (SDL_QueueAudio(deviceId, samples.data(), samples.size_bytes()) < 0) {
-        fmt::print(stderr, "SDLAudioSink: Failed to queue audio: {}\n", SDL_GetError());
+        printf("SDLAudioSink: Failed to queue audio: %d\n", SDL_GetError());
     }
 }

@@ -1,7 +1,6 @@
 #include <SDL.h>
 #include <chrono>
 #include <vector>
-#include <fmt/core.h>
 #include "lokey.hpp"
 
 // A short musical phrase using POKEY
@@ -11,11 +10,11 @@ struct Note {
     int duration_ms;
 };
 
-void playNote(Lokey& lokey, const Note& note) {
+void playNote(const Lokey& lokey, const Note& note) {
     lokey.poke(PokeyRegister::AUDF1, note.freq);
     lokey.poke(PokeyRegister::AUDC1, note.control);
 
-    auto end = std::chrono::steady_clock::now() + std::chrono::milliseconds(note.duration_ms);
+    const auto end = std::chrono::steady_clock::now() + std::chrono::milliseconds(note.duration_ms);
     while (std::chrono::steady_clock::now() < end) {
         lokey.renderAndPlay();
         SDL_Delay(4);
@@ -23,13 +22,13 @@ void playNote(Lokey& lokey, const Note& note) {
 }
 
 int main() {
-    fmt::print("Playing a short tune with Lokey...\n");
+    printf("Playing a short tune with Lokey...\n");
 
     Lokey lokey;
     lokey.start();
     lokey.poke(PokeyRegister::AUDCTL, 0x00); // normal mode
 
-    std::vector<Note> tune = {
+    const std::vector<Note> tune = {
         {0x30, 0xA4, 200},
         {0x28, 0xA4, 200},
         {0x24, 0xA4, 200},
@@ -44,6 +43,6 @@ int main() {
         playNote(lokey, note);
     }
 
-    fmt::print("Done.\n");
+    printf("Done.\n");
     return 0;
 }
