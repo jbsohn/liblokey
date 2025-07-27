@@ -152,20 +152,21 @@ We aim to carry that legacy forward by making their work accessible in modern co
 - 🌐 Runnable in browsers
 - 🔌 Deployable on embedded hardware
 
-### 🧩 About Our Integration
+### 🧍 About Our Integration
 
-We are **not implementing a new POKEY emulator**. Instead, `libLOKEY` uses the **original POKEY sound emulation code
-from the Atari800 project** without modification. Our goal is to provide a modern, portable interface around this
-existing core — not to fork or diverge from the upstream project.
+We really didn’t want to write another POKEY emulator — the Atari800 team already did it right. Instead, `libLOKEY` uses the original POKEY sound emulation code from the Atari800 project, with only minimal changes required to support embedded platforms like the RP2040.
+
+#### ⚠️ Fork Notice (Embedded Use Only)
+
+To support real-time playback on constrained hardware (like the Raspberry Pi Pico), we made a **small, isolated fork** of the Atari800 sound code — specifically based on an **older upstream commit (`ec0fecda647a210e25b6cb77def602bce7676fb3`) that still included static FIR filter infrastructure**. While we adapted it slightly to suit embedded constraints, the core logic (including filter design, poly builds, and POKEY state handling) remains almost entirely the work of the **original Atari800 developers**.
+
+Startup performance on embedded platforms was a major reason for this fork. On the Raspberry Pi Pico, the original filter generation code took approximately **3–5 seconds** to complete at boot — unacceptable for real-time applications. By re-enabling and adapting the precomputed FIR filter path from an earlier Atari800 commit, startup is now **virtually instant**.
 
 Key points:
 
-- No changes are made to the original Atari800 files
-- We wrap the Atari800 POKEY implementation behind a modern C++interface
-- Our approach ensures compatibility and easy tracking of upstream updates
-- The `Lokey` class manages one or more POKEYs
+- The embedded fork disables runtime FIR filter generation for instant startup
+- All other behavior is preserved exactly as in upstream
 
-This lets us build new tools and platforms on top of Atari800’s excellent work without fragmenting the ecosystem.
 
 ## 📜 Licensing
 
