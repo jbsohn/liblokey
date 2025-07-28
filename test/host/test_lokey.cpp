@@ -24,19 +24,13 @@ void playNote(const Lokey& lokey, const Note& note) {
 int main() {
     printf("Playing a short tune with Lokey...\n");
 
-    Lokey lokey;
+    const Lokey lokey;
     lokey.start();
-    lokey.poke(PokeyRegister::AUDCTL, 0x00); // normal mode
+    lokey.poke(PokeyRegister::AUDCTL, 0x00);  // normal mode
 
     const std::vector<Note> tune = {
-        {0x30, 0xA4, 200},
-        {0x28, 0xA4, 200},
-        {0x24, 0xA4, 200},
-        {0x20, 0xA4, 300},
-        {0x24, 0xA4, 150},
-        {0x28, 0xA4, 150},
-        {0x30, 0xA4, 300},
-        {0x00, 0x00, 200}, // rest
+        {0x30, 0xA4, 200}, {0x28, 0xA4, 200}, {0x24, 0xA4, 200}, {0x20, 0xA4, 300},
+        {0x24, 0xA4, 150}, {0x28, 0xA4, 150}, {0x30, 0xA4, 300}, {0x00, 0x00, 200},  // rest
     };
 
     for (const auto& note : tune) {

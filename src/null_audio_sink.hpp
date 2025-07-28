@@ -8,7 +8,7 @@ public:
     void start() override {}
     void stop() override {}
 
-    void writeAudio(const tcb::span<const int16_t> samples) override {
+    void writeAudio(const std::span<const int16_t> samples) override {
         (void)samples;
     }
 
