@@ -4,6 +4,3 @@
 [submodule "pico-extras"]
 	path = pico-extras
 	url = https://github.com/raspberrypi/pico-extras.git
-[submodule "external/pico-sdk"]
-	path = external/pico-sdk
-	url = https://github.com/raspberrypi/pico-sdk
