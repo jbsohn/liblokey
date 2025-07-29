@@ -13,7 +13,7 @@ public:
 
     void start() override;
     void stop() override;
-    void writeAudio(tcb::span<const int16_t> samples) override;
+    void writeAudio(std::span<const int16_t> samples) override;
     [[nodiscard]] size_t getBufferSize() override {
         return bufferSize;
     }

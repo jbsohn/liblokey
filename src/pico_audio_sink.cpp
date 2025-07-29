@@ -35,8 +35,9 @@ void PicoAudioSink::start() {
     // Audio buffer format
     audio_buffer_format = {};
     audio_buffer_format.format = &audio_format;
-    audio_buffer_format.sample_stride = sizeof(int16_t);;  // 16-bit = 2 bytes per sample
-                                            // PWM channel config
+    audio_buffer_format.sample_stride = sizeof(int16_t);
+    ;  // 16-bit = 2 bytes per sample
+       // PWM channel config
     audio_pwm_channel_config_t channel_config = {};
     channel_config.core.base_pin = static_cast<uint8_t>(gpio);
     if (!audio_pwm_setup(&audio_format, -1, &channel_config)) {
@@ -76,7 +77,7 @@ void PicoAudioSink::stop() {
     }
 }
 
-void PicoAudioSink::writeAudio(tcb::span<const int16_t> samples) {
+void PicoAudioSink::writeAudio(std::span<const int16_t> samples) {
     // Process samples in chunks of bufferSize
     size_t offset = 0;
     while (offset < samples.size()) {

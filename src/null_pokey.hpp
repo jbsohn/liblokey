@@ -1,17 +1,22 @@
 #pragma once
 
+#include <array>
+#include <span>
 #include "pokey.hpp"
 #include "pokey_register.hpp"
-
-#include <array>
 
 class NullPokey final : public Pokey {
 public:
     static constexpr size_t kFrameSize = 128;
 
+private:
+    std::array<int16_t, kFrameSize> buffer;
+
+public:
     NullPokey() {
         buffer.fill(0);
     }
+    ~NullPokey() noexcept override = default;
 
     void reset() override {}
 
@@ -23,14 +28,10 @@ public:
     }
 
     tcb::span<const int16_t> renderAudio() override {
-        // Return silence
         return buffer;
     }
 
     const char* name() const override {
         return "NullPokey";
     }
-
-private:
-    std::array<int16_t, kFrameSize> buffer;
 };
