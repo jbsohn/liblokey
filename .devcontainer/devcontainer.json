@@ -1,0 +1,17 @@
+{
+    "name": "Pico Dev",
+    "image": "lukstep/raspberry-pi-pico-sdk:latest",
+    "workspaceFolder": "/workspaces/liblokey",
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "bash"
+            },
+            "extensions": [
+                "ms-vscode.cpptools",
+                "ms-vscode.cmake-tools"
+            ]
+        }
+    },
+    "postCreateCommand": "apt-get update && apt-get install -y ninja-build && cmake --preset pico || true"
+}
