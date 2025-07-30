@@ -6,14 +6,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 if (LOKEY_TARGET_PICO)
     set(PICO_SDK_PATH "${CMAKE_SOURCE_DIR}/pico-sdk" CACHE PATH "Path to the Raspberry Pi Pico SDK")
-    set(PICO_EXTRAS_PATH "${CMAKE_SOURCE_DIR}/pico-extras" CACHE PATH "Path to the Raspberry Pi Pico Extras")
 
     include(${PICO_SDK_PATH}/pico_sdk_init.cmake)
     pico_sdk_init()
-
-    add_subdirectory(pico-extras/src/rp2_common/pico_audio_pwm pico_audio_pwm_build)
-    add_subdirectory(pico-extras/src/common/pico_audio pico_audio_build)
-    add_subdirectory(pico-extras/src/common/pico_util_buffer pico_util_buffer_build)
 
     project(liblokey C CXX ASM)
 else ()

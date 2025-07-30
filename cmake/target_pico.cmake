@@ -45,21 +45,31 @@ add_custom_target(flash
 
 # test_audio_pico
 add_executable(test_audio_pico test/pico/test_audio_pico.cpp)
-target_link_libraries(test_audio_pico PRIVATE liblokey)
+target_link_libraries(test_audio_pico PRIVATE
+        pico_stdlib
+)
 pico_enable_stdio_usb(test_audio_pico 1)
 pico_enable_stdio_uart(test_audio_pico 0)
 pico_add_extra_outputs(test_audio_pico)
 
-# test_audio_pwm_pico
-add_executable(test_audio_pwm_pico test/pico/test_audio_pwm_pico.cpp)
-target_link_libraries(test_audio_pwm_pico PRIVATE
-        pico_stdlib
-        pico_audio_pwm
+# test_audio_pwm_direct_pico
+add_executable(test_audio_pwm_direct_pico
+        test/pico/test_audio_pwm_direct_pico.cpp
+        src/audio_pwm.pio
 )
-target_compile_definitions(test_audio_pwm_pico PRIVATE USE_AUDIO_PWM=1)
-pico_enable_stdio_usb(test_audio_pwm_pico 1)
-pico_enable_stdio_uart(test_audio_pwm_pico 0)
-pico_add_extra_outputs(test_audio_pwm_pico)
+pico_generate_pio_header(
+        test_audio_pwm_direct_pico
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/audio_pwm.pio
+)
+target_link_libraries(test_audio_pwm_direct_pico PRIVATE
+        pico_stdlib
+        hardware_pio
+)
+target_compile_definitions(test_audio_pwm_direct_pico PRIVATE USE_AUDIO_PWM=1)
+pico_enable_stdio_usb(test_audio_pwm_direct_pico 1)
+pico_enable_stdio_uart(test_audio_pwm_direct_pico 0)
+pico_add_extra_outputs(test_audio_pwm_direct_pico)
+
 
 # test_audio_sink_pico
 add_executable(test_audio_sink_pico test/pico/test_audio_sink_pico.cpp)
