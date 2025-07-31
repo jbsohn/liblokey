@@ -2,6 +2,17 @@
 # target_pico.cmake
 #
 
+function(always_build_uf2_for_target target_name)
+    add_custom_command(
+        OUTPUT ${target_name}.uf2
+        COMMAND ${PICO_SDK_PATH}/tools/elf2uf2/elf2uf2 $<TARGET_FILE:${target_name}> ${target_name}.uf2
+        # The magic below: depend on the .elf *and* all sources for this target!
+        DEPENDS ${target_name} $<TARGET_PROPERTY:${target_name},SOURCES>
+        COMMENT "Generating ${target_name}.uf2"
+    )
+    add_custom_target(${target_name}_uf2 ALL DEPENDS ${target_name}.uf2)
+endfunction()
+
 set(LOKEY_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/src/lokey.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/pico_audio_sink.cpp
@@ -23,64 +34,39 @@ target_link_libraries(liblokey PUBLIC
         pico_stdlib
         pico_multicore
         hardware_pwm
-        pico_audio
-        pico_audio_pwm
-        pico_util_buffer
 )
 
-# --- Test Executables ---
-add_executable(pico_hello
-        test/pico/hello.cpp
+# test_audio_gpio_pico
+add_executable(test_audio_gpio_pico
+        test/pico/test_audio_gpio_pico.cpp
 )
-target_link_libraries(pico_hello PRIVATE pico_stdlib)
-pico_enable_stdio_usb(pico_hello 1)
-pico_enable_stdio_uart(pico_hello 0)
-pico_add_extra_outputs(pico_hello)
-
-add_custom_target(flash
-        COMMAND ${CMAKE_COMMAND} -E echo "Flashing with picotool..."
-        COMMAND picotool load -f $<TARGET_FILE:pico_hello>
-        DEPENDS pico_hello
-)
-
-# test_audio_pico
-add_executable(test_audio_pico test/pico/test_audio_pico.cpp)
-target_link_libraries(test_audio_pico PRIVATE
+always_build_uf2_for_target(test_audio_gpio_pico)
+target_link_libraries(test_audio_gpio_pico PRIVATE
         pico_stdlib
 )
-pico_enable_stdio_usb(test_audio_pico 1)
-pico_enable_stdio_uart(test_audio_pico 0)
-pico_add_extra_outputs(test_audio_pico)
 
-# test_audio_pwm_direct_pico
-add_executable(test_audio_pwm_direct_pico
-        test/pico/test_audio_pwm_direct_pico.cpp
+# test_audio_pio_pico
+add_executable(test_audio_pio_pico
+        test/pico/test_audio_pio_pico.cpp
         src/audio_pwm.pio
 )
+always_build_uf2_for_target(test_audio_pio_pico)
 pico_generate_pio_header(
-        test_audio_pwm_direct_pico
+        test_audio_pio_pico
         ${CMAKE_CURRENT_SOURCE_DIR}/src/audio_pwm.pio
 )
-target_link_libraries(test_audio_pwm_direct_pico PRIVATE
+target_link_libraries(test_audio_pio_pico PRIVATE
         pico_stdlib
         hardware_pio
 )
-target_compile_definitions(test_audio_pwm_direct_pico PRIVATE USE_AUDIO_PWM=1)
-pico_enable_stdio_usb(test_audio_pwm_direct_pico 1)
-pico_enable_stdio_uart(test_audio_pwm_direct_pico 0)
-pico_add_extra_outputs(test_audio_pwm_direct_pico)
-
 
 # test_audio_sink_pico
 add_executable(test_audio_sink_pico test/pico/test_audio_sink_pico.cpp)
+always_build_uf2_for_target(test_audio_sink_pico)
 target_link_libraries(test_audio_sink_pico PRIVATE liblokey)
-pico_enable_stdio_usb(test_audio_sink_pico 1)
-pico_enable_stdio_uart(test_audio_sink_pico 0)
-pico_add_extra_outputs(test_audio_sink_pico)
 
 # test_audio_sink_a800_pico
 add_executable(test_audio_sink_a800_pico test/pico/test_audio_sink_a800_pico.cpp)
+always_build_uf2_for_target(test_audio_sink_a800_pico)
 target_link_libraries(test_audio_sink_a800_pico PRIVATE liblokey)
-pico_enable_stdio_usb(test_audio_sink_a800_pico 1)
-pico_enable_stdio_uart(test_audio_sink_a800_pico 0)
-pico_add_extra_outputs(test_audio_sink_a800_pico)
+

@@ -4,7 +4,6 @@
 #include "audio_sink.hpp"
 #include "pico/util/queue.h"
 #include "pico/multicore.h"
-#include "pico/audio.h"
 
 class PicoAudioSink final : public AudioSink {
 public:
@@ -29,19 +28,12 @@ public:
 
 private:
     static void core1Task();
-    void playbackLoop();
+    void playbackLoop() const;
 
-    static PicoAudioSink* active_instance;
-
-    uint gpio;
-    uint sampleRate;
+    uint gpio{};
+    uint sampleRate{};
     std::atomic<bool> running{false};
     queue_t sampleQueue{};
     float volume = 1.0f;
-    size_t bufferSize;
-
-    // New members for audio_pwm
-    audio_buffer_format_t audio_buffer_format{};
-    audio_buffer_pool_t* buffer_pool = nullptr;
-    audio_format_t audio_format;
+    size_t bufferSize{};
 };

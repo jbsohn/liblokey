@@ -1,6 +1,7 @@
 #include <cmath>
+#include <cstdio>
 #include "pico/stdlib.h"
-#include <pico/bootrom.h>
+#include "pico/bootrom.h"
 
 constexpr int AUDIO_PIN = 0;
 constexpr int LED_PIN = 25;
@@ -33,7 +34,9 @@ void mute_audio(const uint gpio) {
     gpio_put(gpio, false);
 }
 
-[[noreturn]] int main() {
+int main() {
+    stdio_init_all();
+    printf("starting audio test\n");
     gpio_init(LED_PIN);
     gpio_set_dir(LED_PIN, GPIO_OUT);
 
@@ -50,6 +53,5 @@ void mute_audio(const uint gpio) {
         sleep_ms(50);
     }
     mute_audio(AUDIO_PIN);
-    sleep_ms(600);  // pause between loops
     reset_usb_boot(0, 0);
 }

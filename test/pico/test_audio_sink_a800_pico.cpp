@@ -4,7 +4,7 @@
 #include "null_audio_sink.hpp"
 #include "pico_audio_sink.hpp"
 #include "util.hpp"
-#include "pico/stdio_usb.h"
+#include "pico/stdio.h"
 
 void playTone(Pokey& pokey, AudioSink& sink, uint8_t audf, uint8_t audc, int ms) {
     pokey.poke(PokeyRegister::AUDF1, audf, 1);
@@ -36,11 +36,7 @@ void sinkTest(Pokey& pokey, AudioSink& sink) {
 }
 
 int main() {
-    stdio_usb_init();
-    while (!stdio_usb_connected()) {
-        tight_loop_contents();
-    }
-
+    stdio_init_all();
     constexpr int bufferSize = 512;
     constexpr int sampleRate = 22050;
     auto pokey = Atari800Pokey(sampleRate, bufferSize, 0);
@@ -54,5 +50,4 @@ int main() {
     sinkTest(pokey, nullAudioSink);
 
     reset_usb_boot(0, 0);
-    return 0;
 }
