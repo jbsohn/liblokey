@@ -9,11 +9,9 @@ if (LOKEY_TARGET_PICO)
 
     include(${PICO_SDK_PATH}/pico_sdk_init.cmake)
     pico_sdk_init()
-
-    project(liblokey C CXX ASM)
-else ()
-    project(liblokey C CXX ASM)
 endif ()
+
+project(liblokey C CXX ASM)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/dependencies.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/source.cmake)
@@ -21,7 +19,9 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/source.cmake)
 if (LOKEY_TARGET_PICO)
     message(STATUS "Building for Raspberry Pi Pico")
     include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/target_pico.cmake)
+    add_subdirectory(test/pico)
 else ()
     message(STATUS "Building for host target")
     include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/target_host.cmake)
+    add_subdirectory(test/host)
 endif ()
