@@ -2,7 +2,7 @@
 #include <memory>
 #include "pico/stdlib.h"
 #include "audio_sink.hpp"
-#include "pico_audio_sink.hpp"
+#include "pico_gpio_audio_sink.hpp"
 #include "pico/bootrom.h"
 
 constexpr int sampleRate = 22050;
@@ -17,7 +17,7 @@ std::array<int16_t, bufferSize> generateSquareWave(int16_t amplitude = 3000) {
 
 int main() {
     stdio_init_all();
-    PicoAudioSink sink(0, sampleRate);
+    PicoGpioAudioSink sink(0, sampleRate);
     sink.start();
 
     auto wave = generateSquareWave();
