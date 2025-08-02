@@ -10,6 +10,5 @@ Checks: >
   -clang-diagnostic-overloaded-function
 
 WarningsAsErrors: ''
-CheckSystemHeaders: false
 HeaderFilterRegex: '^(?!pico-sdk/).*'
 FormatStyle: file
