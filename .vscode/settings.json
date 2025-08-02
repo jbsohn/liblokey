@@ -1,13 +1,20 @@
 {
     "C_Cpp.codeAnalysis.clangTidy.enabled": true,
     "C_Cpp.codeAnalysis.runAutomatically": true,
-    // Optional: point directly at clang-tidy and config file
-    "C_Cpp.codeAnalysis.clangTidy.path": "/usr/bin/clang-tidy", // Or wherever it's installed
+    "C_Cpp.codeAnalysis.clangTidy.path": "/usr/bin/clang-tidy",
     "C_Cpp.codeAnalysis.clangTidy.args": [
         "--config-file=${workspaceFolder}/.clang-tidy"
     ],
-    // Optional: silence weird warnings
     "C_Cpp.errorSquiggles": "enabled",
     "C_Cpp.intelliSenseEngine": "default",
-    "C_Cpp.clang_format_style": "file"
+    "C_Cpp.clang_format_style": "file",
+    "cmake.buildDirectory": "${workspaceFolder}/build/pico",
+    "cmake.configureArgs": [
+        "-DLOKEY_TARGET_PICO=ON"
+    ],
+    "cmake.generator": "Ninja",
+    "cmake.preferredGenerators": [
+        "Ninja",
+        "Unix Makefiles"
+    ]
 }

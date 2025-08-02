@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "name": "Pico",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/pico-sdk/src/**"
+            ],
+            "defines": [
+                "PICO_BOARD=pico",
+                "PICO_TARGET_NAME=pico",
+                "__ARM_ARCH_6M__=1"
+            ],
+            "compilerPath": "/usr/bin/arm-none-eabi-gcc",
+            "cStandard": "c17",
+            "cppStandard": "c++20",
+            "intelliSenseMode": "gcc-arm",
+            "compileCommands": "${workspaceFolder}/build/pico/compile_commands.json"
+        }
+    ],
+    "version": 4
+}

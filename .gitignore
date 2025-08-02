@@ -40,7 +40,6 @@
 *.iml
 
 # VSCode
-.vscode/
 .code-workspace
 
 # Mac OS system files
