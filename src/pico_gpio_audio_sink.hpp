@@ -5,7 +5,7 @@
 #include "audio_sink.hpp"
 #include "pico/util/queue.h"
 
-class PicoGpioAudioSink final : public AudioSink {
+class PicoGpioAudioSink : public AudioSink {
 public:
     explicit PicoGpioAudioSink(uint gpio_pin, uint32_t sample_rate = 22050);
     ~PicoGpioAudioSink() override;

@@ -16,5 +16,9 @@
     "cmake.preferredGenerators": [
         "Ninja",
         "Unix Makefiles"
-    ]
+    ],
+    "files.associations": {
+        "cstring": "cpp",
+        "vector": "cpp"
+    }
 }

@@ -7,8 +7,8 @@ Checks: >
   modernize-loop-convert,
   performance-for-range-copy,
   readability-braces-around-statements,
-  -clang-diagnostic-overloaded-function
-
+  -clang-diagnostic-overloaded-function,
+  -bugprone-easily-swappable-parameters
 WarningsAsErrors: ''
 HeaderFilterRegex: '^(?!pico-sdk/).*'
 FormatStyle: file
