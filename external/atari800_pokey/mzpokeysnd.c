@@ -1357,13 +1357,15 @@ int MZPOKEYSND_Init(ULONG freq17, int playback_freq, UBYTE num_pokeys,
         audible_frq = 4000; /* Nyquist, also 30db attn, should be 50 */
         break;
     default:
-        pokey_frq = (int)(((double)pokey_frq_ideal/POKEYSND_playback_freq) + 0.5)
-          * POKEYSND_playback_freq;
-	filter_size = remez_filter_table((double)POKEYSND_playback_freq/pokey_frq,
-					 &cutoff, quality);
-	audible_frq = (int ) (cutoff * pokey_frq);
+        filter_size = 0;
+        break;
     }
 
+    if (filter_size <= 0) {
+        pokey_frq = (int)((double)pokey_frq_ideal / POKEYSND_playback_freq + 0.5) * POKEYSND_playback_freq;
+        filter_size = remez_filter_table((double)POKEYSND_playback_freq/pokey_frq, &cutoff, quality);
+        audible_frq = (int ) (cutoff * pokey_frq);
+    }
     build_poly4();
     build_poly5();
     build_poly9();

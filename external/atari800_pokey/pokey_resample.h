@@ -35,18 +35,6 @@
 
 #include <stdbool.h>
 
-extern double filter_44_8[];
-extern double filter_44[];
-extern double filter_22_8[];
-extern double filter_22[];
-extern double filter_11_8[];
-extern double filter_11[];
-extern double filter_48_8[];
-extern double filter_48[];
-extern double filter_8_8[];
-extern double filter_8[];
-
-
 int load_precomputed_filter(double* dest, int playback_freq, bool bit16);
 
 #endif /* !defined(MZX_72348A3C_POKEY_RESAMPLE_H_INCLUDED) */
