@@ -32,14 +32,27 @@ target_link_libraries(test_audio_pio_pico PRIVATE
         hardware_pio
 )
 
-# test_audio_sink_pico
-add_executable(test_audio_sink_pico
-        ${CMAKE_CURRENT_SOURCE_DIR}/test_audio_sink_pico.cpp
+# test_gpio_audio_sink_pico
+add_executable(test_gpio_audio_sink_pico
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_gpio_audio_sink_pico.cpp
+        ${CMAKE_SOURCE_DIR}/test/shared/test_audio_sink.cpp
 )
-target_link_libraries(test_audio_sink_pico PRIVATE liblokey)
-pico_enable_stdio_usb(test_audio_sink_pico 1)
-pico_enable_stdio_uart(test_audio_sink_pico 0)
-pico_add_extra_outputs(test_audio_sink_pico)
+target_include_directories(test_gpio_audio_sink_pico PRIVATE ${SHARED_TEST_INCLUDE_DIR})
+target_link_libraries(test_gpio_audio_sink_pico PRIVATE liblokey)
+pico_enable_stdio_usb(test_gpio_audio_sink_pico 1)
+pico_enable_stdio_uart(test_gpio_audio_sink_pico 0)
+pico_add_extra_outputs(test_gpio_audio_sink_pico)
+
+# test_pwm_audio_sink_pico
+add_executable(test_pwm_audio_sink_pico
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_pwm_audio_sink_pico.cpp
+        ${CMAKE_SOURCE_DIR}/test/shared/test_audio_sink.cpp
+)
+target_include_directories(test_pwm_audio_sink_pico PRIVATE ${SHARED_TEST_INCLUDE_DIR})
+target_link_libraries(test_pwm_audio_sink_pico PRIVATE liblokey)
+pico_enable_stdio_usb(test_pwm_audio_sink_pico 1)
+pico_enable_stdio_uart(test_pwm_audio_sink_pico 0)
+pico_add_extra_outputs(test_pwm_audio_sink_pico)
 
 # test_audio_sink_a800_pico
 add_executable(test_audio_sink_a800_pico
