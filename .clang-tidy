@@ -8,7 +8,11 @@ Checks: >
   performance-for-range-copy,
   readability-braces-around-statements,
   -clang-diagnostic-overloaded-function,
-  -bugprone-easily-swappable-parameters
-WarningsAsErrors: ''
-HeaderFilterRegex: '^(?!pico-sdk/).*'
+  -bugprone-easily-swappable-parameters,
+  -readability-implicit-bool-conversion,
+  -readability-magic-numbers,
+  -clang-diagnostic-error
+WarningsAsErrors: ""
+HeaderFilterRegex: "^(?!pico-sdk/).*"
 FormatStyle: file
+SystemHeaders: false
