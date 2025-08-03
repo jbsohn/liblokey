@@ -6,6 +6,7 @@ set(LOKEY_SRC
         ${CMAKE_SOURCE_DIR}/src/lokey.cpp
         ${CMAKE_SOURCE_DIR}/src/pico_audio_sink.cpp
         ${CMAKE_SOURCE_DIR}/src/pico_gpio_audio_sink.cpp
+        ${CMAKE_SOURCE_DIR}/src/pico_pwm_audio_sink.cpp
         ${CMAKE_SOURCE_DIR}/src/atari800_pokey.cpp
 )
 
