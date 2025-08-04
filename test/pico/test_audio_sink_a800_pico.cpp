@@ -9,15 +9,15 @@
 
 int main() {
     stdio_init_all();
-    constexpr int bufferSize = 256;
-    constexpr int sampleRate = 44100;
+    constexpr int bufferSize = 512;
+    constexpr int sampleRate = 22050;
     auto pokey = Atari800Pokey(sampleRate, bufferSize, 0);
-    auto picoAudioSink = PicoPwmAudioSink(0, 12U, sampleRate, bufferSize, 4);
+    auto picoAudioSink = PicoPwmAudioSink(0, 8U, sampleRate, bufferSize, 4);
 
     printf("Starting PicoAudioSink tests...\n");
     printf("Sample Rate: %d, Buffer Size: %d\n", sampleRate, bufferSize);
 
     printf("PicoAudioSink test...\n");
-    test_audio_sink_a800(picoAudioSink, pokey);
+    testAudioSinkA800(picoAudioSink, pokey);
     reset_usb_boot(0, 0);
 }

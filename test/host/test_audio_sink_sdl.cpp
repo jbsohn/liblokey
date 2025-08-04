@@ -3,6 +3,6 @@
 
 int main() {
     SDLAudioSink sink(sampleRate, bufferSize);
-    test_audio_sink(sink);
+    testAudioSink(sink);
     return 0;
 }

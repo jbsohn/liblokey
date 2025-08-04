@@ -6,7 +6,7 @@
 constexpr int AUDIO_PIN = 0;
 constexpr int LED_PIN = 25;
 
-void play_square(const uint gpio, const uint base_freq, const int duration_ms, const int vibrato = 0) {
+void playSquare(const uint gpio, const uint base_freq, const int duration_ms, const int vibrato = 0) {
     const uint32_t start = to_ms_since_boot(get_absolute_time());
 
     gpio_set_function(gpio, GPIO_FUNC_SIO);
@@ -28,7 +28,7 @@ void play_square(const uint gpio, const uint base_freq, const int duration_ms, c
     gpio_put(gpio, false);  // ensure quiet output
 }
 
-void mute_audio(const uint gpio) {
+void muteAudio(const uint gpio) {
     gpio_set_function(gpio, GPIO_FUNC_SIO);
     gpio_set_dir(gpio, GPIO_OUT);
     gpio_put(gpio, false);
@@ -47,11 +47,11 @@ int main() {
     for (int i = 0; i < count; i++) {
         const int durations[] = {150, 150, 150, 300, 150, 150, 300};
         gpio_put(LED_PIN, true);
-        play_square(AUDIO_PIN, notes[i], durations[i], 1);  // vibrato on
+        playSquare(AUDIO_PIN, notes[i], durations[i], 1);  // vibrato on
         gpio_put(LED_PIN, false);
-        mute_audio(AUDIO_PIN);
+        muteAudio(AUDIO_PIN);
         sleep_ms(50);
     }
-    mute_audio(AUDIO_PIN);
+    muteAudio(AUDIO_PIN);
     reset_usb_boot(0, 0);
 }

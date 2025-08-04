@@ -9,6 +9,6 @@ int main() {
     SDLAudioSink sink(sampleRate, bufferSize);
     Atari800Pokey pokey(sampleRate, bufferSize, 0);
 
-    test_audio_sink_a800(sink, pokey);
+    testAudioSinkA800(sink, pokey);
     return 0;
 }

@@ -20,7 +20,7 @@ void pwm_one_bit_dither_program_init(PIO pio, uint sm, uint offset, uint pin) {
     pio_sm_set_enabled(pio, sm, true);
 }
 
-void play_square_pio(PIO pio, uint sm, uint base_freq, int duration_ms, int vibrato = 0) {
+void playSquarePio(PIO pio, uint sm, uint base_freq, int duration_ms, int vibrato = 0) {
     const uint32_t start = to_ms_since_boot(get_absolute_time());
 
     while (to_ms_since_boot(get_absolute_time()) - start < static_cast<uint32_t>(duration_ms)) {
@@ -63,7 +63,7 @@ int main() {
 
     for (int i = 0; i < count; i++) {
         gpio_put(LED_PIN, true);
-        play_square_pio(pio, SM, notes[i], durations[i], 1);  // vibrato on
+        playSquarePio(pio, SM, notes[i], durations[i], 1);  // vibrato on
         gpio_put(LED_PIN, false);
         if (pio_sm_is_tx_fifo_empty(pio, SM)) {
             pio_sm_put_blocking(pio, SM, 0x0000);

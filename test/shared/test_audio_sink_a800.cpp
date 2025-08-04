@@ -9,6 +9,9 @@
 #include "pokey.hpp"
 #include "audio_sink.hpp"
 #include "test_audio_sink_a800.hpp"
+#include "pokey_register.hpp"
+
+#include <thread>
 
 inline uint64_t now_ms() {
 #ifdef PICO_ON_DEVICE
@@ -27,6 +30,28 @@ inline void delay_ms(uint32_t ms) {
 #endif
 }
 
+void playFire(AudioSink& sink, Pokey& pokey) {
+    constexpr int steps = 128;
+
+    for (int i = 0; i < steps; i++) {
+        constexpr int duration = 120;
+        constexpr uint8_t end_freq = 60;
+        constexpr uint8_t start_freq = 5;
+        constexpr uint8_t audc_val = 0x0F;
+
+        // Sweep freq from start_freq to end_freq
+        const uint8_t freq = start_freq + (end_freq - start_freq) * i / steps;
+        pokey.poke(PokeyRegister::AUDF1, freq, 0);
+        pokey.poke(PokeyRegister::AUDF1, freq, 0);
+        pokey.poke(PokeyRegister::AUDC1, audc_val, 0);
+
+        delay_ms(duration / steps);
+        sink.writeAudio(pokey.renderAudio());
+    }
+    // Silence channel
+    pokey.poke(PokeyRegister::AUDC1, 0x00, 0);
+}
+
 void playTone(Pokey& pokey, AudioSink& sink, const uint8_t audf, const uint8_t audc, const int ms) {
     pokey.poke(PokeyRegister::AUDF1, audf, 1);
     pokey.poke(PokeyRegister::AUDC1, audc, 1);
@@ -38,25 +63,29 @@ void playTone(Pokey& pokey, AudioSink& sink, const uint8_t audf, const uint8_t a
     }
 }
 
-void test_audio_sink_a800(AudioSink& sink, Pokey& pokey) {
-    printf("Running POKEY + AudioSink test...\n");
-    sink.start();
-
+void playTones(AudioSink& sink, Pokey& pokey) {
     printf("tone 1\n");
-    playTone(pokey, sink, 0x50, 0xA2, 800);  // lower tone
+    playTone(pokey, sink, 0x50, 0xA2, 400);  // lower tone
 
     // Soft tone 2
     printf("tone 2\n");
-    playTone(pokey, sink, 0x30, 0xA4, 800);  // mid tone, slightly louder
+    playTone(pokey, sink, 0x30, 0xA4, 400);  // mid tone, slightly louder
 
     // Soft tone 3
     printf("tone 3\n");
-    playTone(pokey, sink, 0x20, 0xA6, 800);  // higher tone
+    playTone(pokey, sink, 0x20, 0xA6, 400);  // higher tone
 
     // Silence
     pokey.poke(PokeyRegister::AUDC1, 0x00, 1);
-    delay_ms(800);
+    delay_ms(200);
+}
 
+void testAudioSinkA800(AudioSink& sink, Pokey& pokey) {
+    printf("Running POKEY + AudioSink test...\n");
+    sink.start();
+
+    playTones(sink, pokey);
+    playFire(sink, pokey);
     sink.stop();
     printf("Done.\n");
 }

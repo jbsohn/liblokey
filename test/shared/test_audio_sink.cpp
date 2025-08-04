@@ -19,7 +19,7 @@ std::array<int16_t, bufferSize> generateSquareWave(const float freq = 440.0f, co
 std::array<int16_t, bufferSize> generateSineWave(const float freq = 440.0f, const int16_t amplitude = 3000) {
     std::array<int16_t, bufferSize> buf{};
     for (int i = 0; i < bufferSize; ++i) {
-        float t = static_cast<float>(i) / sampleRate;
+        const float t = static_cast<float>(i) / sampleRate;
         buf[i] = static_cast<int16_t>(std::sin(2 * std::numbers::pi * freq * t) * amplitude);
     }
     return buf;
@@ -49,7 +49,7 @@ std::array<int16_t, bufferSize> generateNoise(int16_t amplitude = 3000) {
     return buf;
 }
 
-void test_audio_sink(AudioSink& sink) {
+void testAudioSink(AudioSink& sink) {
     printf("Starting direct audio sink test...\n");
     sink.start();
 
