@@ -11,8 +11,6 @@
 #include "test_audio_sink_a800.hpp"
 #include "pokey_register.hpp"
 
-#include <thread>
-
 inline uint64_t now_ms() {
 #ifdef PICO_ON_DEVICE
     return to_ms_since_boot(get_absolute_time());
@@ -31,6 +29,7 @@ inline void delay_ms(uint32_t ms) {
 }
 
 void playFire(AudioSink& sink, Pokey& pokey) {
+    printf("Playing fire...\n");
     constexpr int steps = 128;
 
     for (int i = 0; i < steps; i++) {
@@ -50,9 +49,10 @@ void playFire(AudioSink& sink, Pokey& pokey) {
     }
     // Silence channel
     pokey.poke(PokeyRegister::AUDC1, 0x00, 0);
+    printf("done.\n");
 }
 
-void playTone(Pokey& pokey, AudioSink& sink, const uint8_t audf, const uint8_t audc, const int ms) {
+void playTone(AudioSink& sink, Pokey& pokey, const uint8_t audf, const uint8_t audc, const int ms) {
     pokey.poke(PokeyRegister::AUDF1, audf, 1);
     pokey.poke(PokeyRegister::AUDC1, audc, 1);
 
@@ -64,20 +64,46 @@ void playTone(Pokey& pokey, AudioSink& sink, const uint8_t audf, const uint8_t a
 }
 
 void playTones(AudioSink& sink, Pokey& pokey) {
+    printf("Starting tone test...\n");
     printf("tone 1\n");
-    playTone(pokey, sink, 0x50, 0xA2, 400);  // lower tone
+    playTone(sink, pokey, 0x50, 0xA2, 400);  // lower tone
 
-    // Soft tone 2
     printf("tone 2\n");
-    playTone(pokey, sink, 0x30, 0xA4, 400);  // mid tone, slightly louder
+    playTone(sink, pokey, 0x30, 0xA4, 400);  // mid tone, slightly louder
 
-    // Soft tone 3
     printf("tone 3\n");
-    playTone(pokey, sink, 0x20, 0xA6, 400);  // higher tone
+    playTone(sink, pokey, 0x20, 0xA6, 400);  // higher tone
 
-    // Silence
     pokey.poke(PokeyRegister::AUDC1, 0x00, 1);
     delay_ms(200);
+    printf("done.\n");
+}
+
+void playGameOver(AudioSink& sink, Pokey& pokey) {
+    printf("playing game over...\n");
+    playTone(sink, pokey, 0x40, 0xA4, 200);
+    playTone(sink, pokey, 0x38, 0xA4, 200);
+    playTone(sink, pokey, 0x30, 0xA4, 200);
+    playTone(sink, pokey, 0x28, 0xA4, 400);
+    pokey.poke(PokeyRegister::AUDC1, 0x00, 1);
+    delay_ms(250);
+    printf("done.\n");
+}
+
+void playLoop(AudioSink& sink, Pokey& pokey, const int loops = 12) {
+    printf("playing loop %d times...\n", loops);
+
+    for (int i = 0; i < loops; ++i) {
+        constexpr int duration_ms = 180;
+        constexpr uint8_t audc = 0xA4;
+        constexpr uint8_t note2_freq = 0x28;
+        constexpr uint8_t note1_freq = 0x38;
+        playTone(sink, pokey, note1_freq, audc, duration_ms);
+        playTone(sink, pokey, note2_freq, audc, duration_ms);
+    }
+    pokey.poke(PokeyRegister::AUDC1, 0x00, 1);
+    delay_ms(100);
+    printf("done.\n");
 }
 
 void testAudioSinkA800(AudioSink& sink, Pokey& pokey) {
@@ -86,6 +112,9 @@ void testAudioSinkA800(AudioSink& sink, Pokey& pokey) {
 
     playTones(sink, pokey);
     playFire(sink, pokey);
+    playLoop(sink, pokey);
+    playGameOver(sink, pokey);
+
     sink.stop();
     printf("Done.\n");
 }
