@@ -40,21 +40,21 @@ void playFire(AudioSink& sink, Pokey& pokey) {
 
         // Sweep freq from start_freq to end_freq
         const uint8_t freq = start_freq + (end_freq - start_freq) * i / steps;
-        pokey.poke(PokeyRegister::AUDF1, freq, 0);
-        pokey.poke(PokeyRegister::AUDF1, freq, 0);
-        pokey.poke(PokeyRegister::AUDC1, audc_val, 0);
+        pokey.poke(PokeyRegister::AUDF1, freq);
+        pokey.poke(PokeyRegister::AUDF1, freq);
+        pokey.poke(PokeyRegister::AUDC1, audc_val);
 
         delay_ms(duration / steps);
         sink.writeAudio(pokey.renderAudio());
     }
     // Silence channel
-    pokey.poke(PokeyRegister::AUDC1, 0x00, 0);
+    pokey.poke(PokeyRegister::AUDC1, 0x00);
     printf("done.\n");
 }
 
 void playTone(AudioSink& sink, Pokey& pokey, const uint8_t audf, const uint8_t audc, const int ms) {
-    pokey.poke(PokeyRegister::AUDF1, audf, 1);
-    pokey.poke(PokeyRegister::AUDC1, audc, 1);
+    pokey.poke(PokeyRegister::AUDF1, audf);
+    pokey.poke(PokeyRegister::AUDC1, audc);
 
     const uint64_t end = now_ms() + ms;
     while (now_ms() < end) {
@@ -66,15 +66,15 @@ void playTone(AudioSink& sink, Pokey& pokey, const uint8_t audf, const uint8_t a
 void playTones(AudioSink& sink, Pokey& pokey) {
     printf("Starting tone test...\n");
     printf("tone 1\n");
-    playTone(sink, pokey, 0x50, 0xA2, 400);  // lower tone
+    playTone(sink, pokey, 0x50, 0xA2, 1000);  // lower tone
 
     printf("tone 2\n");
-    playTone(sink, pokey, 0x30, 0xA4, 400);  // mid tone, slightly louder
+    playTone(sink, pokey, 0x30, 0xA4, 1000);  // mid tone, slightly louder
 
     printf("tone 3\n");
-    playTone(sink, pokey, 0x20, 0xA6, 400);  // higher tone
+    playTone(sink, pokey, 0x20, 0xA6, 1000);  // higher tone
 
-    pokey.poke(PokeyRegister::AUDC1, 0x00, 1);
+    pokey.poke(PokeyRegister::AUDC1, 0x00);
     delay_ms(200);
     printf("done.\n");
 }
@@ -85,7 +85,7 @@ void playGameOver(AudioSink& sink, Pokey& pokey) {
     playTone(sink, pokey, 0x38, 0xA4, 200);
     playTone(sink, pokey, 0x30, 0xA4, 200);
     playTone(sink, pokey, 0x28, 0xA4, 400);
-    pokey.poke(PokeyRegister::AUDC1, 0x00, 1);
+    pokey.poke(PokeyRegister::AUDC1, 0x00);
     delay_ms(250);
     printf("done.\n");
 }
@@ -101,7 +101,7 @@ void playLoop(AudioSink& sink, Pokey& pokey, const int loops = 12) {
         playTone(sink, pokey, note1_freq, audc, duration_ms);
         playTone(sink, pokey, note2_freq, audc, duration_ms);
     }
-    pokey.poke(PokeyRegister::AUDC1, 0x00, 1);
+    pokey.poke(PokeyRegister::AUDC1, 0x00);
     delay_ms(100);
     printf("done.\n");
 }

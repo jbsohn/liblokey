@@ -9,10 +9,13 @@ public:
     ~Atari800Pokey() override;
 
     void reset() override;
-    void poke(PokeyRegister address, uint8_t val, uint8_t gain) override;
+    void poke(PokeyRegister address, uint8_t val) override;
     std::span<const int16_t> renderAudio() override;
 
-    [[nodiscard]] const char* name() const override { return "Atari800Pokey"; }
+    [[nodiscard]] const char* name() const override {
+        return "Atari800Pokey";
+    }
+
 private:
     int sampleRate;
     size_t bufferSize;

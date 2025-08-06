@@ -27,8 +27,8 @@ void Lokey::reset() const {
     pokey->reset();
 }
 
-void Lokey::poke(const PokeyRegister reg, const uint8_t val, const uint8_t gain) const {
-    pokey->poke(reg, val, gain);
+void Lokey::poke(const PokeyRegister reg, const uint8_t val) const {
+    pokey->poke(reg, val);
 }
 
 void Lokey::renderAndPlay() const {

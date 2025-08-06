@@ -39,3 +39,10 @@ add_executable(test_registers
 )
 target_include_directories(test_registers PRIVATE ${SHARED_TEST_INCLUDE_DIR} ${doctest_SOURCE_DIR}/doctest)
 target_link_libraries(test_registers PRIVATE liblokey doctest)
+
+# test_pokes_sdl
+add_executable(test_pokes_sdl
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_pokes_sdl.cpp
+)
+target_include_directories(test_pokes_sdl PRIVATE ${SHARED_TEST_INCLUDE_DIR})
+target_link_libraries(test_pokes_sdl PRIVATE liblokey SDL2::SDL2)

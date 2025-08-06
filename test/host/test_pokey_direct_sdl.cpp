@@ -41,8 +41,8 @@ void playAlertSiren() {
 }
 
 void playAlienSquelch(std::default_random_engine& rng) {
-    std::uniform_int_distribution<> dist64(0, 63);
-    std::uniform_int_distribution<> dist2(0, 1);
+    std::uniform_int_distribution dist64(0, 63);
+    std::uniform_int_distribution dist2(0, 1);
     for (int i = 0; i < 20; ++i) {
         const int freq = 0x10 + dist64(rng);
         const int style = dist2(rng) ? 0x8F : 0xAF;

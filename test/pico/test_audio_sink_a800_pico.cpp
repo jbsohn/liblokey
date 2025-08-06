@@ -1,7 +1,7 @@
 #include <cstdio>
 #include "pico/stdio.h"
 #include "pico/bootrom.h"
-#include "atari800_pokey.hpp"
+#include "atari800-pokey.hpp"
 #include "pico_pwm_audio_sink.hpp"
 #include "test_audio_sink_a800.hpp"
 

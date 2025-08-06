@@ -21,17 +21,17 @@ void Atari800Pokey::reset() {
     POKEYSND_SetVolume(1);
 }
 
-void Atari800Pokey::poke(const PokeyRegister address, const uint8_t val, const uint8_t gain) {
-    POKEYSND_Update(addr(address), val, channel, gain);
+void Atari800Pokey::poke(const PokeyRegister address, const uint8_t val) {
+    POKEYSND_Update(addr(address), val, channel, 1);
 }
 
 std::span<const int16_t> Atari800Pokey::renderAudio() {
     POKEYSND_Process(audioBuffer.data(), static_cast<int>(bufferSize));
 
-    constexpr float POKEY_FIXED_GAIN = 16.0f;
     for (size_t i = 0; i < bufferSize; ++i) {
-        const float scaled = audioBuffer[i] * POKEY_FIXED_GAIN;
-        audioBuffer[i] = std::clamp((int)scaled, -32767, 32767);
+        constexpr float POKEY_FIXED_GAIN = 16.0f;
+        const float scaled = static_cast<float>(audioBuffer[i]) * POKEY_FIXED_GAIN;
+        audioBuffer[i] = static_cast<int16_t>(std::clamp(static_cast<int>(scaled), -32767, 32767));
     }
 
     return {audioBuffer.data(), bufferSize};
