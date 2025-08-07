@@ -1,6 +1,6 @@
 # libLOKEY
 
-🎧 A portable, embeddable POKEY audio engine for desktop, web, and embedded systems.  
+🎧 A portable, embeddable POKEY audio engine for desktop, web, and embedded systems.
 *Also affectionately known as "lokey-pokey" by its creator.*
 
 ---
@@ -92,6 +92,25 @@ suitable for:
 
 ---
 
+## 🎛️ Pokey Implementations
+
+libLOKEY features two independent Pokey emulation engines:
+
+- **Atari800Pokey:**  
+  A modernized, class-based C++ wrapper around the classic Atari800 Pokey core.
+  This implementation prioritizes accuracy and feature-completeness, closely matching established emulator behavior.
+
+- **ProSystemPokey:**  
+  A ported and refactored C++ wrapper around the ProSystem 7800 Pokey core (integer-based).  
+  Designed for simplicity, speed, and easy adaptation to embedded systems (such as the RP2040).
+
+Both Pokey engines are integrated and can be selected as audio backends for development, testing, and head-to-head
+comparison.  
+This dual-engine approach allows for detailed compatibility, performance, and sound quality evaluation across all use
+cases.
+
+---
+
 ## 🧩 Planned API Overview
 
 ### C++ API
@@ -154,19 +173,40 @@ We aim to carry that legacy forward by making their work accessible in modern co
 
 ### 🧍 About Our Integration
 
-We really didn’t want to write another POKEY emulator — the Atari800 team already did it right. Instead, `libLOKEY` uses the original POKEY sound emulation code from the Atari800 project, with only minimal changes required to support embedded platforms like the RP2040.
+We really didn’t want to write another POKEY emulator — the Atari800 team already did it right. Instead, `libLOKEY` uses
+the original POKEY sound emulation code from the Atari800 project, with only minimal changes required to support
+embedded platforms like the RP2040.
 
 #### ⚠️ Fork Notice (Embedded Use Only)
 
-To support real-time playback on constrained hardware (like the Raspberry Pi Pico), we made a **small, isolated fork** of the Atari800 sound code — specifically based on an **older upstream commit (`ec0fecda647a210e25b6cb77def602bce7676fb3`) that still included static FIR filter infrastructure**. While we adapted it slightly to suit embedded constraints, the core logic (including filter design, poly builds, and POKEY state handling) remains almost entirely the work of the **original Atari800 developers**.
+To support real-time playback on constrained hardware (like the Raspberry Pi Pico), we made a **small, isolated fork**
+of the Atari800 sound code — specifically based on an **older upstream
+commit (`ec0fecda647a210e25b6cb77def602bce7676fb3`) that still included static FIR filter infrastructure**. While we
+adapted it slightly to suit embedded constraints, the core logic (including filter design, poly builds, and POKEY state
+handling) remains almost entirely the work of the **original Atari800 developers**.
 
-Startup performance on embedded platforms was a major reason for this fork. On the Raspberry Pi Pico, the original filter generation code took approximately **3–5 seconds** to complete at boot — unacceptable for real-time applications. By re-enabling and adapting the precomputed FIR filter path from an earlier Atari800 commit, startup is now **virtually instant**.
+Startup performance on embedded platforms was a major reason for this fork. On the Raspberry Pi Pico, the original
+filter generation code took over  **3 seconds** to complete at boot — unacceptable for real-time applications.
+By re-enabling and adapting the precomputed FIR filter path from an earlier Atari800 commit, startup is now **virtually
+instant**.
 
 Key points:
 
 - The embedded fork disables runtime FIR filter generation for instant startup
 - All other behavior is preserved exactly as in upstream
 
+## 🕹️ ProSystem 7800 Pokey Import
+
+In addition to the Atari800-based core, this project now includes a ported/forked version of the **OpenEmu ProSystem
+7800 Pokey
+emulation code**.  
+You’ll find it in the `external/prosystem_pokey` directory.
+
+- **Why include it?**
+    - The ProSystem Pokey code is compact, integer-based, and easier to adapt for embedded use.
+    - It’s useful for comparison, alternative builds, or exploring differences between emulation engines.
+
+---
 
 ## 📜 Licensing
 
@@ -177,7 +217,12 @@ The POKEY emulation code from Atari800 is licensed under the **GNU General Publi
 - Full GPLv2 license
   text: [https://www.gnu.org/licenses/old-licenses/gpl-2.0.html](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 
-See `LICENSE.txt` for more details.
+The POKEY emulation code from OpenEmu ProSystem-Core is licensed under the **GNU General Public License v2**.  
+`libLOKEY` maintains compatibility with that license.
+
+- OpenEmu ProSystem Core project: [https://github.com/OpenEmu/ProSystem-Core](https://atari800.github.io)
+- Full GPLv2 license
+  text: [https://www.gnu.org/licenses/old-licenses/gpl-2.0.html](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 
 ---
 
@@ -188,4 +233,4 @@ built. Expect frequent changes and improvements.
 
 ---
 
-Thanks again to the Atari800 team for laying the foundation this project builds on.
+Thanks again to the Atari800 and ProSystem teams for laying the foundation this project builds on.
