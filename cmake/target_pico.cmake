@@ -8,6 +8,7 @@ set(LOKEY_SRC
         ${CMAKE_SOURCE_DIR}/src/pico_gpio_audio_sink.cpp
         ${CMAKE_SOURCE_DIR}/src/pico_pwm_audio_sink.cpp
         ${CMAKE_SOURCE_DIR}/src/atari800_pokey.cpp
+        ${CMAKE_SOURCE_DIR}/src/prosystem_pokey.cpp
 )
 
 add_library(liblokey STATIC ${LOKEY_SRC} ${POKEY_SRC})

@@ -47,7 +47,7 @@
 
 // TODO: imported from ProSystem.h
 #define CYCLES_PER_SCANLINE 454
-uint32_t prosystem_cycles = 0;
+uint32_t prosystem_cycles = CYCLES_PER_SCANLINE;
 uint32_t prosystem_extra_cycles = 0;
 // END imported from ProSystem.h
 
@@ -104,7 +104,7 @@ static uint32_t pokey_sampleCount[2];
 static uint32_t pokey_baseMultiplier;
 
 static uint8_t rand9[0x1ff];
-static uint8_t rand17[0x1ffff];
+// static uint8_t rand17[0x1ffff];
 static uint32_t r9;
 static uint32_t r17;
 static uint8_t SKCTL;
@@ -115,6 +115,16 @@ static int pot_scanline;
 
 static unsigned long long random_scanline_counter;
 static unsigned long long prev_random_scanline_counter;
+
+
+static uint32_t poly17_state = 0x1FFFF;
+// Call this to get the next POLY17 bit (0 or 1)
+static uint8_t poly17_next() {
+    // Feedback taps: x^17 + x^14 + 1 (Atari POKEY standard)
+    uint8_t new_bit = (poly17_state >> 16 ^ poly17_state >> 13) & 1;
+    poly17_state = (poly17_state << 1 | new_bit) & 0x1FFFF;
+    return poly17_state & 1;
+}
 
 static void rand_init(uint8_t *rng, int size, int left, int right, int add) {
     int mask = (1 << size) - 1;
@@ -173,7 +183,7 @@ void pokey_Reset(void) {
     
     // initialize the random arrays
     rand_init(rand9,   9, 8, 1, 0x00180);
-    rand_init(rand17, 17,16, 1, 0x1c000);
+    // rand_init(rand17, 17,16, 1, 0x1c000);
     
     SKCTL = SK_RESET;
     RANDOM = 0;
@@ -232,7 +242,8 @@ uint8_t pokey_GetRegister(uint16_t address) {
                 RANDOM = rand9[r9];
             }
             else {
-                RANDOM = rand17[r17];
+                // RANDOM = rand17[r17];
+                RANDOM = poly17_next();
             }
             
             prev_random_scanline_counter = curr_scanline_counter;

@@ -4,8 +4,19 @@
 #include "prosystem_pokey.hpp"
 #include "test_audio_sink_a800.hpp"
 
-constexpr int bufferSize = 512;
+#include <chrono>
+
+constexpr int bufferSize = 256;
 constexpr int sampleRate = 22050;
+
+inline uint64_t now_ms() {
+#ifdef PICO_ON_DEVICE
+    return to_ms_since_boot(get_absolute_time());
+#else
+    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch())
+        .count();
+#endif
+}
 
 void testAtari800() {
     printf("Atari800 testing started\n");
@@ -25,6 +36,6 @@ void testProSystem() {
 
 int main() {
     testProSystem();
-    testAtari800();
+    // testAtari800();
     return 0;
 }
