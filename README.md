@@ -226,6 +226,17 @@ The POKEY emulation code from OpenEmu ProSystem-Core is licensed under the **GNU
 
 ---
 
+## AI-Assisted Development
+
+This project wouldn’t exist—at least not as a one-person, evenings-and-weekends effort—without real, practical help from
+AI. ChatGPT and related tools have made it possible to tackle firmware, C++ refactors, embedded hardware, and
+documentation at a speed that just isn’t realistic solo.
+
+If you’re curious about my broader take on how AI is reshaping software development, check out my blog post:  
+👉 [What AI Is Doing to Software Development](https://johnsmusicandtech.com/posts/what-ai-is-doing-to-software-development/)
+
+---
+
 ## 🚧 Status
 
 This project is under active development. The public API, platform support, and audio output paths are still being
