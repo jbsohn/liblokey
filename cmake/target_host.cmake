@@ -14,6 +14,5 @@ target_include_directories(liblokey PUBLIC
         src
         external/atari800_pokey/stubs
         external
-        ${tcb-span_SOURCE_DIR}/include
 )
 target_link_libraries(liblokey PUBLIC SDL2::SDL2)
