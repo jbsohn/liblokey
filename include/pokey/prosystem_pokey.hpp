@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "../../src/pokey/pokey.hpp"
+#include "pokey/pokey.hpp"
 
 class ProSystemPokey final : public Pokey {
 public:

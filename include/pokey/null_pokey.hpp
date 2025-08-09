@@ -2,8 +2,8 @@
 
 #include <array>
 #include <span>
-#include "../pokey.hpp"
-#include "pokey_register.hpp"
+#include "pokey/pokey.hpp"
+#include "pokey/pokey_register.hpp"
 
 class NullPokey final : public Pokey {
 public:
