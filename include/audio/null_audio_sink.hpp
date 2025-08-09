@@ -1,6 +1,6 @@
 #pragma once
 
-#include "audio_sink.hpp"
+#include "../pokey/audio_sink.hpp"
 #include <string>
 
 class NullAudioSink final : public AudioSink {

@@ -3,7 +3,7 @@
 #include <thread>
 #include <fmt/format.h>
 #include "atari800_pokey/pokeysnd.h"
-#include "pokey_register.hpp"
+#include "pokey/pokey_register.hpp"
 
 #define SAMPLE_RATE 44100
 #define BUFFER_SIZE 512

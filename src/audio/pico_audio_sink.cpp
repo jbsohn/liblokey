@@ -1,7 +1,6 @@
 // pico_audio_sink.cpp
-#include "pico_audio_sink.hpp"
-
 #include <cstdio>
+#include "audio/pico_audio_sink.hpp"
 
 PicoAudioSink::PicoAudioSink(uint gpio, uint sampleRate, uint bufferSize) {}
 

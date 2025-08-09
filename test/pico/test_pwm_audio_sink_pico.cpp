@@ -1,6 +1,5 @@
 #include "pico/bootrom.h"
-#include "test_audio_sink.hpp"
-#include "pico_pwm_audio_sink.hpp"
+#include "audio/pico_pwm_audio_sink.hpp"
 #include "test_audio_sink.hpp"
 
 int main() {

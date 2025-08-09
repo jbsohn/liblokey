@@ -2,7 +2,7 @@
 
 #include <exception>
 #include <span>
-#include "pokey_register.hpp"
+#include "pokey/pokey_register.hpp"
 
 class Pokey {
 public:

@@ -1,11 +1,9 @@
 #include <cstdio>
 #include "pico/stdio.h"
 #include "pico/bootrom.h"
-#include "atari800_pokey.hpp"
-#include "prosystem_pokey.hpp"
-#include "pico_pwm_audio_sink.hpp"
-#include "pico_gpio_audio_sink.hpp"
-#include "test_audio_sink_a800.hpp"
+#include "pokey/prosystem_pokey.hpp"
+#include "audio/pico_pwm_audio_sink.hpp"
+#include "test_audio_sink_pokey.hpp"
 
 int main() {
     stdio_init_all();
@@ -18,6 +16,7 @@ int main() {
     printf("Sample Rate: %d, Buffer Size: %d\n", sampleRate, bufferSize);
 
     printf("PicoAudioSink test...\n");
-    testAudioSinkA800(picoAudioSink, pokey);
+    testAudioSinkPokey(picoAudioSink, pokey);
     reset_usb_boot(0, 0);
+    return 0;
 }

@@ -1,5 +1,5 @@
 #include <memory>
-#include "pico_gpio_audio_sink.hpp"
+#include "audio/pico_gpio_audio_sink.hpp"
 #include "pico/bootrom.h"
 #include "test_audio_sink.hpp"
 

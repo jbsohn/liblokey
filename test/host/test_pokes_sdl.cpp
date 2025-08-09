@@ -1,6 +1,6 @@
 
-#include "sdl_audio_sink.hpp"
-#include "atari800_pokey.hpp"
+#include "audio/sdl_audio_sink.hpp"
+#include "pokey/atari800_pokey.hpp"
 #include "test_data.hpp"
 
 int main() {

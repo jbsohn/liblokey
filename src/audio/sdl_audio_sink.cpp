@@ -1,6 +1,5 @@
-#include "sdl_audio_sink.hpp"
-
 #include <thread>
+#include "audio/sdl_audio_sink.hpp"
 
 SDLAudioSink::SDLAudioSink(const int sampleRate, const int bufferFrames)
     : sampleRate(sampleRate), bufferFrames(bufferFrames) {

@@ -1,6 +1,6 @@
 #include <cstring>
 #include <vector>
-#include "pico_gpio_audio_sink.hpp"
+#include "audio/pico_gpio_audio_sink.hpp"
 #include "pico/stdlib.h"
 #include "pico/multicore.h"
 

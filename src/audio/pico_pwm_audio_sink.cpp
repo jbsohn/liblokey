@@ -1,10 +1,10 @@
 #include <cstring>
 #include <vector>
 #include <algorithm>
-#include "pico_pwm_audio_sink.hpp"
 #include "pico/stdlib.h"
 #include "pico/multicore.h"
 #include "hardware/pwm.h"
+#include "audio/pico_pwm_audio_sink.hpp"
 
 PicoPwmAudioSink::PicoPwmAudioSink(const uint gpioPin,
                                    const uint pwmBits,

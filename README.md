@@ -1,14 +1,13 @@
 # libLOKEY
 
-🎧 A portable, embeddable POKEY audio engine for desktop, web, and embedded systems.
+🎧 A portable, embeddable POKEY audio engine for desktop, web, and embedded systems.  
 *Also affectionately known as "lokey-pokey" by its creator.*
 
 ---
 
 ## 🕹️ What’s a POKEY?
 
-**POKEY** stands for **POtentiometer and KEYboard** — a custom chip developed at Atari in the late 1970s by **Doug
-Neubauer** (who also created *Star Raiders*). It handled:
+**POKEY** stands for **POtentiometer and KEYboard** — a custom chip developed at Atari in the late 1970s by **Doug Neubauer** (who also created *Star Raiders*). It handled:
 
 - 4 channels of square wave audio
 - Paddle/joystick input
@@ -23,9 +22,9 @@ You'll find POKEY in:
 - **Atari 400/800** and **XL/XE** home computers
 - **Atari 5200** and **7800** consoles
 - Classic **arcade games**, including:
-    - *Centipede*, *Millipede*, *Missile Command*, *Tempest*
-    - *Food Fight*, *Cloak & Dagger*, *Liberator*, *Juno First* (quad-POKEY!)
-    - *Star Wars* and *Return of the Jedi* (with vector audio)
+  - *Centipede*, *Millipede*, *Missile Command*, *Tempest*
+  - *Food Fight*, *Cloak & Dagger*, *Liberator*, *Juno First* (quad-POKEY!)
+  - *Star Wars* and *Return of the Jedi* (with vector audio)
 
 Arcade machines often used **multiple POKEY chips** to create rich, layered audio and increase input resolution — with
 up to 16 total sound channels.
@@ -34,16 +33,14 @@ up to 16 total sound channels.
 
 ## 🎯 What This Project Does
 
-**libLOKEY** is a lightweight, modern C++ wrapper around the original Atari 800 POKEY sound core.
+**libLOKEY** is a lightweight, modern C++ POKEY library with a reusable audio sink layer. It’s designed for use in games, tools, and embedded projects.
 
 It provides:
 
-- 🎛️ A working real-time SDL-based POKEY test harnesses for tone verification and development
-- 🔊 A mix-ready audio engine (`Lokey`)
-- 🎧 Support for rendering audio output with one or more POKEYs
-- 🧪 C++ APIs for use in games, emulators, audio apps, or embedded platforms (like RP2040)
-
-This project is built for clarity, modularity, and a little nostalgic joy.
+- 🎛️ Real-time SDL test harness for tone verification
+- 🔊 Audio sink abstraction (`lokey::audio`) with SDL, Pico GPIO/PWM, and Null sinks
+- 🧪 Instance-based POKEY API (`lokey::pokey`) for one or more chips
+- 🛠 Clean CMake targets: `lokey::audio` and `lokey::pokey`
 
 ---
 
@@ -92,156 +89,58 @@ suitable for:
 
 ---
 
-## 🎛️ Pokey Implementations
+## 🎛️ POKEY Implementations
 
-libLOKEY features two independent Pokey emulation engines:
+libLOKEY supports **two** POKEY cores, selectable at build or runtime:
 
-- **Atari800Pokey:**  
-  A modernized, class-based C++ wrapper around the classic Atari800 Pokey core.
-  This implementation prioritizes accuracy and feature-completeness, closely matching established emulator behavior.
+- **ProSystem POKEY** *(default for RP2040)*:  
+  Compact, integer-based, and ideal for embedded use.
 
-- **ProSystemPokey:**  
-  A ported and refactored C++ wrapper around the ProSystem 7800 Pokey core (integer-based).  
-  Designed for simplicity, speed, and easy adaptation to embedded systems (such as the RP2040).
-
-Both Pokey engines are integrated and can be selected as audio backends for development, testing, and head-to-head
-comparison.  
-This dual-engine approach allows for detailed compatibility, performance, and sound quality evaluation across all use
-cases.
-
----
-
-## 🧩 Planned API Overview
-
-### C++ API
-
-The preferred interface for working with `libLOKEY` is C++:
-
-```cpp
-Lokey lokey;
-lokey.start();                              // Start audio playback
-lokey.reset();                              // Reset internal state
-lokey.poke(PokeyRegister::AUDF1, 0x40);     // Write to a register
-lokey.renderAndPlay();                      // Render and play one audio frame
-```
+- **Atari800 POKEY** *(desktop/test)*:  
+  Feature-complete, long-standing reference implementation.
 
 ---
 
 ## 🧱 Architectural Overview
 
-libLOKEY is built using a combination of well-known design patterns to ensure modularity, portability, and testability:
+- **Two targets:**
+  - `lokey::audio` → SDL/Pico sinks (no chip code)
+  - `lokey::pokey` → POKEY engine (depends on `lokey::audio`)
 
-🎭 Facade Pattern
+- **Strategy:** Multiple sink backends; multiple POKEY cores behind a common API.
 
-The Lokey class provides a simplified interface for interacting with the entire audio pipeline, hiding lower-level
-implementation details of the POKEY chip and audio output:
+- **Bridge:** Platform audio details decoupled from chip emulation for easy cross-platform use.
 
-lokey.poke(…);
-lokey.renderAndPlay();
-
-🧩 Strategy Pattern
-
-The core abstractions (Pokey, AudioSink) are defined as interfaces, allowing interchangeable backends like
-Atari800Pokey, SDLAudioSink, and (eventually) RP2040Pokey.
-
-🌉 Bridge Pattern
-
-Implementation details (platform-specific audio or chip emulation) are decoupled from the public API. This lets you vary
-or extend either side independently — ideal for cross-platform development.
-
-This flexible architecture should allow libLOKEY to:
-
-- Run on desktops, browsers, or embedded systems
-- Support test harnesses without changing production code
-- Cleanly separate upstream dependencies (like Atari800)
+*(Higher-level orchestration lives in consumer projects like `lokey-7800`.)*
 
 ---
 
 ## 🫡 Acknowledgments
 
-`libLOKEY` uses a version of the **POKEY sound emulation code from the [Atari800 project](https://atari800.github.io)**.
+`libLOKEY` uses POKEY sound emulation code from:
 
-We want to express our **deep appreciation and respect** to the original authors and maintainers of Atari800. Their
-outstanding work in preserving and emulating Atari’s 8-bit systems — including the **POKEY chip** — made this project
-possible. Without their reverse engineering efforts, `libLOKEY` would not exist.
+- **Atari800 project** — GPLv2  
+  https://github.com/atari800/atari800  
+  https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
-We aim to carry that legacy forward by making their work accessible in modern contexts:
+- **OpenEmu ProSystem Core** — GPLv2  
+  https://github.com/OpenEmu/ProSystem-Core  
+  https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
-- 🧪 Testable in CI environments
-- 🌐 Runnable in browsers
-- 🔌 Deployable on embedded hardware
-
-### 🧍 About Our Integration
-
-We really didn’t want to write another POKEY emulator — the Atari800 team already did it right. Instead, `libLOKEY` uses
-the original POKEY sound emulation code from the Atari800 project, with only minimal changes required to support
-embedded platforms like the RP2040.
-
-#### ⚠️ Fork Notice (Embedded Use Only)
-
-To support real-time playback on constrained hardware (like the Raspberry Pi Pico), we made a **small, isolated fork**
-of the Atari800 sound code — specifically based on an **older upstream
-commit (`ec0fecda647a210e25b6cb77def602bce7676fb3`) that still included static FIR filter infrastructure**. While we
-adapted it slightly to suit embedded constraints, the core logic (including filter design, poly builds, and POKEY state
-handling) remains almost entirely the work of the **original Atari800 developers**.
-
-Startup performance on embedded platforms was a major reason for this fork. On the Raspberry Pi Pico, the original
-filter generation code took over  **3 seconds** to complete at boot — unacceptable for real-time applications.
-By re-enabling and adapting the precomputed FIR filter path from an earlier Atari800 commit, startup is now **virtually
-instant**.
-
-Key points:
-
-- The embedded fork disables runtime FIR filter generation for instant startup
-- All other behavior is preserved exactly as in upstream
-
-## 🕹️ ProSystem 7800 Pokey Import
-
-In addition to the Atari800-based core, this project now includes a ported/forked version of the **OpenEmu ProSystem
-7800 Pokey
-emulation code**.  
-You’ll find it in the `external/prosystem_pokey` directory.
-
-- **Why include it?**
-    - The ProSystem Pokey code is compact, integer-based, and easier to adapt for embedded use.
-    - It’s useful for comparison, alternative builds, or exploring differences between emulation engines.
-
----
-
-## 📜 Licensing
-
-The POKEY emulation code from Atari800 is licensed under the **GNU General Public License v2**.  
-`libLOKEY` maintains compatibility with that license.
-
-- Atari800 project: [https://github.com/atari800/atari800/](https://atari800.github.io)
-- Full GPLv2 license
-  text: [https://www.gnu.org/licenses/old-licenses/gpl-2.0.html](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
-
-The POKEY emulation code from OpenEmu ProSystem-Core is licensed under the **GNU General Public License v2**.  
-`libLOKEY` maintains compatibility with that license.
-
-- OpenEmu ProSystem Core project: [https://github.com/OpenEmu/ProSystem-Core](https://atari800.github.io)
-- Full GPLv2 license
-  text: [https://www.gnu.org/licenses/old-licenses/gpl-2.0.html](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
+We express deep appreciation to the original authors and maintainers of these projects. Their reverse engineering work makes `libLOKEY` possible.
 
 ---
 
 ## AI-Assisted Development
 
-This project wouldn’t exist—at least not as a one-person, evenings-and-weekends effort—without real, practical help from
-AI. ChatGPT and related tools have made it possible to tackle firmware, C++ refactors, embedded hardware, and
-documentation at a speed that just isn’t realistic solo.
+This project wouldn’t exist—at least not as a one-person, evenings-and-weekends effort—without practical help from AI tools. ChatGPT and related assistants made it possible to tackle firmware, C++ refactors, embedded hardware, and documentation at a solo-friendly pace.
 
-If you’re curious about my broader take on how AI is reshaping software development, check out my blog post:  
+More thoughts here:  
 👉 [What AI Is Doing to Software Development](https://johnsmusicandtech.com/posts/what-ai-is-doing-to-software-development/)
 
 ---
 
 ## 🚧 Status
 
-This project is under active development. The public API, platform support, and audio output paths are still being
-built. Expect frequent changes and improvements.
+ProSystem and Atari 800 cores runs on RP2040 via PWM sink. Atari800 and ProSystem cores validated on desktop via SDL.
 
----
-
-Thanks again to the Atari800 and ProSystem teams for laying the foundation this project builds on.

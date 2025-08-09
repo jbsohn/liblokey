@@ -1,7 +1,7 @@
 #pragma once
 
 #include <atomic>
-#include "audio_sink.hpp"
+#include "audio/audio_sink.hpp"
 #include "pico/util/queue.h"
 #include "pico/multicore.h"
 

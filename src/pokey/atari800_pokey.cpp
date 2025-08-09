@@ -1,8 +1,8 @@
 #include <cstdio>
 #include <algorithm>
-#include "atari800_pokey.hpp"
 #include "atari800_pokey/pokeysnd.h"
-#include "pokey_register.hpp"
+#include "pokey/atari800_pokey.hpp"
+#include "pokey/pokey_register.hpp"
 
 Atari800Pokey::Atari800Pokey(const int sampleRate, const size_t bufferSize, const int channel)
     : sampleRate(sampleRate), bufferSize(bufferSize), channel(channel) {

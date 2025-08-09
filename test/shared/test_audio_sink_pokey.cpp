@@ -6,10 +6,10 @@
 #include <thread>
 #endif
 
-#include "pokey.hpp"
-#include "audio_sink.hpp"
-#include "test_audio_sink_a800.hpp"
-#include "pokey_register.hpp"
+#include "pokey/pokey.hpp"
+#include "pokey/pokey_register.hpp"
+#include "audio/audio_sink.hpp"
+#include "test_audio_sink_pokey.hpp"
 
 inline uint64_t now_ms() {
 #ifdef PICO_ON_DEVICE
@@ -106,7 +106,7 @@ void playLoop(AudioSink& sink, Pokey& pokey, const int loops = 12) {
     printf("done.\n");
 }
 
-void testAudioSinkA800(AudioSink& sink, Pokey& pokey) {
+void testAudioSinkPokey(AudioSink& sink, Pokey& pokey) {
     printf("Running POKEY + AudioSink test...\n");
     sink.start();
 

@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <algorithm>
-#include "prosystem_pokey.hpp"
-#include "pokey_register.hpp"
+#include "pokey/prosystem_pokey.hpp"
+#include "pokey/pokey_register.hpp"
 
 extern "C" {
 #include "prosystem_pokey/pokey.h"

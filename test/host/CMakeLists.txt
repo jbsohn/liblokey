@@ -18,20 +18,13 @@ add_executable(test_audio_sink_sdl
 target_include_directories(test_audio_sink_sdl PRIVATE ${SHARED_TEST_INCLUDE_DIR})
 target_link_libraries(test_audio_sink_sdl PRIVATE liblokey SDL2::SDL2)
 
-# test_audio_sink_a800_sdl
-add_executable(test_audio_sink_a800_sdl
-        ${CMAKE_CURRENT_SOURCE_DIR}/test_audio_sink_a800_sdl.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/../shared/test_audio_sink_a800.cpp
+# test_audio_sink_pokey_sdl
+add_executable(test_audio_sink_pokey_sdl
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_audio_sink_pokey_sdl.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../shared/test_audio_sink_pokey.cpp
 )
-target_include_directories(test_audio_sink_a800_sdl PRIVATE ${SHARED_TEST_INCLUDE_DIR})
-target_link_libraries(test_audio_sink_a800_sdl PRIVATE liblokey SDL2::SDL2)
-
-# test_lokey
-add_executable(test_lokey
-        ${CMAKE_CURRENT_SOURCE_DIR}/test_lokey.cpp
-)
-target_include_directories(test_lokey PRIVATE ${SHARED_TEST_INCLUDE_DIR})
-target_link_libraries(test_lokey PRIVATE liblokey SDL2::SDL2)
+target_include_directories(test_audio_sink_pokey_sdl PRIVATE ${SHARED_TEST_INCLUDE_DIR})
+target_link_libraries(test_audio_sink_pokey_sdl PRIVATE liblokey SDL2::SDL2)
 
 # test_registers
 add_executable(test_registers
