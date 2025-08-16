@@ -67,14 +67,15 @@ void PicoPwmAudioSink::core1Task() {
 
     std::vector<int16_t> buffer(sink->bufferSize);
     const uint16_t pwm_max = (1u << sink->pwmBits) - 1;
+    const uint32_t sample_period_us = 1000000 / sink->sampleRate;
 
     while (sink->running) {
         queue_remove_blocking(&sink->sampleQueue, buffer.data());
         for (size_t i = 0; i < sink->bufferSize && sink->running; ++i) {
-            const float scaled = static_cast<float>(buffer[i]) / 32768.0f;
-            const float biased = (scaled + 1.0f) * 0.5f;
-            const uint16_t pwm_val = std::clamp<int>(biased * pwm_max, 0, pwm_max);
+            const int32_t biased = static_cast<int32_t>(buffer[i]) + 32768;
+            const uint16_t pwm_val = biased * pwm_max / 65535;
             pwm_set_gpio_level(sink->gpioPin, pwm_val);
+            sleep_us(sample_period_us); // Pace output
         }
     }
     pwm_set_gpio_level(sink->gpioPin, 0);
