@@ -4,19 +4,35 @@
 #include "pokey/prosystem_pokey.hpp"
 #include "audio/pico_pwm_audio_sink.hpp"
 #include "test_audio_sink_pokey.hpp"
+#include "pokey/atari800_pokey.hpp"
+#include "prosystem_pokey/pokey.h"
+
+// set 1 for ProSystem, 0 for Atari800Pokey fallback
+#define POKEY_PRO_SYSTEM 0
 
 int main() {
     stdio_init_all();
-    constexpr int bufferSize = 16;
-    constexpr int sampleRate = 44100;
-    auto pokey = ProSystemPokey(sampleRate);
-    auto picoAudioSink = PicoPwmAudioSink(0, 13u, sampleRate, bufferSize, 4);
+    int sampleRate;
+    int sinkBufferSize;
+
+    // Not sure if these are the best settings but they currently work well on the Pico
+#if POKEY_PRO_SYSTEM
+    sinkBufferSize = 16;
+    sampleRate = 44100;
+    ProSystemPokey pokey(sampleRate);
+#else
+    sinkBufferSize = 512;
+    sampleRate = 22050;
+    Atari800Pokey pokey(sampleRate, sinkBufferSize);
+#endif
+    PicoPwmAudioSink sink(0, 8u, sampleRate, sinkBufferSize, 8);
 
     printf("Starting PicoAudioSink tests...\n");
-    printf("Sample Rate: %d, Buffer Size: %d\n", sampleRate, bufferSize);
+    printf("Sample Rate: %d, Buffer Size: %d\n", sampleRate, sinkBufferSize);
 
     printf("PicoAudioSink test...\n");
-    testAudioSinkPokey(picoAudioSink, pokey);
+    testAudioSinkPokey(sink, pokey);
+
     reset_usb_boot(0, 0);
     return 0;
 }
