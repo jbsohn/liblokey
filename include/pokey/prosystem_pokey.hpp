@@ -11,7 +11,7 @@ public:
     void poke(PokeyRegister address, uint8_t val) override;
     std::span<const int16_t> renderAudio() override;
 
-    [[nodiscard]] virtual const char* name() const {
+    [[nodiscard]] const char* name() const override {
         return "ProSystemPokey";
     }
 
