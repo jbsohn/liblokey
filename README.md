@@ -7,7 +7,8 @@
 
 ## 🕹️ What’s a POKEY?
 
-**POKEY** stands for **POtentiometer and KEYboard** — a custom chip developed at Atari in the late 1970s by **Doug Neubauer** (who also created *Star Raiders*). It handled:
+**POKEY** stands for **POtentiometer and KEYboard** — a custom chip developed at Atari in the late 1970s by **Doug
+Neubauer** (who also created *Star Raiders*). It handled:
 
 - 4 channels of square wave audio
 - Paddle/joystick input
@@ -22,9 +23,9 @@ You'll find POKEY in:
 - **Atari 400/800** and **XL/XE** home computers
 - **Atari 5200** and **7800** consoles
 - Classic **arcade games**, including:
-  - *Centipede*, *Millipede*, *Missile Command*, *Tempest*
-  - *Food Fight*, *Cloak & Dagger*, *Liberator*, *Juno First* (quad-POKEY!)
-  - *Star Wars* and *Return of the Jedi* (with vector audio)
+    - *Centipede*, *Millipede*, *Missile Command*, *Tempest*
+    - *Food Fight*, *Cloak & Dagger*, *Liberator*, *Juno First* (quad-POKEY!)
+    - *Star Wars* and *Return of the Jedi* (with vector audio)
 
 Arcade machines often used **multiple POKEY chips** to create rich, layered audio and increase input resolution — with
 up to 16 total sound channels.
@@ -33,7 +34,8 @@ up to 16 total sound channels.
 
 ## 🎯 What This Project Does
 
-**libLOKEY** is a lightweight, modern C++ POKEY library with a reusable audio sink layer. It’s designed for use in games, tools, and embedded projects.
+**libLOKEY** is a lightweight, modern C++ POKEY library with a reusable audio sink layer. It’s designed for use in
+games, tools, and embedded projects.
 
 It provides:
 
@@ -75,6 +77,16 @@ suitable for:
 - A clean and modern **C API** with portable internals
 - Modular structure with cross-platform build targets
 
+An iconic app startup sound was extracted using our custom fork of the open-source JS7800 emulator, which allowed us to
+log POKEY register writes and reproduce authentic sound sequences on the Pico.
+
+Our recording-enabled JS7800 fork is available at:
+
+https://github.com/jbsohn/js7800/tree/lokey-record
+
+Special thanks to the JS7800 devs—modifying a JavaScript emulator to log POKEY data was way easier (and more fun) than
+wrestling with native code!
+
 ---
 
 ## 📦 Planned Platform Support
@@ -104,8 +116,8 @@ libLOKEY supports **two** POKEY cores, selectable at build or runtime:
 ## 🧱 Architectural Overview
 
 - **Two targets:**
-  - `lokey::audio` → SDL/Pico sinks (no chip code)
-  - `lokey::pokey` → POKEY engine (depends on `lokey::audio`)
+    - `lokey::audio` → SDL/Pico sinks (no chip code)
+    - `lokey::pokey` → POKEY engine (depends on `lokey::audio`)
 
 - **Strategy:** Multiple sink backends; multiple POKEY cores behind a common API.
 
@@ -127,13 +139,19 @@ libLOKEY supports **two** POKEY cores, selectable at build or runtime:
   https://github.com/OpenEmu/ProSystem-Core  
   https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
-We express deep appreciation to the original authors and maintainers of these projects. Their reverse engineering work makes `libLOKEY` possible.
+We express deep appreciation to the original authors and maintainers of these projects. Their reverse engineering work
+makes `libLOKEY` possible.
+
+We don’t want to make a POKEY emulator when everyone else has already made a good one.
+libLOKEY’s goal is to offer a clean, portable audio engine and toolkit—not to reinvent the POKEY wheel.
 
 ---
 
 ## AI-Assisted Development
 
-This project wouldn’t exist—at least not as a one-person, evenings-and-weekends effort—without practical help from AI tools. ChatGPT and related assistants made it possible to tackle firmware, C++ refactors, embedded hardware, and documentation at a solo-friendly pace.
+This project wouldn’t exist—at least not as a one-person, evenings-and-weekends effort—without practical help from AI
+tools. ChatGPT and related assistants made it possible to tackle firmware, C++ refactors, embedded hardware, and
+documentation at a solo-friendly pace.
 
 More thoughts here:  
 👉 [What AI Is Doing to Software Development](https://johnsmusicandtech.com/posts/what-ai-is-doing-to-software-development/)
