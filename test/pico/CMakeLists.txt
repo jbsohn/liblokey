@@ -64,3 +64,13 @@ target_link_libraries(test_audio_sink_pokey_pico PRIVATE liblokey)
 pico_enable_stdio_usb(test_audio_sink_pokey_pico 1)
 pico_enable_stdio_uart(test_audio_sink_pokey_pico 0)
 pico_add_extra_outputs(test_audio_sink_pokey_pico)
+
+# test_pokes_pico
+add_executable(test_pokes_pico
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_pokes_pico.cpp
+)
+target_include_directories(test_pokes_pico PRIVATE ${SHARED_TEST_DIR})
+target_link_libraries(test_pokes_pico PRIVATE liblokey)
+pico_enable_stdio_usb(test_pokes_pico 1)
+pico_enable_stdio_uart(test_pokes_pico 0)
+pico_add_extra_outputs(test_pokes_pico)
