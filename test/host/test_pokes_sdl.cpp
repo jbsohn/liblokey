@@ -1,23 +1,18 @@
 
 #include "audio/sdl_audio_sink.hpp"
-#include "pokey/atari800_pokey.hpp"
-#include "test_data.hpp"
+#include "test_pokey_trace.hpp"
+#include "pokey/prosystem_pokey.hpp"
 
 int main() {
-    constexpr int bufferSize = 1024;
+    constexpr int bufferSize = 256;
     constexpr int sampleRate = 44100;
     SDLAudioSink sink(sampleRate, bufferSize);
-    Atari800Pokey pokey(sampleRate, bufferSize, 0);
+    ProSystemPokey pokey(sampleRate);
 
     sink.start();
-    constexpr int pokes_per_frame = 6;
-    for (size_t i = 0; i < pokes.size(); i += pokes_per_frame) {
-        for (size_t j = 0; j < pokes_per_frame && i + j < pokes.size(); ++j) {
-            auto& [address, value] = pokes[i + j];
-            pokey.poke(static_cast<PokeyRegister>(address), value);
-        }
-        const auto samples = pokey.renderAudio();
-        sink.writeAudio(samples);
+    for (auto event : pokeyEvents) {
+        pokey.poke(static_cast<PokeyRegister>(event.reg), event.val);
+        sink.writeAudio(pokey.renderAudio());
     }
     sink.stop();
     return 0;
