@@ -6,7 +6,7 @@
 
 #include <chrono>
 
-constexpr int bufferSize = 256;
+constexpr int bufferSize = 512;
 constexpr int sampleRate = 22050;
 
 inline uint64_t now_ms() {

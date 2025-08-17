@@ -17,7 +17,7 @@ int main() {
 
     // Not sure if these are the best settings but they currently work well on the Pico
 #if POKEY_PRO_SYSTEM
-    sinkBufferSize = 16;
+    sinkBufferSize = 256;
     sampleRate = 44100;
     ProSystemPokey pokey(sampleRate);
 #else

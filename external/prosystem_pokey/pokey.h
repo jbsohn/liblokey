@@ -42,7 +42,7 @@
 #ifndef POKEY_H
 #define POKEY_H
 
-#define POKEY_BUFFER_SIZE 624
+#define POKEY_BUFFER_SIZE 2048
 #define POKEY_AUDF1 0x4000
 #define POKEY_AUDC1 0x4001
 #define POKEY_AUDF2 0x4002
