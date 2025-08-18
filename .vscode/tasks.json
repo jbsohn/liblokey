@@ -1,0 +1,21 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build",
+            "type": "shell",
+            "command": "ninja -C build/current",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "Lint with clang-tidy",
+            "type": "shell",
+            "command": "clang-tidy $(find src/ -name '*.cpp')",
+            "problemMatcher": "$gcc"
+        }
+    ]
+}
