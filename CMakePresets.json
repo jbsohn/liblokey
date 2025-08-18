@@ -28,15 +28,5 @@
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
       }
     }
-  ],
-  "buildPresets": [
-    {
-      "name": "pico",
-      "configurePreset": "pico"
-    },
-    {
-      "name": "host",
-      "configurePreset": "host"
-    }
   ]
 }
