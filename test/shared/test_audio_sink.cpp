@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <numbers>
+#include <algorithm>
 #include "test_audio_sink.hpp"
 
 // Generates a square wave at a given freq
@@ -10,7 +11,7 @@ std::array<int16_t, bufferSize> generateSquareWave(const float freq = 440.0f, co
     std::array<int16_t, bufferSize> buf{};
     for (int i = 0; i < bufferSize; ++i) {
         const float t = static_cast<float>(i) / sampleRate;
-        buf[i] = std::sin(2 * std::numbers::pi * freq * t) > 0 ? amplitude : -amplitude;
+        buf[i] = static_cast<int16_t>(std::sin(2 * std::numbers::pi * freq * t) > 0 ? amplitude : -amplitude);
     }
     return buf;
 }
@@ -26,11 +27,10 @@ std::array<int16_t, bufferSize> generateSineWave(const float freq = 440.0f, cons
 }
 
 // Frequency sweep (sine)
-std::array<int16_t, bufferSize> generateSweepWave(float startFreq,
-                                                  float endFreq,
-                                                  int bufferIndex,
-                                                  int totalBuffers,
-                                                  int16_t amplitude = 3000) {
+std::array<int16_t, bufferSize> generateSweepWave(const float startFreq,
+                                                  const float endFreq,
+                                                  const int bufferIndex,
+                                                  const int16_t amplitude = 3000) {
     std::array<int16_t, bufferSize> buf{};
     for (int i = 0; i < bufferSize; ++i) {
         const float t = static_cast<float>(i + bufferIndex * bufferSize) / sampleRate;
@@ -41,10 +41,13 @@ std::array<int16_t, bufferSize> generateSweepWave(float startFreq,
 }
 
 // White noise
-std::array<int16_t, bufferSize> generateNoise(int16_t amplitude = 3000) {
+std::array<int16_t, bufferSize> generateNoise(const int16_t amplitude = 3000) {
     std::array<int16_t, bufferSize> buf{};
     for (int i = 0; i < bufferSize; ++i) {
-        buf[i] = rand() % (2 * amplitude) - amplitude;
+        int val = rand() % (2 * amplitude) - amplitude;
+        val = std::clamp(val, static_cast<int>(std::numeric_limits<int16_t>::min()),
+                         static_cast<int>(std::numeric_limits<int16_t>::max()));
+        buf[i] = static_cast<int16_t>(val);
     }
     return buf;
 }
@@ -59,10 +62,11 @@ void testAudioSink(AudioSink& sink) {
 
     constexpr int sweepBuffers = 40;
     for (int i = 0; i < sweepBuffers; i++) {
-        sink.writeAudio(generateSweepWave(220.0f, 880.0f, i, sweepBuffers));
+        sink.writeAudio(generateSweepWave(220.0f, 880.0f, i));
     }
 
-    for (constexpr float melodyFreqs[] = {440, 494, 523, 587, 659, 698, 784, 880}; const float noteFreq : melodyFreqs) {
+    for (constexpr std::array<float, 8> melodyFreqs = {440, 494, 523, 587, 659, 698, 784, 880};
+         const float noteFreq : melodyFreqs) {
         for (int i = 0; i < 8; i++) {
             sink.writeAudio(generateSineWave(noteFreq));
         }
