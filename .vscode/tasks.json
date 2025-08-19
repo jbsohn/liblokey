@@ -1,0 +1,17 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Lint src and test with clang-tidy",
+            "type": "shell",
+            "command": "find src/ test/ -name '*.cpp' | xargs clang-tidy --quiet",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        }
+    ]
+}
