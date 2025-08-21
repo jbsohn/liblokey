@@ -1,5 +1,14 @@
 {
-    "clangd.arguments": [
-        "--compile-commands-dir=${workspaceFolder}"
-    ]
+    "C_Cpp.intelliSenseEngine": "default",
+    "C_Cpp.configurations": [
+        {
+            "name": "host",
+            "compileCommands": "${workspaceFolder}/build/host/compile_commands.json",
+        },
+        {
+            "name": "pico",
+            "compileCommands": "${workspaceFolder}/build/pico/compile_commands.json",
+        }
+    ],
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
 }

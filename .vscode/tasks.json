@@ -2,6 +2,20 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Lint with clang-tidy",
+            "type": "shell",
+            "command": "clang-tidy",
+            "args": [
+                "--quiet",
+                "${file}"
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "Lint src and test with clang-tidy",
             "type": "shell",
             "command": "find src/ test/ -name '*.cpp' | xargs clang-tidy --quiet",
