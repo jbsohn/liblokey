@@ -11,7 +11,7 @@ int main() {
 
     stdio_init_all();
     printf("starting audio sink...\n");
-    PicoPwmAudioSink sink(0, 8u, sampleRate, bufferSize, 8);
+    PicoPwmAudioSink sink(18, 8u, sampleRate, bufferSize, 8);
     sink.start();
 
     printf("starting pokey...\n");

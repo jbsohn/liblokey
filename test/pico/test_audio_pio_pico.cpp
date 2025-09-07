@@ -4,7 +4,7 @@
 #include "audio_pwm.pio.h"
 #include "pico/bootrom.h"
 
-#define AUDIO_PIN 0
+#define AUDIO_PIN 18
 #define SM 0
 #define LED_PIN 25
 
@@ -52,7 +52,7 @@ int main() {
     gpio_init(LED_PIN);
     gpio_set_dir(LED_PIN, GPIO_OUT);
 
-    const PIO pio = pio0;
+    const auto pio = pio0;
     const uint offset = pio_add_program(pio, &pwm_one_bit_dither_program);  // <- your program name
     pwm_one_bit_dither_program_init(pio, SM, offset, AUDIO_PIN);
 

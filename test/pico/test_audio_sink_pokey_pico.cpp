@@ -25,7 +25,7 @@ int main() {
     sampleRate = 22050;
     Atari800Pokey pokey(sampleRate, sinkBufferSize);
 #endif
-    PicoPwmAudioSink sink(0, 8u, sampleRate, sinkBufferSize, 8);
+    PicoPwmAudioSink sink(18, 8u, sampleRate, sinkBufferSize, 8);
 
     printf("Starting PicoAudioSink tests...\n");
     printf("Sample Rate: %d, Buffer Size: %d\n", sampleRate, sinkBufferSize);

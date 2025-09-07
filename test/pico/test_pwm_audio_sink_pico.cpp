@@ -4,7 +4,7 @@
 
 int main() {
     constexpr int sampleRate = 44100;
-    PicoPwmAudioSink sink(0, 12, sampleRate);
+    PicoPwmAudioSink sink(18, 12, sampleRate);
     testAudioSink(sink);
     reset_usb_boot(0, 0);
 }
