@@ -7,7 +7,7 @@
 
 class PicoAudioSink final : public AudioSink {
 public:
-    explicit PicoAudioSink(uint gpio = 0, uint sampleRate = 22050, uint bufferSize = 2048);
+    explicit PicoAudioSink(uint gpio = 18, uint sampleRate = 22050, uint bufferSize = 2048);
     ~PicoAudioSink() override;
 
     void start() override;

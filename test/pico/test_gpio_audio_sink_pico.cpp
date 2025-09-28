@@ -5,9 +5,9 @@
 
 int main() {
     constexpr int AUDIO_PIN = 18;
-    constexpr int sampleRate = 44100;
+    constexpr int SAMPLE_RATE = 44100;
+    PicoGpioAudioSink sink(AUDIO_PIN, SAMPLE_RATE);
 
-    PicoGpioAudioSink sink(AUDIO_PIN, sampleRate);
     testAudioSink(sink);
     reset_usb_boot(0, 0);
 }

@@ -6,7 +6,7 @@
 
 constexpr int AUDIO_PIN = 18;
 constexpr int SM = 0;
-constexpr  int LED_PIN = 25;
+constexpr int LED_PIN = 25;
 
 void pwm_one_bit_dither_program_init(PIO pio, uint sm, uint offset, uint pin) {
     pio_gpio_init(pio, pin);
@@ -52,7 +52,7 @@ int main() {
     gpio_init(LED_PIN);
     gpio_set_dir(LED_PIN, GPIO_OUT);
 
-    const PIO pio = pio0;
+    const auto pio = pio0;
     const uint offset = pio_add_program(pio, &pwm_one_bit_dither_program);  // <- your program name
     pwm_one_bit_dither_program_init(pio, SM, offset, AUDIO_PIN);
 
