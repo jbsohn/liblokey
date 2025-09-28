@@ -4,8 +4,10 @@
 #include "test_audio_sink.hpp"
 
 int main() {
-    constexpr int sampleRate = 44100;
-    PicoGpioAudioSink sink(18, sampleRate);
+    constexpr int AUDIO_PIN = 18;
+    constexpr int SAMPLE_RATE = 44100;
+    PicoGpioAudioSink sink(AUDIO_PIN, SAMPLE_RATE);
+
     testAudioSink(sink);
     reset_usb_boot(0, 0);
 }
