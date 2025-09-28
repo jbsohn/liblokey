@@ -4,9 +4,9 @@
 #include "audio_pwm.pio.h"
 #include "pico/bootrom.h"
 
-#define AUDIO_PIN 0
-#define SM 0
-#define LED_PIN 25
+constexpr int AUDIO_PIN = 18;
+constexpr int SM = 0;
+constexpr  int LED_PIN = 25;
 
 void pwm_one_bit_dither_program_init(PIO pio, uint sm, uint offset, uint pin) {
     pio_gpio_init(pio, pin);

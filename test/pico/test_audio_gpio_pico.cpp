@@ -3,7 +3,7 @@
 #include "pico/stdlib.h"
 #include "pico/bootrom.h"
 
-constexpr int AUDIO_PIN = 0;
+constexpr int AUDIO_PIN = 18;
 constexpr int LED_PIN = 25;
 
 void playSquare(const uint gpio, const uint base_freq, const int duration_ms, const int vibrato = 0) {

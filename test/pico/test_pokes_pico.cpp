@@ -6,12 +6,13 @@
 #include "pico/stdio.h"
 
 int main() {
+    constexpr int AUDIO_PIN = 18;
     constexpr int bufferSize = 16;
     constexpr int sampleRate = 22050;
 
     stdio_init_all();
     printf("starting audio sink...\n");
-    PicoPwmAudioSink sink(0, 8u, sampleRate, bufferSize, 8);
+    PicoPwmAudioSink sink(AUDIO_PIN, 8u, sampleRate, bufferSize, 8);
     sink.start();
 
     printf("starting pokey...\n");
