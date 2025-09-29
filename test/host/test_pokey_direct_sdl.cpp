@@ -1,7 +1,6 @@
 #include <SDL.h>
 #include <random>
 #include <thread>
-#include <fmt/format.h>
 #include "atari800_pokey/pokeysnd.h"
 #include "pokey/pokey_register.hpp"
 
