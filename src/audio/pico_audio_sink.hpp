@@ -1,5 +1,7 @@
 #pragma once
 
+#error "PicoAudioSink is a template placeholder.
+
 #include <atomic>
 #include "audio/audio_sink.hpp"
 #include "pico/util/queue.h"

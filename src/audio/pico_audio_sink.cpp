@@ -1,4 +1,5 @@
-// pico_audio_sink.cpp
+#error "PicoAudioSink is a template placeholder.
+
 #include <cstdio>
 #include "audio/pico_audio_sink.hpp"
 
